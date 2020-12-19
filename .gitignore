@@ -1,0 +1,8 @@
+# Build detritus
+
+bin/
+obj/
+
+# Rider
+
+.idea/

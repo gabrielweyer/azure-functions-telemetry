@@ -21,6 +21,12 @@ NuGet packages:
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
 
+Before calling the `UserSecretFunction` Function, you'll need to set the secret:
+
+```powershell
+dotnet user-secrets set Secret:ReallySecretValue "TopSecret"
+```
+
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
 [dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection

@@ -1,0 +1,220 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location for all resources."
+            }
+        },
+        "resourceNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Used to create a unique name. For example, with a 'hello' prefix and an Application Insights resource, the resource name will be 'hello-appi'."
+            }
+        },
+        "reallySecretValue": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Used to populate 'Secret:ReallySecretValue'."
+            }
+        }
+    },
+    "functions": [
+        {
+            "namespace": "gabo",
+            "members": {
+                "resourceName": {
+                    "parameters": [
+                        {
+                            "name": "prefix",
+                            "type": "string"
+                        },
+                        {
+                            "name": "serviceName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(parameters('prefix'), '-', parameters('serviceName'))]"
+                    }
+                },
+                "storageName": {
+                    "parameters": [
+                        {
+                            "name": "prefix",
+                            "type": "string"
+                        },
+                        {
+                            "name": "serviceName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(parameters('prefix'), '7', parameters('serviceName'))]"
+                    }
+                },
+                "serviceBusNamespace": {
+                    "parameters": [
+                        {
+                            "name": "prefix",
+                            "type": "string"
+                        },
+                        {
+                            "name": "serviceName",
+                            "type": "string"
+                        }
+                    ],
+                    "output": {
+                        "type": "string",
+                        "value": "[concat(parameters('prefix'), parameters('serviceName'))]"
+                    }
+                }
+            }
+        }
+    ],
+    "variables": {
+        "applicationInsights": {
+            "name": "[gabo.resourceName(parameters('resourceNamePrefix'), 'appi')]"
+        },
+        "defaultApiStorage": {
+            "name": "[gabo.storageName(parameters('resourceNamePrefix'), 'defaultapi')]"
+        },
+        "defaultApiFunctionApp": {
+            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultapi-plan')]",
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultapi-func')]"
+        },
+        "serviceBusNamespace": {
+            "name": "[gabo.serviceBusNamespace(parameters('resourceNamePrefix'), 'sb')]"
+        }
+    },
+    "resources": [
+        {
+            "name": "[variables('applicationInsights').name]",
+            "apiVersion": "2018-05-01-preview",
+            "type": "Microsoft.Insights/components",
+            "location": "[parameters('location')]",
+            "kind": "web",
+            "properties": {
+                "Application_Type": "web"
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2017-04-01",
+            "name": "[variables('serviceBusNamespace').name]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "properties": {
+                "zoneRedundant": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('serviceBusNamespace').name, '/default-queue')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
+            ],
+            "properties": {
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P1D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 2,
+                "status": "Active",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('defaultApiStorage').name]",
+            "location": "[parameters('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "properties": {
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2019-08-01",
+            "name": "[variables('defaultApiFunctionApp').hostingPlanName]",
+            "location": "[parameters('location')]",
+            "kind": "",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2019-08-01",
+            "name": "[variables('defaultApiFunctionApp').functionAppName]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('defaultApiFunctionApp').hostingPlanName)]"
+            ],
+            "properties": {
+                "httpsOnly": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('defaultApiFunctionApp').hostingPlanName)]"
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "apiVersion": "2019-08-01",
+                    "name": "appsettings",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('defaultApiFunctionApp').functionAppName)]",
+                        "[resourceId('Microsoft.Insights/components', variables('applicationInsights').name)]",
+                        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
+                    ],
+                    "properties": {
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultApiStorage').name, ';AccountKey=', listKeys(variables('defaultApiStorage').name, '2019-06-01').keys[0].value)]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2018-05-01-preview').InstrumentationKey]",
+                        "FUNCTIONS_EXTENSION_VERSION": "~3",
+                        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultApiStorage').name, ';AccountKey=', listKeys(variables('defaultApiStorage').name, '2019-06-01').keys[0].value)]",
+                        "WEBSITE_CONTENTSHARE": "[variables('defaultApiFunctionApp').functionAppName]",
+                        "WEBSITE_RUN_FROM_PACKAGE": "1",
+                        "Secret:ReallySecretValue": "[parameters('reallySecretValue')]",
+                        "ServiceBusConnection": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace').name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {
+        "defaultApiFunctionAppName": {
+            "type": "string",
+            "value": "[variables('defaultApiFunctionApp').functionAppName]"
+        },
+        "serviceBusNamespace": {
+            "type": "string",
+            "value": "[variables('serviceBusNamespace').name]"
+        }
+    }
+}

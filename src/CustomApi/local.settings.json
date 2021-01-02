@@ -2,10 +2,9 @@
     "IsEncrypted": false,
     "Values": {
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-        "ServiceBusConnection": ""
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet"
     },
     "Host": {
-        "LocalHttpPort": 7071
+        "LocalHttpPort": 7072
     }
 }

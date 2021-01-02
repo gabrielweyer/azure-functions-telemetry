@@ -11,7 +11,7 @@ Provisions the below resources in Azure:
 
 - An Application Insights instance
 - A Service Bus namespace
-- A Function App and its supporting storage account
+- Two Function Apps and their supporting storage accounts
 
 The selected subscription is used to deploy.
 
@@ -48,6 +48,31 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
+function Publish-FunctionApp {
+    param(
+        [Parameter()]
+        [string]$FunctionName
+    )
+
+    $outputPath = Join-Path $PSScriptRoot 'out' $FunctionName
+    $sourcePath = Join-Path $PSScriptRoot 'src' $FunctionName
+
+    dotnet clean --configuration Release --output $outputPath $sourcePath | Out-Null
+
+    dotnet publish --configuration Release --output $outputPath $sourcePath | Out-Null
+
+    $archivePath = Join-Path $outputPath "$FunctionName.zip"
+
+    $compressParameters = @{
+        Path = Join-Path $outputPath '*'
+        CompressionLevel = 'Fastest'
+        DestinationPath = $archivePath
+    }
+    Compress-Archive @compressParameters
+
+    $archivePath
+}
+
 $resourceGroupName = "$ResourceNamePrefix-rg"
 $secretValue = 'TopSecret'
 
@@ -63,20 +88,15 @@ if ($null -eq $selectedSubscription) {
 
 Write-Host 'Publishing Default API to file system'
 
-dotnet clean --configuration Release --output ./out | Out-Null
+$defaultApiArchivePath = Publish-FunctionApp 'DefaultApi'
 
-dotnet publish --configuration Release --output ./out | Out-Null
+Write-Verbose "Published Default API to '$defaultApiArchivePath'"
 
-$archivePath = Join-Path -Path $PSScriptRoot -ChildPath 'out/default-api.zip'
+Write-Host 'Publishing Custom API to file system'
 
-$compressParameters = @{
-    Path = Join-Path -Path $PSScriptRoot -ChildPath 'out/*'
-    CompressionLevel = 'Fastest'
-    DestinationPath = $archivePath
-}
-Compress-Archive @compressParameters
+$customApiArchivePath = Publish-FunctionApp 'CustomApi'
 
-Write-Verbose "Published Default API to '$archivePath'"
+Write-Verbose "Published Custom API to '$customApiArchivePath'"
 
 Write-Host 'Creating resource group'
 
@@ -92,7 +112,7 @@ Write-Verbose "Created (or updated) resource group '$resourceGroupName'"
 
 Write-Host 'Deploying ARM template (takes a while)'
 
-$templatePath = Join-Path -Path $PSScriptRoot -ChildPath 'template.json'
+$templatePath = Join-Path $PSScriptRoot 'template.json'
 
 $templateParameters = @{
     location = $Location
@@ -112,20 +132,34 @@ $createEnvironmentDeploymentParameters = @{
 $armDeploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
 
 $defaultApiFunctionAppName = $armDeploymentResult.Outputs.Item('defaultApiFunctionAppName').Value
+$customApiFunctionAppName = $armDeploymentResult.Outputs.Item('customApiFunctionAppName').Value
 $serviceBusNamesapce = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
 
 Write-Verbose "Default API Function App name is '$defaultApiFunctionAppName'"
+Write-Verbose "Custom API Function App name is '$customApiFunctionAppName'"
+Write-Verbose "Service Bus namespace is '$serviceBusNamesapce'"
 
 Write-Host 'Deploying Default API to Azure'
 
-$publishWebAppParameters = @{
+$publishDefaultApiParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $defaultApiFunctionAppName
-    ArchivePath = $archivePath
+    ArchivePath = $defaultApiArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishWebAppParameters | Out-Null
+Publish-AzWebapp @publishDefaultApiParameters | Out-Null
+
+Write-Host 'Deploying Custom API to Azure'
+
+$publishCustomApiParameters = @{
+    ResourceGroupName = $resourceGroupName
+    Name = $customApiFunctionAppName
+    ArchivePath = $customApiArchivePath
+    Force = $true
+}
+
+Publish-AzWebapp @publishCustomApiParameters | Out-Null
 
 Write-Host 'Setting local user secrets'
 

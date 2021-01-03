@@ -1,6 +1,5 @@
 using CustomApi;
 using CustomApi.Infrastructure.Telemetry;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,16 +21,8 @@ namespace CustomApi
                     configuration.GetSection("Secret").Bind(settings);
                 });
 
-            var applicationDescriptor = new ApplicationDescriptor
-            {
-                Name = "custom-api",
-                Version = "local"
-            };
-
-            builder.Services.AddSingleton(applicationDescriptor);
-            builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
-
-            builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
+            builder.Services
+                .AddApplicationInsights();
         }
     }
 }

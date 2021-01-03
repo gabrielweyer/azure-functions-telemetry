@@ -16,3 +16,7 @@ __blobstorage__/
 # Build
 
 out/
+
+# User settings
+
+*.user

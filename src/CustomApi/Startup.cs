@@ -22,6 +22,7 @@ namespace CustomApi
                 });
 
             builder.Services
+                .AddConsoleLogging()
                 .AddApplicationInsights();
         }
     }

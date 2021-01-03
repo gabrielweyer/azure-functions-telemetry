@@ -42,7 +42,7 @@ namespace CustomApi.Infrastructure.Telemetry
 
                         telemetryConfiguration.TelemetryInitializers.ToList().ForEach(initializer => newConfig.TelemetryInitializers.Add(initializer));
 
-                        newConfig.TelemetryProcessorChainBuilder.Use(next => new SomeSortOfFilter(next));
+                        newConfig.TelemetryProcessorChainBuilder.Use(next => new TelemetryCounter(next));
                         newConfig.TelemetryProcessorChainBuilder.Use(next => new FunctionExecutionTracesFilter(next));
                         newConfig.TelemetryProcessorChainBuilder.Use(next => new DuplicateExceptionsFilter(next));
 

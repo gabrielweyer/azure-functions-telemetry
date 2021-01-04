@@ -1,6 +1,9 @@
+using System;
 using System.Linq;
+using System.Reflection;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
+using Microsoft.Azure.WebJobs.Logging.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -42,13 +45,81 @@ namespace CustomApi.Infrastructure.Telemetry
 
                         telemetryConfiguration.TelemetryInitializers.ToList().ForEach(initializer => newConfig.TelemetryInitializers.Add(initializer));
 
-                        newConfig.TelemetryProcessorChainBuilder.Use(next => new TelemetryCounter(next));
-                        newConfig.TelemetryProcessorChainBuilder.Use(next => new FunctionExecutionTracesFilter(next));
-                        newConfig.TelemetryProcessorChainBuilder.Use(next => new DuplicateExceptionsFilter(next));
+                        /*
+                         * By default the SDK registers the below telemetry processors (in order):
+                         *
+                         * 1. OperationFilteringTelemetryProcessor
+                         * 2. QuickPulseTelemetryProcessor
+                         * 3. FilteringTelemetryProcessor
+                         * 4. AdaptiveSamplingTelemetryProcessor
+                         * 5. PassThroughProcessor
+                         *
+                         * When we invoked the above TelemetryConfiguration factory, one of the side-effect was to
+                         * instantiate an instance of HostingDiagnosticListener. HostingDiagnosticListener is
+                         * responsible for tracking the requests in Azure Functions. As HostingDiagnosticListener was
+                         * provided with an instance of TelemetryClient, it will have no knowledge of the additional
+                         * telemetry processors we're adding now and our telemetry processors will not be executed for
+                         * the RequestTelemetry items.
+                         *
+                         * One solution to this problem is to insert our telemetry processors between
+                         * OperationFilteringTelemetryProcessor and QuickPulseTelemetryProcessor.
+                         */
+
+                        // `OperationFilteringTelemetryProcessor` is an internal class
+                        var operationFilteringTelemetryProcessorType = typeof(HttpAutoCollectionOptions).Assembly
+                            .GetType("Microsoft.Azure.WebJobs.Logging.ApplicationInsights.OperationFilteringTelemetryProcessor");
+
+                        // `PassThroughProcessor` is an internal class
+                        var passThroughProcessorType = typeof(ITelemetryProcessor).Assembly
+                            .GetType("Microsoft.ApplicationInsights.Shared.Extensibility.Implementation.PassThroughProcessor");
 
                         foreach (var processor in telemetryConfiguration.TelemetryProcessors)
                         {
-                            newConfig.TelemetryProcessorChainBuilder.Use(next => processor);
+                            if (processor.GetType() == passThroughProcessorType)
+                            {
+                                /*
+                                 * The current TelemetryProcessorChainBuilder and the new one we're building both have a
+                                 * PassThroughProcessor so we end up with two of them in the final chain.
+                                 *
+                                 * It doesn't seem to be causing an issue but I'd rather have only one of them, dropping
+                                 * the current one.
+                                 */
+                                continue;
+                            }
+
+                            if (processor.GetType() == operationFilteringTelemetryProcessorType)
+                            {
+                                var operationFilteringProcessorNextField = operationFilteringTelemetryProcessorType
+                                    .GetField("_next", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                                if (operationFilteringProcessorNextField == null)
+                                {
+                                    throw new InvalidOperationException("We expect `OperationFilteringTelemetryProcessor` to have a private field named `_next`.");
+                                }
+
+                                var quickPulseTelemetryProcessor = (ITelemetryProcessor) operationFilteringProcessorNextField
+                                    .GetValue(processor);
+
+                                /*
+                                 * We now instantiate our processors in the reverse order so that the last one can point
+                                 * to `QuickPulseTelemetryProcessor` and `OperationFilteringTelemetryProcessor` can
+                                 * point to the first one.
+                                 */
+                                var duplicateExceptionFilter = new DuplicateExceptionsFilter(quickPulseTelemetryProcessor);
+                                var functionExecutionTracesFilter = new FunctionExecutionTracesFilter(duplicateExceptionFilter);
+                                var telemetryCounter = new TelemetryCounter(functionExecutionTracesFilter);
+
+                                operationFilteringProcessorNextField.SetValue(processor, telemetryCounter);
+
+                                newConfig.TelemetryProcessorChainBuilder.Use(next => processor);
+                                newConfig.TelemetryProcessorChainBuilder.Use(next => telemetryCounter);
+                                newConfig.TelemetryProcessorChainBuilder.Use(next => functionExecutionTracesFilter);
+                                newConfig.TelemetryProcessorChainBuilder.Use(next => duplicateExceptionFilter);
+                            }
+                            else
+                            {
+                                newConfig.TelemetryProcessorChainBuilder.Use(next => processor);
+                            }
 
                             if (processor is QuickPulseTelemetryProcessor quickPulseProcessor)
                             {

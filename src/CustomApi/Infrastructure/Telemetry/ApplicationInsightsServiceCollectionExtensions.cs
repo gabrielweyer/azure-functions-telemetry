@@ -21,6 +21,7 @@ namespace CustomApi.Infrastructure.Telemetry
 
             services.AddSingleton(applicationDescriptor);
             services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
+            services.AddSingleton<ITelemetryInitializer, ServiceBusRequestInitializer>();
 
             /*
              * When adding a telemetry processor using AddApplicationInsightsTelemetryProcessor, the telemetry processor

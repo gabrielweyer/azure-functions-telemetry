@@ -19,10 +19,7 @@ namespace CustomApi.Infrastructure.Telemetry
             if (item is ExceptionTelemetry exceptionTelemetry)
             {
                 if (exceptionTelemetry.Properties.TryGetValue("Category", out var category) &&
-                    (
-                        IsSame(CategoryUsedByAllBindings, category) ||
-                        IsSame(OtherCategoryUsedByServiceBusBinding, category)
-                    ))
+                    IsSame(CategoryUsedByAllBindings, category))
                 {
                     return;
                 }
@@ -37,6 +34,5 @@ namespace CustomApi.Infrastructure.Telemetry
         }
 
         private const string CategoryUsedByAllBindings = "Host.Results";
-        private const string OtherCategoryUsedByServiceBusBinding = "Host.Executor";
     }
 }

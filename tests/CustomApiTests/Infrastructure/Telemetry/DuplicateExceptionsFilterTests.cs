@@ -36,7 +36,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
         }
 
         [Fact]
-        public void GivenCategoryIsHostExecutorAsUsedByServiceBusBinding_WhenTelemetryIsException_ThenFilterOutTelemetry()
+        public void GivenCategoryIsHostExecutorAsUsedByServiceBusBinding_WhenTelemetryIsException_ThenKeepTelemetry()
         {
             // Arrange
 
@@ -49,7 +49,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
 
             // Assert
 
-            Assert.False(_innerProcessor.WasProcessorCalled);
+            Assert.True(_innerProcessor.WasProcessorCalled);
         }
 
         [Fact]

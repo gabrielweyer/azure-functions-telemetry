@@ -32,17 +32,20 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 - An Application Insights instance
 - A Service Bus namespace
-- A Function App and its supporting storage account
+- Two Function Apps and their supporting storage account
 
 ```powershell
 .\deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
 ```
 
-## Default Function App
+## Function Apps
 
-`DefaultApi` demonstrate the limitations of Azure Functions.
+- `DefaultApi` demonstrate the limitations of Azure Functions
+- `CustomApi` demonstrates the workarounds I use to improve Azure Functions
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
+
+### Default Function App
 
 You can start the Function App by issuing the below commands:
 
@@ -51,19 +54,19 @@ cd .\src\DefaultApi\
 func start
 ```
 
-### ExceptionThrowingFunction
+#### Default - ExceptionThrowingFunction
 
 Navigate to `http://localhost:7071/api/exception` in your favourite browser.
 
 Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
 
-![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace.png)
+![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace-absent.png)
 
 This also demonstrates that the same exception appears twice in Application Insights:
 
 ![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
 
-### CustomEventFunction
+#### Default - CustomEventFunction
 
 Navigate to `http://localhost:7071/api/event` in your favourite browser.
 
@@ -75,19 +78,19 @@ Note: when using vanilla ASP.NET Core, `TelemetryConfiguration` is registered by
 
 > Don't add `AddApplicationInsightsTelemetry()` to the services collection, which registers services that conflict with services provided by the environment.
 
-### ProcessorFunction
+#### Default - ProcessorFunction
 
 Navigate to `http://localhost:7071/api/processor` in your favourite browser.
 
 Demonstrates that our telemetry processor is not being called even though we added it using `AddApplicationInsightsTelemetryProcessor`.
 
-### UserSecretFunction
+#### Default - UserSecretFunction
 
 Navigate to `http://localhost:7071/api/secret` in your favourite browser.
 
 Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
 
-### TraceLogFunction
+#### Default - TraceLogFunction
 
 Navigate to `http://localhost:7071/api/trace-log` in your favourite browser.
 
@@ -101,13 +104,58 @@ You'll need to set the Application Insights instrumentation key:
 dotnet user-secrets set APPINSIGHTS_INSTRUMENTATIONKEY "{YourInstrumentationKey}" --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
-### QueueFunction
+#### Default - QueueFunction
 
-You can send a message to the queue using the Service Bus Explorer in the Azure Portal.
+You can send a message to the `default-queue` queue using the Service Bus Explorer in the Azure Portal.
 
 Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
 
 ![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-eight-telemetry-items.png)
+
+### Custom Function App
+
+You can start the Function App by issuing the below commands:
+
+```powershell
+cd .\src\CustomApi\
+func start
+```
+
+### Custom - ExceptionThrowingFunction
+
+Navigate to `http://localhost:7072/api/exception` in your favourite browser.
+
+Demonstrates that the stack trace is present in the console logs when an exception is thrown.
+
+![Stack trace present in the console when an exception is thrown](docs/img/console-stack-trace-present.png)
+
+This also demonstrates that the same exception appears only once in Application Insights:
+
+![The same exception is logged only once for the HTTP binding](docs/img/http-binding-exception-logged-once.png)
+
+#### Custom - CustomEventFunction
+
+Navigate to `http://localhost:7072/api/event` in your favourite browser.
+
+Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because we [registered a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+
+![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+
+#### Custom - ProcessorFunction
+
+Navigate to `http://localhost:7072/api/processor` in your favourite browser.
+
+Demonstrates that our `TelemetryCounter` telemetry processor is being called:
+
+![Our telemetry processor is even being called for requests](docs/img/telemetry-counter-is-being-called.png)
+
+#### Custom - QueueFunction
+
+You can send a message to the `custom-queue` queue using the Service Bus Explorer in the Azure Portal.
+
+Demonstrate that a single exception thrown by the Function is recorded two times in Application Insights and that a total of four telemetry items are emitted during the Function execution.
+
+![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-four-telemetry-items.png)
 
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
@@ -118,3 +166,4 @@ Demonstrate that a single exception thrown by the Function is recorded three tim
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows#secret-manager
 [blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/
+[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/10383f8825533ade6eab23aa7390163191bf1627/src/CustomApi/Infrastructure/Telemetry/ApplicationInsightsServiceCollectionExtensions.cs#L169-L172

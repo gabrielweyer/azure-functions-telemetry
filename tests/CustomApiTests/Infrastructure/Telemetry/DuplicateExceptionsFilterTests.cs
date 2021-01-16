@@ -1,6 +1,6 @@
 using CustomApi.Infrastructure.Telemetry;
+using CustomApiTests.TestInfrastructure.Builders;
 using CustomApiTests.TestInfrastructure.Mocks;
-using Microsoft.ApplicationInsights.DataContracts;
 using Xunit;
 
 namespace CustomApiTests.Infrastructure.Telemetry
@@ -23,8 +23,8 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var exceptionTelemetry = new ExceptionTelemetry();
-            exceptionTelemetry.Properties["Category"] = "Host.Results";
+            var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostResults)
+                .Build();
 
             // Act
 
@@ -40,8 +40,8 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var exceptionTelemetry = new ExceptionTelemetry();
-            exceptionTelemetry.Properties["Category"] = "Host.Executor";
+            var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+                .Build();
 
             // Act
 
@@ -57,8 +57,8 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var exceptionTelemetry = new ExceptionTelemetry();
-            exceptionTelemetry.Properties["Category"] = "Function.QueueFunction";
+            var exceptionTelemetry = new ExceptionTelemetryBuilder("Function.QueueFunction")
+                .Build();
 
             // Act
 
@@ -74,8 +74,24 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var exceptionTelemetry = new TraceTelemetry();
-            exceptionTelemetry.Properties["Category"] = "Host.Executor";
+            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostResults)
+                .Build();
+
+            // Act
+
+            _target.Process(traceTelemetry);
+
+            // Assert
+
+            Assert.True(_innerProcessor.WasProcessorCalled);
+        }
+
+        [Fact]
+        public void
+            GivenFunctionExecutionEndsInException_WhenFunctionIsKnownToBeServiceBusBinding_ThenFilterOutTelemetry()
+        {
+            var exceptionTelemetry = ExceptionTelemetryBuilder
+                .AsFunctionCompletedFailed("Function.QueueFunction");
 
             // Act
 
@@ -83,7 +99,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
 
             // Assert
 
-            Assert.True(_innerProcessor.WasProcessorCalled);
+            Assert.False(_innerProcessor.WasProcessorCalled);
         }
     }
 }

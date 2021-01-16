@@ -32,7 +32,7 @@ namespace CustomApi.Infrastructure.Telemetry
             {
                 o.Rules.Add(new LoggerFilterRule(
                     "Microsoft.Extensions.Logging.Console.ConsoleLoggerProvider",
-                    "Host.Results",
+                    FunctionRuntimeCategory.HostResults,
                     LogLevel.None,
                     null));
             }

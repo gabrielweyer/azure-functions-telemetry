@@ -1,4 +1,5 @@
 using CustomApi.Infrastructure.Telemetry;
+using CustomApiTests.TestInfrastructure.Builders;
 using CustomApiTests.TestInfrastructure.Mocks;
 using Microsoft.ApplicationInsights.DataContracts;
 using Xunit;
@@ -23,9 +24,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var traceTelemetry = new TraceTelemetry();
-            traceTelemetry.Properties["EventId"] = "1";
-            traceTelemetry.Properties["EventName"] = "FunctionStarted";
+            var traceTelemetry = TraceTelemetryBuilder.AsFunctionStarted();
 
             // Act
 
@@ -41,9 +40,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var traceTelemetry = new TraceTelemetry();
-            traceTelemetry.Properties["EventId"] = "2";
-            traceTelemetry.Properties["EventName"] = "FunctionCompleted";
+            var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedSucceeded();
 
             // Act
 
@@ -59,9 +56,7 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var traceTelemetry = new TraceTelemetry();
-            traceTelemetry.Properties["EventId"] = "3";
-            traceTelemetry.Properties["EventName"] = "FunctionCompleted";
+            var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedFailed();
 
             // Act
 
@@ -77,10 +72,10 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var traceTelemetry = new TraceTelemetry();
-            traceTelemetry.SeverityLevel = SeverityLevel.Error;
-            traceTelemetry.Message = "Message processing error (Action=UserCallback, ClientId=MessageReceiver1custom-queue, EntityPath=custom-queue, Endpoint=prefixsb.servicebus.windows.net)";
-            traceTelemetry.Properties["Category"] = "Host.Executor";
+            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+                .WithSeverityLevel(SeverityLevel.Error)
+                .WithMessage("Message processing error (Action=UserCallback, ClientId=MessageReceiver1custom-queue, EntityPath=custom-queue, Endpoint=prefixsb.servicebus.windows.net)")
+                .Build();
 
             // Act
 
@@ -98,10 +93,10 @@ namespace CustomApiTests.Infrastructure.Telemetry
         {
             // Arrange
 
-            var traceTelemetry = new TraceTelemetry();
-            traceTelemetry.SeverityLevel = SeverityLevel.Error;
-            traceTelemetry.Message = message;
-            traceTelemetry.Properties["Category"] = "Host.Executor";
+            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+                .WithSeverityLevel(SeverityLevel.Error)
+                .WithMessage(message)
+                .Build();
 
             // Act
 

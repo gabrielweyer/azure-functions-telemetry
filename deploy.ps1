@@ -98,7 +98,7 @@ $customApiArchivePath = Publish-FunctionApp 'CustomApi'
 
 Write-Verbose "Published Custom API to '$customApiArchivePath'"
 
-Write-Host 'Creating resource group'
+Write-Host 'Creating (or updating) resource group'
 
 $createResourceGroupParameters = @{
     Name = $resourceGroupName

@@ -2,7 +2,7 @@
 
 This project demonstrates the limitations of Azure Functions in three areas:
 
-- Http binding
+- HTTP binding
 - Development experience
 - Application Insights integration
 
@@ -45,6 +45,12 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
 
+You'll need to set the Application Insights instrumentation key:
+
+```powershell
+dotnet user-secrets set APPINSIGHTS_INSTRUMENTATIONKEY "{YourInstrumentationKey}" --id 074ca336-270b-4832-9a1a-60baf152b727
+```
+
 ### Default Function App
 
 You can start the Function App by issuing the below commands:
@@ -84,6 +90,8 @@ Navigate to `http://localhost:7071/api/processor` in your favourite browser.
 
 Demonstrates that our telemetry processor is not being called even though we added it using `AddApplicationInsightsTelemetryProcessor`.
 
+![Our telemetry processor is not being called for requests](docs/img/telemetry-processor-is-not-being-called.png)
+
 #### Default - UserSecretFunction
 
 Navigate to `http://localhost:7071/api/secret` in your favourite browser.
@@ -97,12 +105,6 @@ Navigate to `http://localhost:7071/api/trace-log` in your favourite browser.
 Demonstrate that log events are not filtered before being sent to Live Metrics.
 
 ![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
-
-You'll need to set the Application Insights instrumentation key:
-
-```powershell
-dotnet user-secrets set APPINSIGHTS_INSTRUMENTATIONKEY "{YourInstrumentationKey}" --id 074ca336-270b-4832-9a1a-60baf152b727
-```
 
 #### Default - QueueFunction
 
@@ -153,9 +155,11 @@ Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 You can send a message to the `custom-queue` queue using the Service Bus Explorer in the Azure Portal.
 
-Demonstrate that a single exception thrown by the Function is recorded two times in Application Insights and that a total of four telemetry items are emitted during the Function execution.
+Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of three telemetry items are emitted during the Function execution.
 
-![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-four-telemetry-items.png)
+![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-three-telemetry-items.png)
+
+I'm also setting the "request" `URL` and "response" code using `ServiceBusRequestInitializer`.
 
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools

@@ -23,7 +23,7 @@ namespace CustomApi
 
             builder.Services
                 .AddConsoleLogging()
-                .AddApplicationInsights();
+                .AddApplicationInsights("custom-api", typeof(Startup));
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Microsoft.ApplicationInsights.Extensibility;
@@ -11,14 +12,22 @@ namespace CustomApi.Infrastructure.Telemetry
 {
     public static class ApplicationInsightsServiceCollectionExtensions
     {
-        public static IServiceCollection AddApplicationInsights(this IServiceCollection services)
+        /// <summary>
+        /// Registers Telemetry Initializers and Processors
+        /// </summary>
+        /// <param name="services"></param>
+        /// <param name="applicationName">Will be used as the 'Cloud role name'.</param>
+        /// <param name="typeFromEntryAssembly">The `AssemblyInformationalVersion` of the assembly will be used as the
+        /// 'Application Version'.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static IServiceCollection AddApplicationInsights(
+            this IServiceCollection services,
+            string applicationName,
+            Type typeFromEntryAssembly)
         {
-            var applicationDescriptor = new ApplicationDescriptor
-            {
-                Name = "custom-api",
-                Version = "local"
-            };
-
+            var applicationVersion = GetAssemblyInformationalVersion(typeFromEntryAssembly);
+            var applicationDescriptor = new ApplicationDescriptor(applicationName, applicationVersion);
             services.AddSingleton(applicationDescriptor);
             services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
             services.AddSingleton<ITelemetryInitializer, ServiceBusRequestInitializer>();
@@ -169,6 +178,11 @@ namespace CustomApi.Infrastructure.Telemetry
         private static void AddNoOpTelemetryConfigurationIfOneIsNotPresent(this IServiceCollection services)
         {
             services.TryAddSingleton(new TelemetryConfiguration());
+        }
+
+        private static string GetAssemblyInformationalVersion(Type type)
+        {
+            return FileVersionInfo.GetVersionInfo(type.Assembly.Location).ProductVersion;
         }
     }
 }

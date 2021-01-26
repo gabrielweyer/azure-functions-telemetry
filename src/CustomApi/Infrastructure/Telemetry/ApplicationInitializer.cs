@@ -21,7 +21,13 @@ namespace CustomApi.Infrastructure.Telemetry
 
     public class ApplicationDescriptor
     {
-        public string Name { get; set; }
-        public string Version { get; set; }
+        public ApplicationDescriptor(string name, string version)
+        {
+            Name = name;
+            Version = version;
+        }
+
+        public string Name { get; }
+        public string Version { get; }
     }
 }

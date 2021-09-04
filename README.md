@@ -21,10 +21,10 @@ I used the Azure Functions Core Tools version `3.0.3160` to create the Function 
 
 NuGet packages:
 
-- `Microsoft.NET.Sdk.Functions`: `3.0.7` (added automatically when creating the Function)
+- `Microsoft.NET.Sdk.Functions`: `3.0.11` (added automatically when creating the Function, updated later)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
-- `Microsoft.Extensions.DependencyInjection`: `3.1.10` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
-- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.23` (added manually following [Log custom telemetry in C# functions][custom-telemetry])
+- `Microsoft.Extensions.DependencyInjection`: `3.1.12` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
+- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.25` (added manually following [Log custom telemetry in C# functions][custom-telemetry])
 
 ## Getting started
 
@@ -32,7 +32,7 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 - An Application Insights instance
 - A Service Bus namespace
-- Two Function Apps and their supporting storage account
+- Two Function Apps and their supporting storage accounts
 
 ```powershell
 .\deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
@@ -40,8 +40,8 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 ## Function Apps
 
-- `DefaultApi` demonstrate the limitations of Azure Functions
-- `CustomApi` demonstrates the workarounds I use to improve Azure Functions
+- `DefaultFunction` demonstrate the limitations of Azure Functions
+- `CustomFunction` demonstrates the workarounds I use to improve Azure Functions
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
 
@@ -56,11 +56,11 @@ dotnet user-secrets set APPINSIGHTS_INSTRUMENTATIONKEY "{YourInstrumentationKey}
 You can start the Function App by issuing the below commands:
 
 ```powershell
-cd .\src\DefaultApi\
+cd .\samples\DefaultFunction\
 func start
 ```
 
-#### Default - ExceptionThrowingFunction
+#### Default - HttpExceptionThrowingFunction
 
 Navigate to `http://localhost:7071/api/exception` in your favourite browser.
 
@@ -106,9 +106,9 @@ Demonstrate that log events are not filtered before being sent to Live Metrics.
 
 ![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
 
-#### Default - QueueFunction
+#### Default - ServiceBusExceptionThrowingFunction
 
-You can send a message to the `default-queue` queue using the Service Bus Explorer in the Azure Portal.
+You can send a message to the `default-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7071/api/service-bus-exception` in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
 
@@ -119,7 +119,7 @@ Demonstrate that a single exception thrown by the Function is recorded three tim
 You can start the Function App by issuing the below commands:
 
 ```powershell
-cd .\src\CustomApi\
+cd .\samples\CustomFunction\
 func start
 ```
 
@@ -151,13 +151,13 @@ Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 ![Our telemetry processor is even being called for requests](docs/img/telemetry-counter-is-being-called.png)
 
-#### Custom - QueueFunction
+#### Custom - ServiceBusExceptionThrowingFunction
 
-You can send a message to the `custom-queue` queue using the Service Bus Explorer in the Azure Portal.
+You can send a message to the `custom-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7072/api/service-bus-exception` in your favourite browser.
 
-Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of three telemetry items are emitted during the Function execution.
+Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of two telemetry items are emitted during the Function execution.
 
-![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-three-telemetry-items.png)
+![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-two-telemetry-items.png)
 
 I'm also setting the "request" `URL` and "response" code using `ServiceBusRequestInitializer`.
 
@@ -166,7 +166,7 @@ I'm also setting the "request" `URL` and "response" code using `ServiceBusReques
 [dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
 [custom-telemetry]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v2%2Ccmd#log-custom-telemetry-in-c-functions
 [powershell-7]: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7
-[azure-powershell]: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-5.2.0
+[azure-powershell]: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-6.3.0
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows#secret-manager
 [blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/

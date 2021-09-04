@@ -3,15 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C346CF22-FBA4-488C-A4FE-063370AD521E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{C346CF22-FBA4-488C-A4FE-063370AD521E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultApi", "src\DefaultApi\DefaultApi.csproj", "{751DDE37-DE25-4417-93C1-4FE86233983C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultFunction", "samples\DefaultFunction\DefaultFunction.csproj", "{751DDE37-DE25-4417-93C1-4FE86233983C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomApi", "src\CustomApi\CustomApi.csproj", "{55BE19D5-7ADE-4408-ACE5-8442BDA01A5E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomFunction", "samples\CustomFunction\CustomFunction.csproj", "{55BE19D5-7ADE-4408-ACE5-8442BDA01A5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{307699FB-B6E0-4326-8D53-2872E0CE737D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomApiTests", "tests\CustomApiTests\CustomApiTests.csproj", "{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom.FunctionsTelemetryTests", "tests\Custom.FunctionsTelemetryTests\Custom.FunctionsTelemetryTests.csproj", "{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E7564337-E755-4355-A470-33731471CE2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom.FunctionsTelemetry", "src\Custom.FunctionsTelemetry\Custom.FunctionsTelemetry.csproj", "{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,10 +66,23 @@ Global
 		{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}.Release|x64.Build.0 = Release|Any CPU
 		{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}.Release|x86.ActiveCfg = Release|Any CPU
 		{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}.Release|x86.Build.0 = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|x64.Build.0 = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Debug|x86.Build.0 = Debug|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|x64.ActiveCfg = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|x64.Build.0 = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|x86.ActiveCfg = Release|Any CPU
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{751DDE37-DE25-4417-93C1-4FE86233983C} = {C346CF22-FBA4-488C-A4FE-063370AD521E}
 		{55BE19D5-7ADE-4408-ACE5-8442BDA01A5E} = {C346CF22-FBA4-488C-A4FE-063370AD521E}
 		{55E4560C-DFD9-41CD-88DF-7E8427DFCA35} = {307699FB-B6E0-4326-8D53-2872E0CE737D}
+		{B82D9052-8BC8-4EF7-9F15-7C6D362504FC} = {E7564337-E755-4355-A470-33731471CE2B}
 	EndGlobalSection
 EndGlobal

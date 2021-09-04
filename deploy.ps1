@@ -28,7 +28,7 @@ Used to create unique names. For example, with a 'hello' prefix and an Applicati
 You need:
 
 - PowerShell 7 (https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7)
-- Azure PowerShell (https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-5.2.0)
+- Azure PowerShell (https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-6.3.0)
 
 Select the subscription you want to deploy to before running this script.
 
@@ -55,7 +55,7 @@ function Publish-FunctionApp {
     )
 
     $outputPath = Join-Path $PSScriptRoot 'out' $FunctionName
-    $sourcePath = Join-Path $PSScriptRoot 'src' $FunctionName
+    $sourcePath = Join-Path $PSScriptRoot 'samples' $FunctionName
 
     dotnet clean --configuration Release --output $outputPath $sourcePath | Out-Null
 
@@ -86,17 +86,17 @@ if ($null -eq $selectedSubscription) {
     Write-Verbose "Deploying to subscription '$($selectedSubscription.Id) ($($selectedSubscription.Name))'"
 }
 
-Write-Host 'Publishing Default API to file system'
+Write-Host 'Publishing Default Function to file system'
 
-$defaultApiArchivePath = Publish-FunctionApp 'DefaultApi'
+$defaultFunctionArchivePath = Publish-FunctionApp 'DefaultFunction'
 
-Write-Verbose "Published Default API to '$defaultApiArchivePath'"
+Write-Verbose "Published Default Function to '$defaultFunctionArchivePath'"
 
-Write-Host 'Publishing Custom API to file system'
+Write-Host 'Publishing Custom Function to file system'
 
-$customApiArchivePath = Publish-FunctionApp 'CustomApi'
+$customFunctionArchivePath = Publish-FunctionApp 'CustomFunction'
 
-Write-Verbose "Published Custom API to '$customApiArchivePath'"
+Write-Verbose "Published Custom Function to '$customFunctionArchivePath'"
 
 Write-Host 'Creating (or updating) resource group'
 
@@ -131,41 +131,41 @@ $createEnvironmentDeploymentParameters = @{
 
 $armDeploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
 
-$defaultApiFunctionAppName = $armDeploymentResult.Outputs.Item('defaultApiFunctionAppName').Value
-$customApiFunctionAppName = $armDeploymentResult.Outputs.Item('customApiFunctionAppName').Value
-$serviceBusNamesapce = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
+$defaultFunctionAppName = $armDeploymentResult.Outputs.Item('defaultFunctionAppName').Value
+$customFunctionAppName = $armDeploymentResult.Outputs.Item('customFunctionAppName').Value
+$serviceBusNamespace = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
 
-Write-Verbose "Default API Function App name is '$defaultApiFunctionAppName'"
-Write-Verbose "Custom API Function App name is '$customApiFunctionAppName'"
-Write-Verbose "Service Bus namespace is '$serviceBusNamesapce'"
+Write-Verbose "Default Function App name is '$defaultFunctionAppName'"
+Write-Verbose "Custom Function App name is '$customFunctionAppName'"
+Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
 
-Write-Host 'Deploying Default API to Azure'
+Write-Host 'Deploying Default Function to Azure'
 
-$publishDefaultApiParameters = @{
+$publishDefaultParameters = @{
     ResourceGroupName = $resourceGroupName
-    Name = $defaultApiFunctionAppName
-    ArchivePath = $defaultApiArchivePath
+    Name = $defaultFunctionAppName
+    ArchivePath = $defaultFunctionArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishDefaultApiParameters | Out-Null
+Publish-AzWebapp @publishDefaultParameters
 
-Write-Host 'Deploying Custom API to Azure'
+Write-Host 'Deploying Custom Function to Azure'
 
-$publishCustomApiParameters = @{
+$publishCustomParameters = @{
     ResourceGroupName = $resourceGroupName
-    Name = $customApiFunctionAppName
-    ArchivePath = $customApiArchivePath
+    Name = $customFunctionAppName
+    ArchivePath = $customFunctionArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishCustomApiParameters | Out-Null
+Publish-AzWebapp @publishCustomParameters
 
 Write-Host 'Setting local user secrets'
 
 dotnet user-secrets set Secret:ReallySecretValue "$secretValue" --id 074ca336-270b-4832-9a1a-60baf152b727 | Out-Null
 Write-verbose "Set secret 'Secret:ReallySecretValue'"
 
-$connectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamesapce -Name RootManageSharedAccessKey
+$connectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamespace -Name RootManageSharedAccessKey
 dotnet user-secrets set ServiceBusConnection "$($connectionStrings.PrimaryConnectionString)" --id 074ca336-270b-4832-9a1a-60baf152b727 | Out-Null
 Write-verbose "Set secret 'ServiceBusConnection'"

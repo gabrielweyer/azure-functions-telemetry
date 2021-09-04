@@ -170,4 +170,4 @@ I'm also setting the "request" `URL` and "response" code using `ServiceBusReques
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows#secret-manager
 [blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/
-[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/10383f8825533ade6eab23aa7390163191bf1627/src/CustomApi/Infrastructure/Telemetry/ApplicationInsightsServiceCollectionExtensions.cs#L169-L172
+[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216

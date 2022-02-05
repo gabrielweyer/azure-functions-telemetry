@@ -63,9 +63,9 @@ namespace Custom.FunctionsTelemetryTests.ApplicationInsights
         public void GivenServiceBusBindingMessageProcessingErrorTrace_ThenFilterOutTelemetry()
         {
             // Arrange
-            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.ServiceBusListener)
                 .WithSeverityLevel(SeverityLevel.Error)
-                .WithMessage("Message processing error (Action=UserCallback, ClientId=MessageReceiver1custom-queue, EntityPath=custom-queue, Endpoint=prefixsb.servicebus.windows.net)")
+                .WithMessage("Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
                 .Build();
 
             // Act

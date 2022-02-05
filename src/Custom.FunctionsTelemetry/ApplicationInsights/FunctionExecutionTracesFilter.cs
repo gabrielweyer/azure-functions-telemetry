@@ -41,7 +41,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         private static bool IsServiceBusBindingMessageErrorProcessingTrace(TraceTelemetry trace) =>
             trace.SeverityLevel == SeverityLevel.Error &&
             TelemetryHelper.TryGetCategory(trace, out var category) &&
-            StringHelper.IsSame(FunctionRuntimeCategory.HostExecutor, category) &&
+            StringHelper.IsSame(FunctionRuntimeCategory.ServiceBusListener, category) &&
             !string.IsNullOrEmpty(trace.Message) &&
             trace.Message.StartsWith("Message processing error", StringComparison.OrdinalIgnoreCase);
     }

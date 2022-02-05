@@ -79,7 +79,8 @@
     ],
     "variables": {
         "applicationInsights": {
-            "name": "[gabo.resourceName(parameters('resourceNamePrefix'), 'appi')]"
+            "name": "[gabo.resourceName(parameters('resourceNamePrefix'), 'appi')]",
+            "workspaceName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'log')]"
         },
         "defaultStorage": {
             "name": "[gabo.storageName(parameters('resourceNamePrefix'), 'default')]"
@@ -101,13 +102,32 @@
     },
     "resources": [
         {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2021-06-01",
+            "name": "[variables('applicationInsights').workspaceName]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "sku": {
+                    "name": "pergb2018"
+                },
+                "retentionInDays": 30,
+                "features": {
+                    "enableLogAccessUsingOnlyResourcePermissions": true
+                }
+            }
+        },
+        {
             "name": "[variables('applicationInsights').name]",
-            "apiVersion": "2018-05-01-preview",
+            "apiVersion": "2020-02-02",
             "type": "Microsoft.Insights/components",
             "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('applicationInsights').workspaceName)]"
+            ],
             "kind": "web",
             "properties": {
-                "Application_Type": "web"
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('applicationInsights').workspaceName)]"
             }
         },
         {

@@ -148,7 +148,7 @@ $publishDefaultParameters = @{
     Force = $true
 }
 
-Publish-AzWebapp @publishDefaultParameters
+Publish-AzWebapp @publishDefaultParameters | Out-Null
 
 Write-Host 'Deploying Custom Function to Azure'
 
@@ -159,7 +159,7 @@ $publishCustomParameters = @{
     Force = $true
 }
 
-Publish-AzWebapp @publishCustomParameters
+Publish-AzWebapp @publishCustomParameters | Out-Null
 
 Write-Host 'Setting local user secrets'
 

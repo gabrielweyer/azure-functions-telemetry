@@ -83,9 +83,11 @@
             "workspaceName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'log')]"
         },
         "defaultV3InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'default-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'default-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'default')]"
+            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv3inprocess-plan')]",
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv3inprocess-func')]",
+            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'defaultv3inprocess')]",
+            "queue": "defaultv3inprocess-queue",
+            "exceptionQueue": "defaultv3inprocess-exception-queue"
         },
         "defaultV4InProcessFunctionApp": {
             "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv4inprocess-plan')]",
@@ -149,7 +151,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('serviceBusNamespace').name, '/default-queue')]",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').queue)]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -172,7 +174,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('serviceBusNamespace').name, '/default-exception-queue')]",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').exceptionQueue)]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"

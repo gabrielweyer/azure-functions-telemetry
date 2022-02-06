@@ -1,7 +1,7 @@
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace DefaultFunction.Infrastructure.Telemetry
+namespace DefaultV3InProcessFunction.Infrastructure.Telemetry
 {
     public class ApplicationInitializer : ITelemetryInitializer
     {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DefaultFunction.Functions.HttpExceptionThrowing
+namespace DefaultV3InProcessFunction.Functions.HttpExceptionThrowing
 {
     public static class HttpExceptionThrowingFunction
     {

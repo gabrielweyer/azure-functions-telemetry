@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Options;
 
-namespace DefaultFunction.Functions.UserSecret
+namespace DefaultV3InProcessFunction.Functions.UserSecret
 {
     public class UserSecretFunction
     {

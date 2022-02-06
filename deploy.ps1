@@ -88,7 +88,7 @@ if ($null -eq $selectedSubscription) {
 
 Write-Host 'Publishing Default V3 In-Process Function App to file system'
 
-$defaultV3InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultFunction'
+$defaultV3InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultV3InProcessFunction'
 
 Write-Verbose "Published Default V3 In-Process Function App to '$defaultV3InProcessFunctionArchivePath'"
 
@@ -149,25 +149,25 @@ Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
 
 Write-Host 'Deploying Default V3 In-Process Function App to Azure'
 
-$publishDefaultParameters = @{
+$publishDefaultV3InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $defaultV3InProcessFunctionAppName
     ArchivePath = $defaultV3InProcessFunctionArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishDefaultParameters | Out-Null
+Publish-AzWebapp @publishDefaultV3InProcessParameters | Out-Null
 
 Write-Host 'Deploying Default V4 In-Process Function App to Azure'
 
-$publishDefaultParameters = @{
+$publishDefaultV4InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $defaultV4InProcessFunctionAppName
     ArchivePath = $defaultV4InProcessFunctionArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishDefaultParameters | Out-Null
+Publish-AzWebapp @publishDefaultV4InProcessParameters | Out-Null
 
 Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
 

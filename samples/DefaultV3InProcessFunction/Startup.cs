@@ -1,13 +1,13 @@
-using DefaultFunction;
-using DefaultFunction.Functions.UserSecret;
-using DefaultFunction.Infrastructure.Telemetry;
+using DefaultV3InProcessFunction;
+using DefaultV3InProcessFunction.Functions.UserSecret;
+using DefaultV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace DefaultFunction
+namespace DefaultV3InProcessFunction
 {
     public class Startup : FunctionsStartup
     {
@@ -25,7 +25,7 @@ namespace DefaultFunction
 
             var applicationDescriptor = new ApplicationDescriptor
             {
-                Name = "default-worker",
+                Name = "defaultv3inprocess",
                 Version = "local"
             };
 

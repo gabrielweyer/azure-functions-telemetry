@@ -9,9 +9,9 @@ Deploys the project to Azure.
 .DESCRIPTION
 Provisions the below resources in Azure:
 
-- An Application Insights instance
+- A Workspace based Application Insights instance
 - A Service Bus namespace
-- Two Function Apps and their supporting storage accounts
+- Three Function Apps and their supporting storage accounts
 
 The selected subscription is used to deploy.
 
@@ -86,17 +86,23 @@ if ($null -eq $selectedSubscription) {
     Write-Verbose "Deploying to subscription '$($selectedSubscription.Id) ($($selectedSubscription.Name))'"
 }
 
-Write-Host 'Publishing Default Function to file system'
+Write-Host 'Publishing Default V3 In-Process Function App to file system'
 
-$defaultFunctionArchivePath = Publish-FunctionApp 'DefaultFunction'
+$defaultV3InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultFunction'
 
-Write-Verbose "Published Default Function to '$defaultFunctionArchivePath'"
+Write-Verbose "Published Default V3 In-Process Function App to '$defaultV3InProcessFunctionArchivePath'"
 
-Write-Host 'Publishing Custom Function to file system'
+Write-Host 'Publishing Default V4 In-Process Function App to file system'
 
-$customFunctionArchivePath = Publish-FunctionApp 'CustomFunction'
+$defaultV4InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultV4InProcessFunction'
 
-Write-Verbose "Published Custom Function to '$customFunctionArchivePath'"
+Write-Verbose "Published Default V4 In-Process Function App to '$defaultV4InProcessFunctionArchivePath'"
+
+Write-Host 'Publishing Custom V3 In-Process Function App to file system'
+
+$customV3InProcessFunctionArchivePath = Publish-FunctionApp 'CustomFunction'
+
+Write-Verbose "Published Custom V3 In-Process Function App to '$customV3InProcessFunctionArchivePath'"
 
 Write-Host 'Creating (or updating) resource group'
 
@@ -131,31 +137,44 @@ $createEnvironmentDeploymentParameters = @{
 
 $armDeploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
 
-$defaultFunctionAppName = $armDeploymentResult.Outputs.Item('defaultFunctionAppName').Value
-$customFunctionAppName = $armDeploymentResult.Outputs.Item('customFunctionAppName').Value
+$defaultV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
+$defaultV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
+$customV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
 $serviceBusNamespace = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
 
-Write-Verbose "Default Function App name is '$defaultFunctionAppName'"
-Write-Verbose "Custom Function App name is '$customFunctionAppName'"
+Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
+Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"
+Write-Verbose "Custom V3 In-Process Function App name is '$customV3InProcessFunctionAppName'"
 Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
 
-Write-Host 'Deploying Default Function to Azure'
+Write-Host 'Deploying Default V3 In-Process Function App to Azure'
 
 $publishDefaultParameters = @{
     ResourceGroupName = $resourceGroupName
-    Name = $defaultFunctionAppName
-    ArchivePath = $defaultFunctionArchivePath
+    Name = $defaultV3InProcessFunctionAppName
+    ArchivePath = $defaultV3InProcessFunctionArchivePath
     Force = $true
 }
 
 Publish-AzWebapp @publishDefaultParameters | Out-Null
 
-Write-Host 'Deploying Custom Function to Azure'
+Write-Host 'Deploying Default V4 In-Process Function App to Azure'
+
+$publishDefaultParameters = @{
+    ResourceGroupName = $resourceGroupName
+    Name = $defaultV4InProcessFunctionAppName
+    ArchivePath = $defaultV4InProcessFunctionArchivePath
+    Force = $true
+}
+
+Publish-AzWebapp @publishDefaultParameters | Out-Null
+
+Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
 
 $publishCustomParameters = @{
     ResourceGroupName = $resourceGroupName
-    Name = $customFunctionAppName
-    ArchivePath = $customFunctionArchivePath
+    Name = $customV3InProcessFunctionAppName
+    ArchivePath = $customV3InProcessFunctionArchivePath
     Force = $true
 }
 

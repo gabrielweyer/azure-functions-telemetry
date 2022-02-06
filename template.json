@@ -82,19 +82,22 @@
             "name": "[gabo.resourceName(parameters('resourceNamePrefix'), 'appi')]",
             "workspaceName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'log')]"
         },
-        "defaultStorage": {
-            "name": "[gabo.storageName(parameters('resourceNamePrefix'), 'default')]"
-        },
-        "defaultFunctionApp": {
+        "defaultV3InProcessFunctionApp": {
             "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'default-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'default-func')]"
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'default-func')]",
+            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'default')]"
         },
-        "customStorage": {
-            "name": "[gabo.storageName(parameters('resourceNamePrefix'), 'custom')]"
+        "defaultV4InProcessFunctionApp": {
+            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv4inprocess-plan')]",
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv4inprocess-func')]",
+            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'defaultv4inprocess')]",
+            "queue": "defaultv4inprocess-queue",
+            "exceptionQueue": "defaultv4inprocess-exception-queue"
         },
-        "customFunctionApp": {
+        "customV3InProcessFunctionApp": {
             "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'custom-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'custom-func')]"
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'custom-func')]",
+            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'custom')]"
         },
         "serviceBusNamespace": {
             "name": "[gabo.serviceBusNamespace(parameters('resourceNamePrefix'), 'sb')]"
@@ -191,6 +194,52 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV4InProcessFunctionApp').queue)]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
+            ],
+            "properties": {
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P1D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 2,
+                "status": "Active",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV4InProcessFunctionApp').exceptionQueue)]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
+            ],
+            "properties": {
+                "lockDuration": "PT30S",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "requiresSession": false,
+                "defaultMessageTimeToLive": "P1D",
+                "deadLetteringOnMessageExpiration": false,
+                "enableBatchedOperations": true,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 2,
+                "status": "Active",
+                "enablePartitioning": false,
+                "enableExpress": false
+            }
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
             "name": "[concat(variables('serviceBusNamespace').name, '/custom-queue')]",
             "location": "[parameters('location')]",
@@ -238,20 +287,7 @@
         {
             "apiVersion": "2019-06-01",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('defaultStorage').name]",
-            "location": "[parameters('location')]",
-            "kind": "StorageV2",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "properties": {
-                "accessTier": "Hot"
-            }
-        },
-        {
-            "apiVersion": "2019-06-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('customStorage').name]",
+            "name": "[variables('defaultV3InProcessFunctionApp').storageName]",
             "location": "[parameters('location')]",
             "kind": "StorageV2",
             "sku": {
@@ -264,7 +300,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2019-08-01",
-            "name": "[variables('defaultFunctionApp').hostingPlanName]",
+            "name": "[variables('defaultV3InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
             "sku": {
@@ -278,18 +314,18 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2019-08-01",
-            "name": "[variables('defaultFunctionApp').functionAppName]",
+            "name": "[variables('defaultV3InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
             "kind": "functionapp",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('defaultFunctionApp').hostingPlanName)]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('defaultV3InProcessFunctionApp').hostingPlanName)]"
             ],
             "properties": {
                 "httpsOnly": true,
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('defaultFunctionApp').hostingPlanName)]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('defaultV3InProcessFunctionApp').hostingPlanName)]"
             },
             "resources": [
                 {
@@ -297,18 +333,18 @@
                     "apiVersion": "2019-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Storage/storageAccounts', variables('defaultStorage').name)]",
-                        "[resourceId('Microsoft.Web/sites', variables('defaultFunctionApp').functionAppName)]",
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('defaultV3InProcessFunctionApp').storageName)]",
+                        "[resourceId('Microsoft.Web/sites', variables('defaultV3InProcessFunctionApp').functionAppName)]",
                         "[resourceId('Microsoft.Insights/components', variables('applicationInsights').name)]",
                         "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
                     ],
                     "properties": {
-                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultStorage').name, ';AccountKey=', listKeys(variables('defaultStorage').name, '2019-06-01').keys[0].value)]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2018-05-01-preview').InstrumentationKey]",
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultStorage').name, ';AccountKey=', listKeys(variables('defaultStorage').name, '2019-06-01').keys[0].value)]",
-                        "WEBSITE_CONTENTSHARE": "[variables('defaultFunctionApp').functionAppName]",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
+                        "WEBSITE_CONTENTSHARE": "[variables('defaultV3InProcessFunctionApp').functionAppName]",
                         "WEBSITE_RUN_FROM_PACKAGE": "1",
                         "Secret:ReallySecretValue": "[parameters('reallySecretValue')]",
                         "ServiceBusConnection": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace').name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
@@ -317,9 +353,22 @@
             ]
         },
         {
+            "apiVersion": "2019-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('customV3InProcessFunctionApp').storageName]",
+            "location": "[parameters('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "properties": {
+                "accessTier": "Hot"
+            }
+        },
+        {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2019-08-01",
-            "name": "[variables('customFunctionApp').hostingPlanName]",
+            "name": "[variables('customV3InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
             "sku": {
@@ -333,18 +382,18 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2019-08-01",
-            "name": "[variables('customFunctionApp').functionAppName]",
+            "name": "[variables('customV3InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
             },
             "kind": "functionapp",
             "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', variables('customFunctionApp').hostingPlanName)]"
+                "[resourceId('Microsoft.Web/serverfarms', variables('customV3InProcessFunctionApp').hostingPlanName)]"
             ],
             "properties": {
                 "httpsOnly": true,
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('customFunctionApp').hostingPlanName)]"
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('customV3InProcessFunctionApp').hostingPlanName)]"
             },
             "resources": [
                 {
@@ -352,18 +401,86 @@
                     "apiVersion": "2019-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[resourceId('Microsoft.Storage/storageAccounts', variables('customStorage').name)]",
-                        "[resourceId('Microsoft.Web/sites', variables('customFunctionApp').functionAppName)]",
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('customV3InProcessFunctionApp').storageName)]",
+                        "[resourceId('Microsoft.Web/sites', variables('customV3InProcessFunctionApp').functionAppName)]",
                         "[resourceId('Microsoft.Insights/components', variables('applicationInsights').name)]",
                         "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
                     ],
                     "properties": {
-                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customStorage').name, ';AccountKey=', listKeys(variables('customStorage').name, '2019-06-01').keys[0].value)]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2018-05-01-preview').InstrumentationKey]",
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('customV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customStorage').name, ';AccountKey=', listKeys(variables('customStorage').name, '2019-06-01').keys[0].value)]",
-                        "WEBSITE_CONTENTSHARE": "[variables('customFunctionApp').functionAppName]",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('customV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
+                        "WEBSITE_CONTENTSHARE": "[variables('customV3InProcessFunctionApp').functionAppName]",
+                        "WEBSITE_RUN_FROM_PACKAGE": "1",
+                        "Secret:ReallySecretValue": "[parameters('reallySecretValue')]",
+                        "ServiceBusConnection": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace').name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2021-06-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('defaultV4InProcessFunctionApp').storageName]",
+            "location": "[parameters('location')]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "properties": {
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-02-01",
+            "name": "[variables('defaultV4InProcessFunctionApp').hostingPlanName]",
+            "location": "[parameters('location')]",
+            "kind": "",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-02-01",
+            "name": "[variables('defaultV4InProcessFunctionApp').functionAppName]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "kind": "functionapp",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', variables('defaultV4InProcessFunctionApp').hostingPlanName)]"
+            ],
+            "properties": {
+                "httpsOnly": true,
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('defaultV4InProcessFunctionApp').hostingPlanName)]"
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "apiVersion": "2021-02-01",
+                    "name": "appsettings",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('defaultV4InProcessFunctionApp').storageName)]",
+                        "[resourceId('Microsoft.Web/sites', variables('defaultV4InProcessFunctionApp').functionAppName)]",
+                        "[resourceId('Microsoft.Insights/components', variables('applicationInsights').name)]",
+                        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
+                    ],
+                    "properties": {
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV4InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV4InProcessFunctionApp').storageName, '2021-06-01').keys[0].value)]",
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
+                        "FUNCTIONS_EXTENSION_VERSION": "~4",
+                        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV4InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV4InProcessFunctionApp').storageName, '2021-06-01').keys[0].value)]",
+                        "WEBSITE_CONTENTSHARE": "[variables('defaultV4InProcessFunctionApp').functionAppName]",
                         "WEBSITE_RUN_FROM_PACKAGE": "1",
                         "Secret:ReallySecretValue": "[parameters('reallySecretValue')]",
                         "ServiceBusConnection": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNamespace').name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString]"
@@ -373,13 +490,17 @@
         }
     ],
     "outputs": {
-        "defaultFunctionAppName": {
+        "defaultV3InProcessFunctionAppName": {
             "type": "string",
-            "value": "[variables('defaultFunctionApp').functionAppName]"
+            "value": "[variables('defaultV3InProcessFunctionApp').functionAppName]"
         },
-        "customFunctionAppName": {
+        "defaultV4InProcessFunctionAppName": {
             "type": "string",
-            "value": "[variables('customFunctionApp').functionAppName]"
+            "value": "[variables('defaultV4InProcessFunctionApp').functionAppName]"
+        },
+        "customV3InProcessFunctionAppName": {
+            "type": "string",
+            "value": "[variables('customV3InProcessFunctionApp').functionAppName]"
         },
         "serviceBusNamespace": {
             "type": "string",

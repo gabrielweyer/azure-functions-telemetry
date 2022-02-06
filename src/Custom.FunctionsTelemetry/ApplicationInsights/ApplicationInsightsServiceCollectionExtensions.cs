@@ -188,7 +188,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         }
 
         /// <summary>
-        /// When the configuration APPINSIGHTS_INSTRUMENTATIONKEY key is not present, the Functions runtime does not
+        /// When the configuration APPINSIGHTS_INSTRUMENTATIONKEY / APPLICATIONINSIGHTS_CONNECTION_STRING key is not present, the Functions runtime does not
         /// register Application Insights with the Inversion of Control container:
         ///
         /// https://github.com/Azure/azure-functions-host/blob/7d9cd7fc69b282b2f6ce2c2ee1574a236bc69202/src/WebJobs.Script/ScriptHostBuilderExtensions.cs#L368-L372
@@ -197,13 +197,13 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         ///
         /// https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd#log-custom-telemetry-in-c-functions
         ///
-        /// So if we don't configure the instrumentation key we end up with a runtime exception when serving the
+        /// So if we don't configure the instrumentation key / connection string we end up with a runtime exception when serving the
         /// Function:
         ///
         /// Microsoft.Extensions.DependencyInjection.Abstractions: Unable to resolve service for type 'Microsoft.ApplicationInsights.Extensibility.TelemetryConfiguration' while attempting to activate [...].
         ///
         /// It's common to run locally without having Application Insights configured. Forcing the developer to
-        /// configure a "fake" instrumentation key will get the SDK to send telemetry even if the key is invalid. A
+        /// configure a "fake" instrumentation key / connection string will get the SDK to send telemetry even if the key is invalid. A
         /// better solution is to register a no-op TelemetryConfiguration instance. As our registration runs after the
         /// runtime has configured Application Insights, our no-op TelemetryConfiguration will only be registered if one
         /// wasn't registered previously.

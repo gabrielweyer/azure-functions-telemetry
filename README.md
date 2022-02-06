@@ -50,10 +50,10 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
 
-You'll need to set the Application Insights instrumentation key:
+You'll need to set the Application Insights connection string:
 
 ```powershell
-dotnet user-secrets set APPINSIGHTS_INSTRUMENTATIONKEY "{YourInstrumentationKey}" --id 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING "{YourConnectionString}" --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
 ### Default In-Process v3 Function App
@@ -81,9 +81,9 @@ This also demonstrates that the same exception appears twice in Application Insi
 
 Navigate to `http://localhost:7071/api/event` in your favourite browser.
 
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
+Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
 
-![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY`, TelemetryConfiguration is not registered](docs/img/telemetry-configuration-not-registered.png)
+![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is not registered](docs/img/telemetry-configuration-not-registered.png)
 
 Note: when using vanilla ASP.NET Core, `TelemetryConfiguration` is registered by calling `AddApplicationInsightsTelemetry()` in `Startup.cs` but this method [should not be called in Azure Functions][dont-call-add-app-insights-telemetry]:
 
@@ -144,9 +144,9 @@ This also demonstrates that the same exception appears only once in Application 
 
 Navigate to `http://localhost:7072/api/event` in your favourite browser.
 
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because we [registered a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because we [registered a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
 
-![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
 
 #### Custom In-Process V3 - ProcessorFunction
 

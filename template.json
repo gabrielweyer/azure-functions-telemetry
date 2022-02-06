@@ -344,7 +344,7 @@
                     ],
                     "properties": {
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
+                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').ConnectionString]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
@@ -412,7 +412,7 @@
                     ],
                     "properties": {
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('customV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
+                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').ConnectionString]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('customV3InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('customV3InProcessFunctionApp').storageName, '2019-06-01').keys[0].value)]",
@@ -480,7 +480,7 @@
                     ],
                     "properties": {
                         "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV4InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV4InProcessFunctionApp').storageName, '2021-06-01').keys[0].value)]",
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').InstrumentationKey]",
+                        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('microsoft.insights/components/', variables('applicationInsights').name), '2020-02-02').ConnectionString]",
                         "FUNCTIONS_EXTENSION_VERSION": "~4",
                         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
                         "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('defaultV4InProcessFunctionApp').storageName, ';AccountKey=', listKeys(variables('defaultV4InProcessFunctionApp').storageName, '2021-06-01').keys[0].value)]",

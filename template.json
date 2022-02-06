@@ -97,9 +97,11 @@
             "exceptionQueue": "defaultv4inprocess-exception-queue"
         },
         "customV3InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'custom-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'custom-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'custom')]"
+            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv3inprocess-plan')]",
+            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv3inprocess-func')]",
+            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'customv3inprocess')]",
+            "queue": "customv3inprocess-queue",
+            "exceptionQueue": "customv3inprocess-exception-queue"
         },
         "serviceBusNamespace": {
             "name": "[gabo.serviceBusNamespace(parameters('resourceNamePrefix'), 'sb')]"
@@ -243,7 +245,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('serviceBusNamespace').name, '/custom-queue')]",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').queue)]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -266,7 +268,7 @@
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
-            "name": "[concat(variables('serviceBusNamespace').name, '/custom-exception-queue')]",
+            "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').exceptionQueue)]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"

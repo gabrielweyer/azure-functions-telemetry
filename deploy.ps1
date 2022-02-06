@@ -100,7 +100,7 @@ Write-Verbose "Published Default V4 In-Process Function App to '$defaultV4InProc
 
 Write-Host 'Publishing Custom V3 In-Process Function App to file system'
 
-$customV3InProcessFunctionArchivePath = Publish-FunctionApp 'CustomFunction'
+$customV3InProcessFunctionArchivePath = Publish-FunctionApp 'CustomV3InProcessFunction'
 
 Write-Verbose "Published Custom V3 In-Process Function App to '$customV3InProcessFunctionArchivePath'"
 
@@ -171,14 +171,14 @@ Publish-AzWebapp @publishDefaultV4InProcessParameters | Out-Null
 
 Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
 
-$publishCustomParameters = @{
+$publishCustomV3InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $customV3InProcessFunctionAppName
     ArchivePath = $customV3InProcessFunctionArchivePath
     Force = $true
 }
 
-Publish-AzWebapp @publishCustomParameters | Out-Null
+Publish-AzWebapp @publishCustomV3InProcessParameters | Out-Null
 
 Write-Host 'Setting local user secrets'
 

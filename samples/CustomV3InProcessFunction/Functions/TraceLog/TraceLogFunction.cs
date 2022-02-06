@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CustomFunction.Functions.TraceLog
+namespace CustomV3InProcessFunction.Functions.TraceLog
 {
     public class TraceLogFunction
     {

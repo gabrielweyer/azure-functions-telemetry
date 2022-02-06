@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace CustomFunction.Functions.CustomEvent
+namespace CustomV3InProcessFunction.Functions.CustomEvent
 {
     public class CustomEventFunction
     {

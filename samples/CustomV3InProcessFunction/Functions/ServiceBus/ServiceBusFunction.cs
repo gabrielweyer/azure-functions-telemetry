@@ -1,12 +1,12 @@
 using Microsoft.Azure.WebJobs;
 
-namespace CustomFunction.Functions.ServiceBus
+namespace CustomV3InProcessFunction.Functions.ServiceBus
 {
     public class ServiceBusFunction
     {
         [FunctionName("ServiceBusFunction")]
         public static void Run(
-            [ServiceBusTrigger("custom-queue", Connection = "ServiceBusConnection")]
+            [ServiceBusTrigger("customv3inprocess-queue", Connection = "ServiceBusConnection")]
             string myQueueItem)
         {
         }

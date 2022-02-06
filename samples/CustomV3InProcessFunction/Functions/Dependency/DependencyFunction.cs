@@ -7,30 +7,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace CustomFunction.Functions.Availability
+namespace CustomV3InProcessFunction.Functions.Dependency
 {
-    public class AvailabilityFunction
+    public class DependencyFunction
     {
         private readonly TelemetryClient _telemetryClient;
 
-        public AvailabilityFunction(TelemetryConfiguration telemetryConfiguration)
+        public DependencyFunction(TelemetryConfiguration telemetryConfiguration)
         {
             _telemetryClient = new TelemetryClient(telemetryConfiguration);
         }
 
-        [FunctionName("AvailabilityFunction")]
-        public IActionResult RunGetAppInsightsAvailability(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "availability")]
+        [FunctionName("DependencyFunction")]
+        public IActionResult RunGetAppInsightsDependency(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "dependency")]
             HttpRequest request)
         {
-            var availability = new AvailabilityTelemetry(
-                "WeAreAvailable",
+            var dependency = new DependencyTelemetry(
+                "HTTP",
+                "AnotherSystem",
+                "VeryImportantDependency",
+                "/whatever",
                 DateTimeOffset.UtcNow,
                 TimeSpan.FromMilliseconds(125),
-                "FromSomewhere",
+                "200",
                 true);
 
-            _telemetryClient.TrackAvailability(availability);
+            _telemetryClient.TrackDependency(dependency);
 
             return new AcceptedResult();
         }

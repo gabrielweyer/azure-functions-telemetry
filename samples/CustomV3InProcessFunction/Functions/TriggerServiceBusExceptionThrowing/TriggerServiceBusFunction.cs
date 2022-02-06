@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace CustomFunction.Functions.TriggerServiceBusExceptionThrowing
+namespace CustomV3InProcessFunction.Functions.TriggerServiceBusExceptionThrowing
 {
     public class TriggerServiceBusExceptionThrowingFunction
     {
@@ -11,7 +11,7 @@ namespace CustomFunction.Functions.TriggerServiceBusExceptionThrowing
         public static IActionResult RunGetTriggerServiceBusException(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus-exception")]
             HttpRequest request,
-            [ServiceBus("custom-exception-queue", Connection = "ServiceBusConnection")]
+            [ServiceBus("customv3inprocess-exception-queue", Connection = "ServiceBusConnection")]
             out string message)
         {
             message = "{ 'Name': 'SomeName' }";

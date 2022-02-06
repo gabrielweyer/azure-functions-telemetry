@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using Custom.FunctionsTelemetry.ApplicationInsights;
 using Custom.FunctionsTelemetry.Logging;
-using CustomFunction;
-using CustomFunction.Functions.UserSecret;
+using CustomV3InProcessFunction;
+using CustomV3InProcessFunction.Functions.UserSecret;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace CustomFunction
+namespace CustomV3InProcessFunction
 {
     public class Startup : FunctionsStartup
     {
@@ -27,7 +27,7 @@ namespace CustomFunction
                 });
 
             var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
-                    "custom-worker",
+                    "customv3inprocess",
                     typeof(Startup))
                 .WithHealthRequestFilter("HealthFunction")
                 .WithDependencyFilter("CustomHTTP")

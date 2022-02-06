@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace CustomFunction.Functions.TriggerServiceBus
+namespace CustomV3InProcessFunction.Functions.TriggerServiceBus
 {
     public class TriggerServiceBusFunction
     {
@@ -11,7 +11,7 @@ namespace CustomFunction.Functions.TriggerServiceBus
         public static IActionResult RunGetTriggerServiceBus(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus")]
             HttpRequest request,
-            [ServiceBus("custom-queue", Connection = "ServiceBusConnection")]
+            [ServiceBus("customv3inprocess-queue", Connection = "ServiceBusConnection")]
             out string message)
         {
             message = "{ 'Name': 'SomeName' }";

@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
-using Microsoft.Azure.WebJobs.Logging.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -78,17 +77,21 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                          * OperationFilteringTelemetryProcessor and QuickPulseTelemetryProcessor.
                          */
 
-                        // `OperationFilteringTelemetryProcessor` is an internal class
-                        var operationFilteringTelemetryProcessorType = typeof(HttpAutoCollectionOptions).Assembly
-                            .GetType("Microsoft.Azure.WebJobs.Logging.ApplicationInsights.OperationFilteringTelemetryProcessor");
-
-                        // `PassThroughProcessor` is an internal class
-                        var passThroughProcessorType = typeof(ITelemetryProcessor).Assembly
-                            .GetType("Microsoft.ApplicationInsights.Shared.Extensibility.Implementation.PassThroughProcessor");
+                        /*
+                         * Both `OperationFilteringTelemetryProcessor` and `PassThroughProcessor` are internal.
+                         * They're coming from two different assemblies. Somehow in .NET Core 3.1 I can get both
+                         * types from their assembly using `GetType("{FullName}") but in .NET 6 I can
+                         * only get the the `PassThroughProcessor`. Instead I decided to match on type name.
+                         */
+                        const string passThroughProcessorTypeFullName = "Microsoft.ApplicationInsights.Shared.Extensibility.Implementation.PassThroughProcessor";
+                        const string operationFilteringTelemetryProcessorTypeFullName = "Microsoft.Azure.WebJobs.Logging.ApplicationInsights.OperationFilteringTelemetryProcessor";
 
                         foreach (var processor in telemetryConfiguration.TelemetryProcessors)
                         {
-                            if (processor.GetType() == passThroughProcessorType)
+                            var processorType = processor.GetType();
+                            var processorTypeName = processorType.FullName;
+
+                            if (passThroughProcessorTypeFullName.Equals(processorTypeName))
                             {
                                 /*
                                  * The current TelemetryProcessorChainBuilder and the new one we're building both have a
@@ -100,9 +103,9 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                                 continue;
                             }
 
-                            if (processor.GetType() == operationFilteringTelemetryProcessorType)
+                            if (operationFilteringTelemetryProcessorTypeFullName.Equals(processorTypeName))
                             {
-                                var operationFilteringProcessorNextField = operationFilteringTelemetryProcessorType
+                                var operationFilteringProcessorNextField = processorType
                                     .GetField("_next", BindingFlags.NonPublic | BindingFlags.Instance);
 
                                 if (operationFilteringProcessorNextField == null)

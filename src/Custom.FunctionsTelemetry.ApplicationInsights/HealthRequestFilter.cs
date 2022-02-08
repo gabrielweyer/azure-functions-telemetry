@@ -17,7 +17,8 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
 
         public void Process(ITelemetry item)
         {
-            if (item is RequestTelemetry {ResponseCode: "200"} request &&
+            if (item is RequestTelemetry request &&
+                request.ResponseCode == "200" &&
                 StringHelper.IsSame(_healthCheckFunctionName, request.Name))
             {
                 return;

@@ -100,7 +100,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         }
 
         public CustomApplicationInsightsOptions Build() =>
-            new()
+            new CustomApplicationInsightsOptions()
             {
                 ApplicationName = _applicationName,
                 TypeFromEntryAssembly = _typeFromEntryAssembly,

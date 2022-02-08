@@ -11,7 +11,7 @@ Provisions the below resources in Azure:
 
 - A Workspace based Application Insights instance
 - A Service Bus namespace
-- Three Function Apps and their supporting storage accounts
+- Four Function Apps and their supporting storage accounts
 
 The selected subscription is used to deploy.
 
@@ -104,6 +104,12 @@ $customV3InProcessFunctionArchivePath = Publish-FunctionApp 'CustomV3InProcessFu
 
 Write-Verbose "Published Custom V3 In-Process Function App to '$customV3InProcessFunctionArchivePath'"
 
+Write-Host 'Publishing Custom V4 In-Process Function App to file system'
+
+$customV4InProcessFunctionArchivePath = Publish-FunctionApp 'CustomV4InProcessFunction'
+
+Write-Verbose "Published Custom V4 In-Process Function App to '$customV4InProcessFunctionArchivePath'"
+
 Write-Host 'Creating (or updating) resource group'
 
 $createResourceGroupParameters = @{
@@ -140,11 +146,13 @@ $armDeploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymen
 $defaultV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
 $defaultV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
 $customV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
+$customV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
 $serviceBusNamespace = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
 
 Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
 Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"
 Write-Verbose "Custom V3 In-Process Function App name is '$customV3InProcessFunctionAppName'"
+Write-Verbose "Custom V4 In-Process Function App name is '$customV4InProcessFunctionAppName'"
 Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
 
 Write-Host 'Deploying Default V3 In-Process Function App to Azure'
@@ -179,6 +187,17 @@ $publishCustomV3InProcessParameters = @{
 }
 
 Publish-AzWebapp @publishCustomV3InProcessParameters | Out-Null
+
+Write-Host 'Deploying Custom V4 In-Process Function App to Azure'
+
+$publishCustomV4InProcessParameters = @{
+    ResourceGroupName = $resourceGroupName
+    Name = $customV4InProcessFunctionAppName
+    ArchivePath = $customV4InProcessFunctionArchivePath
+    Force = $true
+}
+
+Publish-AzWebapp @publishCustomV4InProcessParameters | Out-Null
 
 Write-Host 'Setting local user secrets'
 

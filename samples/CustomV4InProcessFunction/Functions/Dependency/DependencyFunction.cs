@@ -24,7 +24,7 @@ public class DependencyFunction
         HttpRequest request)
     {
         var dependency = new DependencyTelemetry(
-            "HTTP",
+            "CustomHTTP",
             "AnotherSystem",
             "VeryImportantDependency",
             "/whatever",

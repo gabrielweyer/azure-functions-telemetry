@@ -24,7 +24,7 @@ namespace CustomV3InProcessFunction.Functions.Dependency
             HttpRequest request)
         {
             var dependency = new DependencyTelemetry(
-                "HTTP",
+                "CustomHTTP",
                 "AnotherSystem",
                 "VeryImportantDependency",
                 "/whatever",

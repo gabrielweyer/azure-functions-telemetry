@@ -141,7 +141,7 @@ The Function Apps run on fixed ports locally:
 - `v3`: `7072`
 - `v4`: `7074`
 
-### Custom In-Process V4 - ExceptionThrowingFunction
+### Custom In-Process V4 - HttpExceptionThrowingFunction
 
 Navigate to `http://localhost:7074/api/exception` in your favourite browser.
 
@@ -181,6 +181,12 @@ Demonstrate that a single exception thrown by the Function is recorded only once
 
 I'm also setting the "request" `URL` and "response" code using `ServiceBusRequestInitializer`.
 
+#### Custom In-Process V4 - AvailabilityFunction
+
+Navigate to `http://localhost:7074/api/availability` in your favourite browser.
+
+Emits an availability telemetry items. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the processor is called for availability telemetry items.
+
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
 [dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
@@ -191,3 +197,4 @@ I'm also setting the "request" `URL` and "response" code using `ServiceBusReques
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
 [blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/
 [default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216
+[url-ping-test]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/availability-overview

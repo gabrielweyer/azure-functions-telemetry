@@ -4,8 +4,9 @@
         "logLevel": {
             "default": "Information",
             "Azure.Messaging.ServiceBus": "Warning",
-            "Azure.Core": "Warning",
-            "Microsoft.AspNetCore": "Warning"
+            "Azure.Core": "Error",
+            "Microsoft.AspNetCore": "Warning",
+            "Host.Controllers.Host": "Warning"
         },
         "applicationInsights": {
             "samplingSettings": {

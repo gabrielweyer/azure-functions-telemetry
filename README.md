@@ -1,12 +1,6 @@
 # Azure Functions Limitations
 
-This project demonstrates the limitations of Azure Functions `v3` and `v4` in three areas:
-
-- HTTP binding
-- Development experience
-- Application Insights integration
-
-This project is supporting the blog post I wrote about [Azure Functions and their limitations][blog-post].
+This project demonstrates the limitations of the Application Insights integration with Azure Functions `v3` and `v4`. This repository is supporting the blog post I wrote about [Azure Functions and their limitations][blog-post].
 
 ## Prerequisites
 
@@ -44,8 +38,8 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
 ## Function Apps
 
-- `DefaultV3InProcessFunction` and `DefaultV4InProcessFunction` demonstrate the limitations of In-Process Azure Functions `v3` / `v4`
-- `CustomV3InProcessFunction` and `CustomV4InProcessFunction` demonstrate the workarounds I use to improve In-Process Azure Functions `v3` / `v4`
+- `DefaultV3InProcessFunction` and `DefaultV4InProcessFunction` demonstrate the limitations of In-Process Azure Functions `v3` / `v4` Application Insights integration
+- `CustomV3InProcessFunction` and `CustomV4InProcessFunction` demonstrate the workarounds I use to improve In-Process Azure Functions `v3` / `v4` Application Insights integration
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
 
@@ -116,7 +110,7 @@ Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] w
 
 Navigate to `http://localhost:7073/api/trace-log` in your favourite browser.
 
-Demonstrate that log events are not filtered before being sent to Live Metrics.
+Demonstrate that log events are not filtered before being sent to Live Metrics. This is not a limitation of Azure Functions, that's how Application Insights works and something you need to be aware of.
 
 ![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
 
@@ -163,7 +157,7 @@ This also demonstrates that the same exception appears only once in Application 
 
 Navigate to `http://localhost:7074/api/event` in your favourite browser.
 
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because we [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
 
 ![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
 
@@ -174,6 +168,8 @@ Navigate to `http://localhost:7074/api/processor` in your favourite browser.
 Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 ![Our telemetry processor is even being called for requests](docs/img/telemetry-counter-is-being-called.png)
+
+Note that the processor is also called for request telemetry items.
 
 #### Custom In-Process V4 - ServiceBusExceptionThrowingFunction
 

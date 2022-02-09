@@ -23,7 +23,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Custom.FunctionsTelemetry.LoggingV3\Custom.FunctionsTelemetry.LoggingV3.csproj" />
-    <ProjectReference Include="..\..\src\Custom.FunctionsTelemetry.ApplicationInsights\Custom.FunctionsTelemetry.ApplicationInsights.csproj" />
+    <ProjectReference Include="..\..\src\Custom.FunctionsTelemetry\Custom.FunctionsTelemetry.csproj" />
   </ItemGroup>
 </Project>

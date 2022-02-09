@@ -9,7 +9,7 @@ using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPuls
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-[assembly: InternalsVisibleTo("Custom.FunctionsTelemetry.ApplicationInsightsTests")]
+[assembly: InternalsVisibleTo("Custom.FunctionsTelemetryTests")]
 namespace Custom.FunctionsTelemetry.ApplicationInsights
 {
     public static class ApplicationInsightsServiceCollectionExtensions

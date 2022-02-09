@@ -1,4 +1,4 @@
-namespace Custom.FunctionsTelemetry.ApplicationInsights
+namespace Custom.FunctionsTelemetry
 {
     internal static class FunctionRuntimeCategory
     {

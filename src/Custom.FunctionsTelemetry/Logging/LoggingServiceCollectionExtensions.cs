@@ -1,3 +1,4 @@
+using Custom.FunctionsTelemetry.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

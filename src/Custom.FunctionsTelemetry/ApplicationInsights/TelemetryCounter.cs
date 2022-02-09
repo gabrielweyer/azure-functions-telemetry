@@ -16,9 +16,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         public long MetricTelemetryCount;
         public long PageViewPerformanceTelemetryCount;
         public long PageViewTelemetryCount;
-        public long PerformanceCounterTelemetryCount;
         public long RequestTelemetryCount;
-        public long SessionStateTelemetryCount;
         public long TraceTelemetryCount;
         public long OtherTelemetryCount;
 
@@ -52,14 +50,8 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                 case PageViewTelemetry _:
                     Interlocked.Increment(ref PageViewTelemetryCount);
                     break;
-                case PerformanceCounterTelemetry _:
-                    Interlocked.Increment(ref PerformanceCounterTelemetryCount);
-                    break;
                 case RequestTelemetry _:
                     Interlocked.Increment(ref RequestTelemetryCount);
-                    break;
-                case SessionStateTelemetry _:
-                    Interlocked.Increment(ref SessionStateTelemetryCount);
                     break;
                 case TraceTelemetry _:
                     Interlocked.Increment(ref TraceTelemetryCount);

@@ -193,6 +193,22 @@ Navigate to `http://localhost:7074/api/dependency` in your favourite browser.
 
 Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
 
+#### Custom In-Process V4 - discarding SystemTraceMiddleware logs
+
+The `SystemTraceMiddleware` emits two log events per HTTP Function execution when running locally:
+
+![SystemTraceMiddleware: two log events per HTTP Function execution when running locally](docs/img/system-trace-middleware-local-two-logs-http-function-execution.png)
+
+These can be suppressed by adding the below `Value` to `local.settings.json` (not `host.json`):
+
+```json
+"logging:logLevel:Microsoft.Azure.WebJobs.Script.WebHost.Middleware.SystemTraceMiddleware": "None"
+```
+
+![SystemTraceMiddleware: suppresed logs](docs/img/system-trace-middleware-suppressed-logs.png)
+
+Anthony Chu has [documented how to suppress some logs][anthony-chu-suppress-logs].
+
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
 [dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
@@ -204,3 +220,4 @@ Discards a specific telemetry type. This is useful when having a noisy telemetry
 [blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/
 [default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216
 [url-ping-test]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/availability-overview
+[anthony-chu-suppress-logs]: https://github.com/anthonychu/functions-log-suppression#readme

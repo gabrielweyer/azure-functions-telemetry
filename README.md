@@ -68,18 +68,6 @@ The Function Apps run on fixed ports locally:
 - `v3`: `7071`
 - `v4`: `7073`
 
-#### Default In-Process V4 - HttpExceptionThrowingFunction
-
-Navigate to `http://localhost:7073/api/exception` in your favourite browser.
-
-Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
-
-![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace-absent.png)
-
-This also demonstrates that the same exception appears twice in Application Insights:
-
-![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
-
 #### Default In-Process V4 - CustomEventFunction
 
 Navigate to `http://localhost:7073/api/event` in your favourite browser.
@@ -92,6 +80,18 @@ Note: when using vanilla ASP.NET, `TelemetryConfiguration` is registered by call
 
 > Don't add `AddApplicationInsightsTelemetry()` to the services collection, which registers services that conflict with services provided by the environment.
 
+#### Default In-Process V4 - HttpExceptionThrowingFunction
+
+Navigate to `http://localhost:7073/api/exception` in your favourite browser.
+
+Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
+
+![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace-absent.png)
+
+This also demonstrates that the same exception appears twice in Application Insights:
+
+![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
+
 #### Default In-Process V4 - ProcessorFunction
 
 Navigate to `http://localhost:7073/api/processor` in your favourite browser.
@@ -100,11 +100,13 @@ Demonstrates that our telemetry processor is not being called even though we add
 
 ![Our telemetry processor is not being called for requests](docs/img/telemetry-processor-is-not-being-called.png)
 
-#### Default In-Process V4 - UserSecretFunction
+#### Default In-Process V4 - ServiceBusExceptionThrowingFunction
 
-Navigate to `http://localhost:7073/api/secret` in your favourite browser.
+You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/api/service-bus-exception` in your favourite browser.
 
-Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
+Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
+
+![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-eight-telemetry-items.png)
 
 #### Default In-Process V4 - TraceLogFunction
 
@@ -114,13 +116,11 @@ Demonstrate that log events are not filtered before being sent to Live Metrics. 
 
 ![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
 
-#### Default In-Process V4 - ServiceBusExceptionThrowingFunction
+#### Default In-Process V4 - UserSecretFunction
 
-You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/api/service-bus-exception` in your favourite browser.
+Navigate to `http://localhost:7073/api/secret` in your favourite browser.
 
-Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
-
-![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-eight-telemetry-items.png)
+Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
 
 ### Custom In-Process V3 and V4 Function Apps
 
@@ -141,6 +141,26 @@ The Function Apps run on fixed ports locally:
 - `v3`: `7072`
 - `v4`: `7074`
 
+#### Custom In-Process V4 - AvailabilityFunction
+
+Navigate to `http://localhost:7074/api/availability` in your favourite browser.
+
+Emits an availability telemetry items. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the processor is called for availability telemetry items.
+
+#### Custom In-Process V4 - CustomEventFunction
+
+Navigate to `http://localhost:7074/api/event` in your favourite browser.
+
+Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+
+![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+
+#### Custom In-Process V4 - DependencyFunction
+
+Navigate to `http://localhost:7074/api/dependency` in your favourite browser.
+
+Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
+
 ### Custom In-Process V4 - HttpExceptionThrowingFunction
 
 Navigate to `http://localhost:7074/api/exception` in your favourite browser.
@@ -152,14 +172,6 @@ Demonstrates that the stack trace is present in the console logs when an excepti
 This also demonstrates that the same exception appears only once in Application Insights:
 
 ![The same exception is logged only once for the HTTP binding](docs/img/http-binding-exception-logged-once.png)
-
-#### Custom In-Process V4 - CustomEventFunction
-
-Navigate to `http://localhost:7074/api/event` in your favourite browser.
-
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
-
-![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
 
 #### Custom In-Process V4 - ProcessorFunction
 
@@ -180,18 +192,6 @@ Demonstrate that a single exception thrown by the Function is recorded only once
 ![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-two-telemetry-items.png)
 
 I'm also setting the "request" `URL` and "response" code using `ServiceBusRequestInitializer`.
-
-#### Custom In-Process V4 - AvailabilityFunction
-
-Navigate to `http://localhost:7074/api/availability` in your favourite browser.
-
-Emits an availability telemetry items. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the processor is called for availability telemetry items.
-
-#### Custom In-Process V4 - DependencyFunction
-
-Navigate to `http://localhost:7074/api/dependency` in your favourite browser.
-
-Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
 
 #### Custom In-Process V4 - discarding SystemTraceMiddleware logs
 

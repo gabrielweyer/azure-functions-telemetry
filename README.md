@@ -161,6 +161,14 @@ Navigate to `http://localhost:7074/api/dependency` in your favourite browser.
 
 Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
 
+#### Custom In-Process V4 - HealthFunction
+
+Navigate to `http://localhost:7074/api/health` in your favourite browser.
+
+To keep Function Apps on a consumption plan alive and limit the number of cold starts, developers tend to use Application Insights [URL ping test][url-ping-test]. These results in many requests being recorded in Application Insights. I've configured App Insights to discard such requests.
+
+Note that `HEAD` is more commonly used than `GET` for ping tests but it's easier to issue a `GET` with a web browser.
+
 ### Custom In-Process V4 - HttpExceptionThrowingFunction
 
 Navigate to `http://localhost:7074/api/exception` in your favourite browser.

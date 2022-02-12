@@ -17,7 +17,7 @@ namespace DefaultV3InProcessFunction.Functions.CustomEvent
             _telemetryClient = new TelemetryClient(telemetryConfiguration);
         }
 
-        [FunctionName("CustomEventFunction")]
+        [FunctionName(nameof(CustomEventFunction))]
         public IActionResult RunGetAppInsightsEvent(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event")]
             HttpRequest request)

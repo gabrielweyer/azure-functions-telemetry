@@ -15,7 +15,7 @@ public class TraceLogFunction
         _logger = logger;
     }
 
-    [FunctionName("TraceLogFunction")]
+    [FunctionName(nameof(TraceLogFunction))]
     public IActionResult RunGetVerboseLog(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trace-log")]
         HttpRequest request)

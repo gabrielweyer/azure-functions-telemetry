@@ -5,9 +5,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace DefaultV3InProcessFunction.Functions.TriggerServiceBus
 {
-    public class TriggerServiceBusFunction
+    public static class TriggerServiceBusFunction
     {
-        [FunctionName("TriggerServiceBusFunction")]
+        [FunctionName(nameof(TriggerServiceBusFunction))]
         public static IActionResult RunGetTriggerServiceBus(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus")]
             HttpRequest request,

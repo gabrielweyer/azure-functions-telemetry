@@ -6,34 +6,33 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DefaultV4InProcessFunction.Functions.CustomEvent
+namespace DefaultV4InProcessFunction.Functions.CustomEvent;
+
+public class CustomEventFunction
 {
-    public class CustomEventFunction
+    private readonly TelemetryClient _telemetryClient;
+
+    public CustomEventFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        private readonly TelemetryClient _telemetryClient;
+        _telemetryClient = new TelemetryClient(telemetryConfiguration);
+    }
 
-        public CustomEventFunction(TelemetryConfiguration telemetryConfiguration)
+    [FunctionName(nameof(CustomEventFunction))]
+    public IActionResult RunGetAppInsightsEvent(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event")]
+        HttpRequest request)
+    {
+        var @event = new EventTelemetry
         {
-            _telemetryClient = new TelemetryClient(telemetryConfiguration);
-        }
-
-        [FunctionName("CustomEventFunction")]
-        public IActionResult RunGetAppInsightsEvent(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event")]
-            HttpRequest request)
-        {
-            var @event = new EventTelemetry
+            Name = "SomethingHappened",
+            Properties =
             {
-                Name = "SomethingHappened",
-                Properties =
-                {
-                    { "ImportantEventProperty", "SomeValue" }
-                }
-            };
+                { "ImportantEventProperty", "SomeValue" }
+            }
+        };
 
-            _telemetryClient.TrackEvent(@event);
+        _telemetryClient.TrackEvent(@event);
 
-            return new AcceptedResult();
-        }
+        return new AcceptedResult();
     }
 }

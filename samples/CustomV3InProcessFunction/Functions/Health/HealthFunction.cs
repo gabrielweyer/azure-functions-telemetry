@@ -8,7 +8,7 @@ namespace CustomV3InProcessFunction.Functions.Health
     public static class HealthFunction
     {
         [HttpGet]
-        [FunctionName("HealthFunction")]
+        [FunctionName(nameof(HealthFunction))]
         public static IActionResult RunHeadHealth(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "health")]
             HttpRequest request) =>

@@ -4,16 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DefaultV4InProcessFunction.Functions.Processor
+namespace DefaultV4InProcessFunction.Functions.Processor;
+
+public static class ProcessorFunction
 {
-    public static class ProcessorFunction
+    [FunctionName(nameof(ProcessorFunction))]
+    public static IActionResult RunGetProcessor(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
+        HttpRequest request)
     {
-        [FunctionName("ProcessorFunction")]
-        public static IActionResult RunGetProcessor(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
-            HttpRequest request)
-        {
-            return new OkObjectResult(new { SomeSortOfFilter.InvocationCount });
-        }
+        return new OkObjectResult(new { SomeSortOfFilter.InvocationCount });
     }
 }

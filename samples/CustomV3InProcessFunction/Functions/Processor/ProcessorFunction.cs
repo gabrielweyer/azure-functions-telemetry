@@ -18,7 +18,7 @@ namespace CustomV3InProcessFunction.Functions.Processor
                 .Single(p => p is TelemetryCounter) as TelemetryCounter;
         }
 
-        [FunctionName("ProcessorFunction")]
+        [FunctionName(nameof(ProcessorFunction))]
         public IActionResult RunGetProcessor(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
             HttpRequest request)

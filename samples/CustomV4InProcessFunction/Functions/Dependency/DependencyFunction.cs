@@ -18,7 +18,7 @@ public class DependencyFunction
         _telemetryClient = new TelemetryClient(telemetryConfiguration);
     }
 
-    [FunctionName("DependencyFunction")]
+    [FunctionName(nameof(DependencyFunction))]
     public IActionResult RunGetAppInsightsDependency(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "dependency")]
         HttpRequest request)

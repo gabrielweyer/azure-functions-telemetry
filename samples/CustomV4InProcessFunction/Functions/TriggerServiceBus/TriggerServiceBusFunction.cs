@@ -7,7 +7,7 @@ namespace CustomV4InProcessFunction.Functions.TriggerServiceBus;
 
 public static class TriggerServiceBusFunction
 {
-    [FunctionName("TriggerServiceBusFunction")]
+    [FunctionName(nameof(TriggerServiceBusFunction))]
     public static IActionResult RunGetTriggerServiceBus(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus")]
         HttpRequest request,

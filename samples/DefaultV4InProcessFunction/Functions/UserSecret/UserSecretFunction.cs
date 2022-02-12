@@ -4,28 +4,27 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Options;
 
-namespace DefaultV4InProcessFunction.Functions.UserSecret
+namespace DefaultV4InProcessFunction.Functions.UserSecret;
+
+public class UserSecretFunction
 {
-    public class UserSecretFunction
+    private readonly SecretOptions _options;
+
+    public UserSecretFunction(IOptions<SecretOptions> options)
     {
-        private readonly SecretOptions _options;
-
-        public UserSecretFunction(IOptions<SecretOptions> options)
-        {
-            _options = options.Value;
-        }
-
-        [FunctionName("UserSecretFunction")]
-        public IActionResult RunGetSecret(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
-            HttpRequest request)
-        {
-            return new OkObjectResult(_options);
-        }
+        _options = options.Value;
     }
 
-    public class SecretOptions
+    [FunctionName(nameof(UserSecretFunction))]
+    public IActionResult RunGetSecret(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
+        HttpRequest request)
     {
-        public string ReallySecretValue { get; set; }
+        return new OkObjectResult(_options);
     }
+}
+
+public class SecretOptions
+{
+    public string ReallySecretValue { get; set; }
 }

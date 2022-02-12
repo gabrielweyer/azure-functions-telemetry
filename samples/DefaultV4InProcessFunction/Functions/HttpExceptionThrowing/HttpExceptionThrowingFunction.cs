@@ -4,16 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DefaultV4InProcessFunction.Functions.HttpExceptionThrowing
+namespace DefaultV4InProcessFunction.Functions.HttpExceptionThrowing;
+
+public static class HttpExceptionThrowingFunction
 {
-    public static class HttpExceptionThrowingFunction
+    [FunctionName(nameof(HttpExceptionThrowingFunction))]
+    public static IActionResult RunGetException(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "exception")]
+        HttpRequest req)
     {
-        [FunctionName("HttpExceptionThrowingFunction")]
-        public static IActionResult RunGetException(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "exception")]
-            HttpRequest req)
-        {
-            throw new InvalidOperationException("The only goal of this function is to throw an Exception.");
-        }
+        throw new InvalidOperationException("The only goal of this function is to throw an Exception.");
     }
 }

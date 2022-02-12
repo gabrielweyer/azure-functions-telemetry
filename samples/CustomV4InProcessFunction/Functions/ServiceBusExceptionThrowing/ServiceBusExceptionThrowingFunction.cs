@@ -5,7 +5,7 @@ namespace CustomV4InProcessFunction.Functions.ServiceBusExceptionThrowing;
 
 public static class ServiceBusExceptionThrowingFunction
 {
-    [FunctionName("ServiceBusExceptionThrowingFunction")]
+    [FunctionName(nameof(ServiceBusExceptionThrowingFunction))]
     public static void Run(
         [ServiceBusTrigger("customv4inprocess-exception-queue", Connection = "ServiceBusConnection")]
         string myQueueItem)

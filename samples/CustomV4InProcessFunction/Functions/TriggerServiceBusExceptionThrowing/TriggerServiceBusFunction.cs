@@ -7,7 +7,7 @@ namespace CustomV4InProcessFunction.Functions.TriggerServiceBusExceptionThrowing
 
 public static class TriggerServiceBusExceptionThrowingFunction
 {
-    [FunctionName("TriggerServiceBusExceptionThrowingFunction")]
+    [FunctionName(nameof(TriggerServiceBusExceptionThrowingFunction))]
     public static IActionResult RunGetTriggerServiceBusException(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus-exception")]
         HttpRequest request,

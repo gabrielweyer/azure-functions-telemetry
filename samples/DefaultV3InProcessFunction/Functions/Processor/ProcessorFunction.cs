@@ -8,7 +8,7 @@ namespace DefaultV3InProcessFunction.Functions.Processor
 {
     public static class ProcessorFunction
     {
-        [FunctionName("ProcessorFunction")]
+        [FunctionName(nameof(ProcessorFunction))]
         public static IActionResult RunGetProcessor(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
             HttpRequest request)

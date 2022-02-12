@@ -8,7 +8,7 @@ namespace CustomV4InProcessFunction.Functions.HttpExceptionThrowing;
 
 public static class HttpExceptionThrowingFunction
 {
-    [FunctionName("HttpExceptionThrowingFunction")]
+    [FunctionName(nameof(HttpExceptionThrowingFunction))]
     public static IActionResult RunGetException(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "exception")]
         HttpRequest request)

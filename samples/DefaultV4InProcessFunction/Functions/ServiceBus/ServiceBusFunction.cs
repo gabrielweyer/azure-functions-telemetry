@@ -1,14 +1,13 @@
 using Microsoft.Azure.WebJobs;
 
-namespace DefaultV4InProcessFunction.Functions.ServiceBus
+namespace DefaultV4InProcessFunction.Functions.ServiceBus;
+
+public static class ServiceBusFunction
 {
-    public class ServiceBusFunction
+    [FunctionName(nameof(ServiceBusFunction))]
+    public static void Run(
+        [ServiceBusTrigger("defaultv4inprocess-queue", Connection = "ServiceBusConnection")]
+        string myQueueItem)
     {
-        [FunctionName("ServiceBusFunction")]
-        public static void Run(
-            [ServiceBusTrigger("defaultv4inprocess-queue", Connection = "ServiceBusConnection")]
-            string myQueueItem)
-        {
-        }
     }
 }

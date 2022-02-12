@@ -18,7 +18,7 @@ namespace CustomV3InProcessFunction.Functions.Availability
             _telemetryClient = new TelemetryClient(telemetryConfiguration);
         }
 
-        [FunctionName("AvailabilityFunction")]
+        [FunctionName(nameof(AvailabilityFunction))]
         public IActionResult RunGetAppInsightsAvailability(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "availability")]
             HttpRequest request)

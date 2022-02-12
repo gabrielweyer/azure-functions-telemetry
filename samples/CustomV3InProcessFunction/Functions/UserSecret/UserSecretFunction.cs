@@ -15,7 +15,7 @@ namespace CustomV3InProcessFunction.Functions.UserSecret
             _options = options.Value;
         }
 
-        [FunctionName("UserSecretFunction")]
+        [FunctionName(nameof(UserSecretFunction))]
         public IActionResult RunGetSecret(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
             HttpRequest request)

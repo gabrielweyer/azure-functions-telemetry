@@ -15,7 +15,7 @@ public class UserSecretFunction
         _options = options.Value;
     }
 
-    [FunctionName("UserSecretFunction")]
+    [FunctionName(nameof(UserSecretFunction))]
     public IActionResult RunGetSecret(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
         HttpRequest request)

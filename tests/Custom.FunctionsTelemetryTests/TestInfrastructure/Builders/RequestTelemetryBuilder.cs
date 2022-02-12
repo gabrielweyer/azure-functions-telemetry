@@ -23,7 +23,7 @@ public static class RequestTelemetryBuilder
             Success = true,
             Name = "HttpFunction",
             ResponseCode = "200",
-            Url = new Uri("http://localhost:7071/api/http")
+            Url = new Uri("http://localhost:7071/http")
         };
     }
 }

@@ -70,7 +70,7 @@ The Function Apps run on fixed ports locally:
 
 #### Default In-Process V4 - CustomEventFunction
 
-Navigate to `http://localhost:7073/api/event` in your favourite browser.
+Navigate to `http://localhost:7073/event` in your favourite browser.
 
 Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
 
@@ -82,7 +82,7 @@ Note: when using vanilla ASP.NET, `TelemetryConfiguration` is registered by call
 
 #### Default In-Process V4 - HttpExceptionThrowingFunction
 
-Navigate to `http://localhost:7073/api/exception` in your favourite browser.
+Navigate to `http://localhost:7073/exception` in your favourite browser.
 
 Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
 
@@ -94,7 +94,7 @@ This also demonstrates that the same exception appears twice in Application Insi
 
 #### Default In-Process V4 - ProcessorFunction
 
-Navigate to `http://localhost:7073/api/processor` in your favourite browser.
+Navigate to `http://localhost:7073/processor` in your favourite browser.
 
 Demonstrates that our telemetry processor is not being called even though we added it using `AddApplicationInsightsTelemetryProcessor`.
 
@@ -102,7 +102,7 @@ Demonstrates that our telemetry processor is not being called even though we add
 
 #### Default In-Process V4 - ServiceBusExceptionThrowingFunction
 
-You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/api/service-bus-exception` in your favourite browser.
+You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus-exception` in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
 
@@ -110,7 +110,7 @@ Demonstrate that a single exception thrown by the Function is recorded three tim
 
 #### Default In-Process V4 - TraceLogFunction
 
-Navigate to `http://localhost:7073/api/trace-log` in your favourite browser.
+Navigate to `http://localhost:7073/trace-log` in your favourite browser.
 
 Demonstrate that log events are not filtered before being sent to Live Metrics. This is not a limitation of Azure Functions, that's how Application Insights works and something you need to be aware of.
 
@@ -118,7 +118,7 @@ Demonstrate that log events are not filtered before being sent to Live Metrics. 
 
 #### Default In-Process V4 - UserSecretFunction
 
-Navigate to `http://localhost:7073/api/secret` in your favourite browser.
+Navigate to `http://localhost:7073/secret` in your favourite browser.
 
 Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
 
@@ -143,13 +143,13 @@ The Function Apps run on fixed ports locally:
 
 #### Custom In-Process V4 - AvailabilityFunction
 
-Navigate to `http://localhost:7074/api/availability` in your favourite browser.
+Navigate to `http://localhost:7074/availability` in your favourite browser.
 
 Emits an availability telemetry items. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the processor is called for availability telemetry items.
 
 #### Custom In-Process V4 - CustomEventFunction
 
-Navigate to `http://localhost:7074/api/event` in your favourite browser.
+Navigate to `http://localhost:7074/event` in your favourite browser.
 
 Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
 
@@ -157,13 +157,13 @@ Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIO
 
 #### Custom In-Process V4 - DependencyFunction
 
-Navigate to `http://localhost:7074/api/dependency` in your favourite browser.
+Navigate to `http://localhost:7074/dependency` in your favourite browser.
 
 Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
 
 #### Custom In-Process V4 - HealthFunction
 
-Navigate to `http://localhost:7074/api/health` in your favourite browser.
+Navigate to `http://localhost:7074/health` in your favourite browser.
 
 To keep Function Apps on a consumption plan alive and limit the number of cold starts, developers tend to use Application Insights [URL ping test][url-ping-test]. These results in many requests being recorded in Application Insights. I've configured App Insights to discard such requests.
 
@@ -171,7 +171,7 @@ Note that `HEAD` is more commonly used than `GET` for ping tests but it's easier
 
 ### Custom In-Process V4 - HttpExceptionThrowingFunction
 
-Navigate to `http://localhost:7074/api/exception` in your favourite browser.
+Navigate to `http://localhost:7074/exception` in your favourite browser.
 
 Demonstrates that the stack trace is present in the console logs when an exception is thrown.
 
@@ -183,7 +183,7 @@ This also demonstrates that the same exception appears only once in Application 
 
 #### Custom In-Process V4 - ProcessorFunction
 
-Navigate to `http://localhost:7074/api/processor` in your favourite browser.
+Navigate to `http://localhost:7074/processor` in your favourite browser.
 
 Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
@@ -193,7 +193,7 @@ Note that the processor is also called for request telemetry items.
 
 #### Custom In-Process V4 - ServiceBusExceptionThrowingFunction
 
-You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/api/service-bus-exception` in your favourite browser.
+You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus-exception` in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of two telemetry items are emitted during the Function execution.
 

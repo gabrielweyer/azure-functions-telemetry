@@ -1,15 +1,14 @@
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Mocks
-{
-    public class MockTelemetryProcessor : ITelemetryProcessor
-    {
-        public bool WasProcessorCalled { get; private set; }
+namespace Custom.FunctionsTelemetry.TestInfrastructure.Mocks;
 
-        public void Process(ITelemetry item)
-        {
-            WasProcessorCalled = true;
-        }
+public class MockTelemetryProcessor : ITelemetryProcessor
+{
+    public bool WasProcessorCalled { get; private set; }
+
+    public void Process(ITelemetry item)
+    {
+        WasProcessorCalled = true;
     }
 }

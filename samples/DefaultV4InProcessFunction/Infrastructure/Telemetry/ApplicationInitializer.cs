@@ -1,27 +1,26 @@
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace DefaultV4InProcessFunction.Infrastructure.Telemetry
+namespace DefaultV4InProcessFunction.Infrastructure.Telemetry;
+
+public class ApplicationInitializer : ITelemetryInitializer
 {
-    public class ApplicationInitializer : ITelemetryInitializer
+    private readonly ApplicationDescriptor _applicationDescriptor;
+
+    public ApplicationInitializer(ApplicationDescriptor applicationDescriptor)
     {
-        private readonly ApplicationDescriptor _applicationDescriptor;
-
-        public ApplicationInitializer(ApplicationDescriptor applicationDescriptor)
-        {
-            _applicationDescriptor = applicationDescriptor;
-        }
-
-        public void Initialize(ITelemetry telemetry)
-        {
-            telemetry.Context.Cloud.RoleName = _applicationDescriptor.Name;
-            telemetry.Context.Component.Version = _applicationDescriptor.Version;
-        }
+        _applicationDescriptor = applicationDescriptor;
     }
 
-    public class ApplicationDescriptor
+    public void Initialize(ITelemetry telemetry)
     {
-        public string Name { get; set; }
-        public string Version { get; set; }
+        telemetry.Context.Cloud.RoleName = _applicationDescriptor.Name;
+        telemetry.Context.Component.Version = _applicationDescriptor.Version;
     }
+}
+
+public class ApplicationDescriptor
+{
+    public string Name { get; set; }
+    public string Version { get; set; }
 }

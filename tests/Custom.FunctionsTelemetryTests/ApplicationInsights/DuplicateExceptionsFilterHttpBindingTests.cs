@@ -1,78 +1,76 @@
 using System.Collections.Generic;
-using Custom.FunctionsTelemetry.ApplicationInsights;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Builders;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Mocks.@new;
+using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+using Custom.FunctionsTelemetry.TestInfrastructure.Mocks.@new;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsightsTests
+namespace Custom.FunctionsTelemetry.ApplicationInsights;
+
+public class DuplicateExceptionsFilterHttpBindingTests
 {
-    public class DuplicateExceptionsFilterHttpBindingTests
+    private readonly DuplicateExceptionsFilter _target;
+
+    private readonly MockTelemetryProcessor _innerProcessor;
+
+    public DuplicateExceptionsFilterHttpBindingTests()
     {
-        private readonly DuplicateExceptionsFilter _target;
+        _innerProcessor = new MockTelemetryProcessor();
 
-        private readonly MockTelemetryProcessor _innerProcessor;
+        _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string>());
+    }
 
-        public DuplicateExceptionsFilterHttpBindingTests()
-        {
-            _innerProcessor = new MockTelemetryProcessor();
+    [Fact]
+    public void GivenCategoryIsHostResultsAsUsedByAllBindings_WhenTelemetryIsException_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostResults)
+            .Build();
 
-            _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string>());
-        }
+        // Act
+        _target.Process(exceptionTelemetry);
 
-        [Fact]
-        public void GivenCategoryIsHostResultsAsUsedByAllBindings_WhenTelemetryIsException_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostResults)
-                .Build();
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(exceptionTelemetry);
+    [Fact]
+    public void GivenCategoryIsHostExecutorAsUsedByServiceBusBinding_WhenTelemetryIsException_ThenKeepTelemetry()
+    {
+        // Arrange
+        var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+            .Build();
 
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(exceptionTelemetry);
 
-        [Fact]
-        public void GivenCategoryIsHostExecutorAsUsedByServiceBusBinding_WhenTelemetryIsException_ThenKeepTelemetry()
-        {
-            // Arrange
-            var exceptionTelemetry = new ExceptionTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
-                .Build();
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(exceptionTelemetry);
+    [Fact]
+    public void GivenFunctionCategory_WhenTelemetryIsException_ThenKeepTelemetry()
+    {
+        // Arrange
+        var exceptionTelemetry = new ExceptionTelemetryBuilder("Function.QueueFunction")
+            .Build();
 
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(exceptionTelemetry);
 
-        [Fact]
-        public void GivenFunctionCategory_WhenTelemetryIsException_ThenKeepTelemetry()
-        {
-            // Arrange
-            var exceptionTelemetry = new ExceptionTelemetryBuilder("Function.QueueFunction")
-                .Build();
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(exceptionTelemetry);
+    [Fact]
+    public void GivenCategoryIsHostResults_WhenTelemetryIsNotException_ThenKeepTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostResults)
+            .Build();
 
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenCategoryIsHostResults_WhenTelemetryIsNotException_ThenKeepTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostResults)
-                .Build();
-
-            // Act
-            _target.Process(traceTelemetry);
-
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
     }
 }

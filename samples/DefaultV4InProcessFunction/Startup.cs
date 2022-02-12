@@ -7,28 +7,27 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace DefaultV4InProcessFunction
+namespace DefaultV4InProcessFunction;
+
+public class Startup : FunctionsStartup
 {
-    public class Startup : FunctionsStartup
+    public override void Configure(IFunctionsHostBuilder builder)
     {
-        public override void Configure(IFunctionsHostBuilder builder)
-        {
-            builder.Services.AddOptions<SecretOptions>()
-                .Configure<IConfiguration>((settings, configuration) =>
-                {
-                    configuration.GetSection("Secret").Bind(settings);
-                });
-
-            var applicationDescriptor = new ApplicationDescriptor
+        builder.Services.AddOptions<SecretOptions>()
+            .Configure<IConfiguration>((settings, configuration) =>
             {
-                Name = "defaultv4inprocess",
-                Version = "local"
-            };
+                configuration.GetSection("Secret").Bind(settings);
+            });
 
-            builder.Services.AddSingleton(applicationDescriptor);
-            builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
+        var applicationDescriptor = new ApplicationDescriptor
+        {
+            Name = "defaultv4inprocess",
+            Version = "local"
+        };
 
-            builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
-        }
+        builder.Services.AddSingleton(applicationDescriptor);
+        builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
+
+        builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
     }
 }

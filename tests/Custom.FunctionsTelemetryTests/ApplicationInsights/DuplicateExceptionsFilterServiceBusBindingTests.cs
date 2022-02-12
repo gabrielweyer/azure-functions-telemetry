@@ -1,37 +1,35 @@
 using System.Collections.Generic;
-using Custom.FunctionsTelemetry.ApplicationInsights;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Builders;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Mocks.@new;
+using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+using Custom.FunctionsTelemetry.TestInfrastructure.Mocks.@new;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsightsTests
+namespace Custom.FunctionsTelemetry.ApplicationInsights;
+
+public class DuplicateExceptionsFilterServiceBusBindingTests
 {
-    public class DuplicateExceptionsFilterServiceBusBindingTests
+    private readonly DuplicateExceptionsFilter _target;
+
+    private readonly MockTelemetryProcessor _innerProcessor;
+
+    public DuplicateExceptionsFilterServiceBusBindingTests()
     {
-        private readonly DuplicateExceptionsFilter _target;
+        _innerProcessor = new MockTelemetryProcessor();
 
-        private readonly MockTelemetryProcessor _innerProcessor;
+        _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string> {"QueueFunction"});
+    }
 
-        public DuplicateExceptionsFilterServiceBusBindingTests()
-        {
-            _innerProcessor = new MockTelemetryProcessor();
+    [Fact]
+    public void
+        GivenFunctionExecutionEndsInException_WhenFunctionIsKnownToBeServiceBusBinding_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var exceptionTelemetry = ExceptionTelemetryBuilder
+            .AsFunctionCompletedFailed("Function.QueueFunction");
 
-            _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string> {"QueueFunction"});
-        }
+        // Act
+        _target.Process(exceptionTelemetry);
 
-        [Fact]
-        public void
-            GivenFunctionExecutionEndsInException_WhenFunctionIsKnownToBeServiceBusBinding_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var exceptionTelemetry = ExceptionTelemetryBuilder
-                .AsFunctionCompletedFailed("Function.QueueFunction");
-
-            // Act
-            _target.Process(exceptionTelemetry);
-
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
     }
 }

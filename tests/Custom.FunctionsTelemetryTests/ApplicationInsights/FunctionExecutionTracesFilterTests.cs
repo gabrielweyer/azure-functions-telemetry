@@ -1,121 +1,119 @@
-using Custom.FunctionsTelemetry.ApplicationInsights;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Builders;
-using Custom.FunctionsTelemetry.ApplicationInsightsTests.TestInfrastructure.Mocks;
+using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+using Custom.FunctionsTelemetry.TestInfrastructure.Mocks;
 using Microsoft.ApplicationInsights.DataContracts;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsightsTests
+namespace Custom.FunctionsTelemetry.ApplicationInsights;
+
+public class FunctionExecutionTracesFilterTests
 {
-    public class FunctionExecutionTracesFilterTests
+    private readonly FunctionExecutionTracesFilter _target;
+
+    private readonly MockTelemetryProcessor _innerProcessor;
+
+    public FunctionExecutionTracesFilterTests()
     {
-        private readonly FunctionExecutionTracesFilter _target;
+        _innerProcessor = new MockTelemetryProcessor();
 
-        private readonly MockTelemetryProcessor _innerProcessor;
+        _target = new FunctionExecutionTracesFilter(_innerProcessor);
+    }
 
-        public FunctionExecutionTracesFilterTests()
-        {
-            _innerProcessor = new MockTelemetryProcessor();
+    [Fact]
+    public void GivenFunctionStartedTrace_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = TraceTelemetryBuilder.AsFunctionStarted();
 
-            _target = new FunctionExecutionTracesFilter(_innerProcessor);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenFunctionStartedTrace_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = TraceTelemetryBuilder.AsFunctionStarted();
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(traceTelemetry);
+    [Fact]
+    public void GivenFunctionCompletedTrace_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedSucceeded();
 
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenFunctionCompletedTrace_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedSucceeded();
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(traceTelemetry);
+    [Fact]
+    public void GivenFunctionCompletedWithErrorTrace_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedFailed();
 
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenFunctionCompletedWithErrorTrace_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = TraceTelemetryBuilder.AsFunctionCompletedFailed();
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(traceTelemetry);
+    [Fact]
+    public void GivenServiceBusBindingMessageProcessingErrorTrace_ThenFilterOutTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.ServiceBusListener)
+            .WithSeverityLevel(SeverityLevel.Error)
+            .WithMessage("Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
+            .Build();
 
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenServiceBusBindingMessageProcessingErrorTrace_ThenFilterOutTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.ServiceBusListener)
-                .WithSeverityLevel(SeverityLevel.Error)
-                .WithMessage("Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
-                .Build();
+        // Assert
+        Assert.False(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(traceTelemetry);
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public void GivenHostExecutorTrace_WhenNoMessage_ThenKeepTelemetry(string message)
+    {
+        // Arrange
+        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
+            .WithSeverityLevel(SeverityLevel.Error)
+            .WithMessage(message)
+            .Build();
 
-            // Assert
-            Assert.False(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("")]
-        public void GivenHostExecutorTrace_WhenNoMessage_ThenKeepTelemetry(string message)
-        {
-            // Arrange
-            var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
-                .WithSeverityLevel(SeverityLevel.Error)
-                .WithMessage(message)
-                .Build();
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(traceTelemetry);
+    [Fact]
+    public void GivenTelemetryIsNotTraceTelemetry_ThenKeepTelemetry()
+    {
+        // Arrange
+        var exceptionTelemetry = new ExceptionTelemetry();
 
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(exceptionTelemetry);
 
-        [Fact]
-        public void GivenTelemetryIsNotTraceTelemetry_ThenKeepTelemetry()
-        {
-            // Arrange
-            var exceptionTelemetry = new ExceptionTelemetry();
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
+    }
 
-            // Act
-            _target.Process(exceptionTelemetry);
+    [Fact]
+    public void GivenTraceTelemetryThatIsNeitherFunctionStartedOrCompleted_ThenKeepTelemetry()
+    {
+        // Arrange
+        var traceTelemetry = new TraceTelemetry();
 
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Act
+        _target.Process(traceTelemetry);
 
-        [Fact]
-        public void GivenTraceTelemetryThatIsNeitherFunctionStartedOrCompleted_ThenKeepTelemetry()
-        {
-            // Arrange
-            var traceTelemetry = new TraceTelemetry();
-
-            // Act
-            _target.Process(traceTelemetry);
-
-            // Assert
-            Assert.True(_innerProcessor.WasProcessorCalled);
-        }
+        // Assert
+        Assert.True(_innerProcessor.WasProcessorCalled);
     }
 }

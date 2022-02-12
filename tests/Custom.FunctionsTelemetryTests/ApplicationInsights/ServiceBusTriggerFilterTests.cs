@@ -1,5 +1,5 @@
 using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
-using Custom.FunctionsTelemetry.TestInfrastructure.Mocks.@new;
+using Custom.FunctionsTelemetry.TestInfrastructure.Mocks;
 using Xunit;
 
 namespace Custom.FunctionsTelemetry.ApplicationInsights;

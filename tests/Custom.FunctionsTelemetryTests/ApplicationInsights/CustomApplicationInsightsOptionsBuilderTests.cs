@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Custom.FunctionsTelemetry.ApplicationInsights;
 using FluentAssertions;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsights;
+namespace Custom.FunctionsTelemetryTests.ApplicationInsights;
 
 public class CustomApplicationInsightsOptionsBuilderTests
 {

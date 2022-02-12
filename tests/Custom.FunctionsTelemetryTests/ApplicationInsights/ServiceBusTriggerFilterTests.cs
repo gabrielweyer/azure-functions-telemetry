@@ -1,8 +1,9 @@
-using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
-using Custom.FunctionsTelemetry.TestInfrastructure.Mocks;
+using Custom.FunctionsTelemetry.ApplicationInsights;
+using Custom.FunctionsTelemetryTests.TestInfrastructure.Builders;
+using Custom.FunctionsTelemetryTests.TestInfrastructure.Mocks;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsights;
+namespace Custom.FunctionsTelemetryTests.ApplicationInsights;
 
 public class ServiceBusTriggerFilterTests
 {

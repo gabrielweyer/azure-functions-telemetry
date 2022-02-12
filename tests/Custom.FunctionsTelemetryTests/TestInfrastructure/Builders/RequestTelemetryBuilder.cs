@@ -1,7 +1,7 @@
 using System;
 using Microsoft.ApplicationInsights.DataContracts;
 
-namespace Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+namespace Custom.FunctionsTelemetryTests.TestInfrastructure.Builders;
 
 public static class RequestTelemetryBuilder
 {

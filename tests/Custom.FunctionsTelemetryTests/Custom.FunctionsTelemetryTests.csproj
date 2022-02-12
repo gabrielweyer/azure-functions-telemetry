@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Custom.FunctionsTelemetry</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

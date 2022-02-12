@@ -1,7 +1,7 @@
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace Custom.FunctionsTelemetry.TestInfrastructure.Mocks;
+namespace Custom.FunctionsTelemetryTests.TestInfrastructure.Mocks;
 
 public class MockTelemetryProcessor : ITelemetryProcessor
 {

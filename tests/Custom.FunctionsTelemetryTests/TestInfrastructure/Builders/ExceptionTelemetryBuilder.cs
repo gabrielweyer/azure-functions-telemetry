@@ -1,7 +1,8 @@
+using Custom.FunctionsTelemetry;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.WebJobs.Logging;
 
-namespace Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+namespace Custom.FunctionsTelemetryTests.TestInfrastructure.Builders;
 
 public class ExceptionTelemetryBuilder
 {

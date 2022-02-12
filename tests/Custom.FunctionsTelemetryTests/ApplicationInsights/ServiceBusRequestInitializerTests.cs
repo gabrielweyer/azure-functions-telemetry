@@ -1,7 +1,8 @@
-using Custom.FunctionsTelemetry.TestInfrastructure.Builders;
+using Custom.FunctionsTelemetry.ApplicationInsights;
+using Custom.FunctionsTelemetryTests.TestInfrastructure.Builders;
 using Xunit;
 
-namespace Custom.FunctionsTelemetry.ApplicationInsights;
+namespace Custom.FunctionsTelemetryTests.ApplicationInsights;
 
 public class ServiceBusRequestInitializerTests
 {

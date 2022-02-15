@@ -147,14 +147,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                                     customProcessors.Insert(0, healthRequestFilter);
                                 }
 
-                                if (!string.IsNullOrEmpty(options.DependencyTypeToFilter))
-                                {
-                                    var dependencyFilter = new DependencyFilter(
-                                        customProcessors.First(),
-                                        options.DependencyTypeToFilter);
-                                    customProcessors.Insert(0, dependencyFilter);
-                                }
-
                                 var processorFactoryServiceDescriptors = services
                                     .Where(sd => sd.ServiceType == typeof(ITelemetryProcessorFactory))
                                     .ToList();

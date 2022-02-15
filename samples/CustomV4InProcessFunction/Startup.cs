@@ -31,13 +31,13 @@ public class Startup : FunctionsStartup
                 "customv4inprocess",
                 typeof(Startup))
             .WithHealthRequestFilter("HealthFunction")
-            .WithDependencyFilter("CustomHTTP")
             .WithServiceBusRequestInitializer()
             .DiscardServiceBusDuplicateExceptions(serviceBusTriggeredFunctionNames)
             .WithServiceBusTriggerFilter()
             .Build();
 
         builder.Services
+            .AddApplicationInsightsTelemetryProcessor<CustomHttpDependencyFilter>()
             .AddApplicationInsightsTelemetryProcessor<TelemetryCounter>()
             .AddCustomApplicationInsights(appInsightsOptions)
             .AddCustomConsoleLogging();

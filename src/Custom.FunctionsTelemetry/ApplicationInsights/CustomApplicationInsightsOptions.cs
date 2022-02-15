@@ -11,6 +11,5 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         public bool HasServiceBusTriggerFilter { get; set; }
         public List<string> ServiceBusTriggeredFunctionNames { get; set; }
         public string HealthCheckFunctionName { get; set; }
-        public string DependencyTypeToFilter { get; set; }
     }
 }

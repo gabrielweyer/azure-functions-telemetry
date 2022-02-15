@@ -27,27 +27,6 @@ public class CustomApplicationInsightsOptionsBuilderTests
     }
 
     [Fact]
-    public void GivenDependencyFilterIsConfigured_ThenSetSetDependencyFilter()
-    {
-        // Arrange
-        var builder = new CustomApplicationInsightsOptionsBuilder("some-name", typeof(StringHelper))
-            .WithDependencyFilter("SomeDependency");
-
-        // Act
-        var actualOptions = builder.Build();
-
-        // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions
-        {
-            ApplicationName = "some-name",
-            TypeFromEntryAssembly = typeof(StringHelper),
-            ServiceBusTriggeredFunctionNames = new List<string>(),
-            DependencyTypeToFilter = "SomeDependency"
-        };
-        actualOptions.Should().BeEquivalentTo(expectedOptions);
-    }
-
-    [Fact]
     public void GivenHealthFilterIsConfigured_ThenSetHealthFilter()
     {
         // Arrange

@@ -31,13 +31,13 @@ namespace CustomV3InProcessFunction
                     "customv3inprocess",
                     typeof(Startup))
                 .WithHealthRequestFilter("HealthFunction")
-                .WithDependencyFilter("CustomHTTP")
                 .WithServiceBusRequestInitializer()
                 .DiscardServiceBusDuplicateExceptions(serviceBusTriggeredFunctionNames)
                 .WithServiceBusTriggerFilter()
                 .Build();
 
             builder.Services
+                .AddApplicationInsightsTelemetryProcessor<CustomHttpDependencyFilter>()
                 .AddApplicationInsightsTelemetryProcessor<TelemetryCounter>()
                 .AddCustomApplicationInsights(appInsightsOptions)
                 .AddCustomConsoleLogging();

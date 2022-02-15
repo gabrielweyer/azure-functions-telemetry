@@ -11,7 +11,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         private bool _hasServiceBusTriggerFilter;
         private List<string> _serviceBusTriggeredFunctionNames;
         private string _healthCheckFunctionName;
-        private string _dependencyTypeToFilter;
 
         /// <summary>
         /// Helps you configure Application Insights.
@@ -27,7 +26,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
             _hasServiceBusTriggerFilter = false;
             _serviceBusTriggeredFunctionNames = new List<string>();
             _healthCheckFunctionName = null;
-            _dependencyTypeToFilter = null;
         }
 
         /// <summary>
@@ -86,19 +84,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
             return this;
         }
 
-        /// <summary>
-        /// Allows you to filter out a single dependency type. Calling this method multiple times will replace the
-        /// previous value.
-        /// </summary>
-        /// <param name="dependencyType"></param>
-        /// <returns></returns>
-        public CustomApplicationInsightsOptionsBuilder WithDependencyFilter(string dependencyType)
-        {
-            _dependencyTypeToFilter = dependencyType;
-
-            return this;
-        }
-
         public CustomApplicationInsightsOptions Build() =>
             new CustomApplicationInsightsOptions()
             {
@@ -108,7 +93,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                 HasServiceBusTriggerFilter = _hasServiceBusTriggerFilter,
                 ServiceBusTriggeredFunctionNames = _serviceBusTriggeredFunctionNames,
                 HealthCheckFunctionName = _healthCheckFunctionName,
-                DependencyTypeToFilter = _dependencyTypeToFilter
             };
     }
 }

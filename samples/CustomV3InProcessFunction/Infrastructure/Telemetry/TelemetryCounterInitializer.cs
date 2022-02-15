@@ -6,13 +6,11 @@ using Microsoft.ApplicationInsights.Extensibility;
 namespace CustomV3InProcessFunction.Infrastructure.Telemetry
 {
     /// <summary>
-    /// This is not really a telemetry processor as it doesn't discard any telemetry. The goal is to demonstrate that
-    /// every telemetry item type is going through the processor and could be potentially be discarded.
+    /// This is not really a telemetry initializer as it doesn't enrich the telemetry. The goal is to demonstrate that
+    /// every telemetry item type is going through the initializer and could be potentially be enriched.
     /// </summary>
-    public class TelemetryCounter : ITelemetryProcessor
+    public class TelemetryCounterInitializer : ITelemetryInitializer
     {
-        private readonly ITelemetryProcessor _next;
-
         public long AvailabilityTelemetryCount;
         public long DependencyTelemetryCount;
         public long EventTelemetryCount;
@@ -24,14 +22,9 @@ namespace CustomV3InProcessFunction.Infrastructure.Telemetry
         public long TraceTelemetryCount;
         public long OtherTelemetryCount;
 
-        public TelemetryCounter(ITelemetryProcessor next)
+        public void Initialize(ITelemetry telemetry)
         {
-            _next = next;
-        }
-
-        public void Process(ITelemetry item)
-        {
-            switch (item)
+            switch (telemetry)
             {
                 case AvailabilityTelemetry _:
                     Interlocked.Increment(ref AvailabilityTelemetryCount);
@@ -64,8 +57,6 @@ namespace CustomV3InProcessFunction.Infrastructure.Telemetry
                     Interlocked.Increment(ref OtherTelemetryCount);
                     break;
             }
-
-            _next.Process(item);
         }
     }
 }

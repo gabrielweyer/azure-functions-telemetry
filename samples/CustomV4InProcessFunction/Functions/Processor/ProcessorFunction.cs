@@ -10,12 +10,12 @@ namespace CustomV4InProcessFunction.Functions.Processor;
 
 public class ProcessorFunction
 {
-    private readonly TelemetryCounter _telemetryCounter;
+    private readonly TelemetryCounterProcessor _telemetryCounterProcessor;
 
     public ProcessorFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        _telemetryCounter = telemetryConfiguration.TelemetryProcessors
-            .Single(p => p is TelemetryCounter) as TelemetryCounter;
+        _telemetryCounterProcessor = telemetryConfiguration.TelemetryProcessors
+            .Single(p => p is TelemetryCounterProcessor) as TelemetryCounterProcessor;
     }
 
     [FunctionName(nameof(ProcessorFunction))]
@@ -25,16 +25,16 @@ public class ProcessorFunction
     {
         return new OkObjectResult(new
         {
-            _telemetryCounter.AvailabilityTelemetryCount,
-            _telemetryCounter.DependencyTelemetryCount,
-            _telemetryCounter.EventTelemetryCount,
-            _telemetryCounter.ExceptionTelemetryCount,
-            _telemetryCounter.MetricTelemetryCount,
-            _telemetryCounter.PageViewPerformanceTelemetryCount,
-            _telemetryCounter.PageViewTelemetryCount,
-            _telemetryCounter.RequestTelemetryCount,
-            _telemetryCounter.TraceTelemetryCount,
-            _telemetryCounter.OtherTelemetryCount
+            _telemetryCounterProcessor.AvailabilityTelemetryCount,
+            _telemetryCounterProcessor.DependencyTelemetryCount,
+            _telemetryCounterProcessor.EventTelemetryCount,
+            _telemetryCounterProcessor.ExceptionTelemetryCount,
+            _telemetryCounterProcessor.MetricTelemetryCount,
+            _telemetryCounterProcessor.PageViewPerformanceTelemetryCount,
+            _telemetryCounterProcessor.PageViewTelemetryCount,
+            _telemetryCounterProcessor.RequestTelemetryCount,
+            _telemetryCounterProcessor.TraceTelemetryCount,
+            _telemetryCounterProcessor.OtherTelemetryCount
         });
     }
 }

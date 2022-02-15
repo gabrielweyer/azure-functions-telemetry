@@ -9,7 +9,7 @@ namespace CustomV4InProcessFunction.Infrastructure.Telemetry;
 /// This is not really a telemetry processor as it doesn't discard any telemetry. The goal is to demonstrate that
 /// every telemetry item type is going through the processor and could be potentially be discarded.
 /// </summary>
-public class TelemetryCounter : ITelemetryProcessor
+public class TelemetryCounterProcessor : ITelemetryProcessor
 {
     private readonly ITelemetryProcessor _next;
 
@@ -24,7 +24,7 @@ public class TelemetryCounter : ITelemetryProcessor
     public long TraceTelemetryCount;
     public long OtherTelemetryCount;
 
-    public TelemetryCounter(ITelemetryProcessor next)
+    public TelemetryCounterProcessor(ITelemetryProcessor next)
     {
         _next = next;
     }

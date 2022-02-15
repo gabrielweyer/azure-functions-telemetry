@@ -4,6 +4,7 @@ using Custom.FunctionsTelemetry.Logging;
 using CustomV4InProcessFunction;
 using CustomV4InProcessFunction.Functions.UserSecret;
 using CustomV4InProcessFunction.Infrastructure.Telemetry;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +39,18 @@ public class Startup : FunctionsStartup
 
         builder.Services
             .AddApplicationInsightsTelemetryProcessor<CustomHttpDependencyFilter>()
-            .AddApplicationInsightsTelemetryProcessor<TelemetryCounter>()
+            .AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>()
+            .AddSingleton<ITelemetryInitializer, TelemetryCounterInitializer>()
+            /*
+             * When adding a instance of a telemetry initializer, you need to provide the service Type otherwise
+             * your initializer will not be used.
+             *
+             * <code>
+             * // Dot not use:
+             * .AddSingleton(new TelemetryCounterInstanceInitializer("NiceValue"))
+             * </code>
+             */
+            .AddSingleton<ITelemetryInitializer>(new TelemetryCounterInstanceInitializer("NiceValue"))
             .AddCustomApplicationInsights(appInsightsOptions)
             .AddCustomConsoleLogging();
     }

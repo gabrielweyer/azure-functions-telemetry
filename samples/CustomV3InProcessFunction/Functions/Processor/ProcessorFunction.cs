@@ -1,5 +1,5 @@
 using System.Linq;
-using Custom.FunctionsTelemetry.ApplicationInsights;
+using CustomV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -3,6 +3,7 @@ using Custom.FunctionsTelemetry.ApplicationInsights;
 using Custom.FunctionsTelemetry.Logging;
 using CustomV4InProcessFunction;
 using CustomV4InProcessFunction.Functions.UserSecret;
+using CustomV4InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,7 @@ public class Startup : FunctionsStartup
             .Build();
 
         builder.Services
+            .AddApplicationInsightsTelemetryProcessor<TelemetryCounter>()
             .AddCustomApplicationInsights(appInsightsOptions)
             .AddCustomConsoleLogging();
     }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.ApplicationInsights.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +47,9 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
             {
                 var implFactory = configDescriptor.ImplementationFactory;
                 services.Remove(configDescriptor);
-                services.AddSingleton(provider =>
+                services.AddSingleton(serviceProvider =>
                 {
-                    if (implFactory.Invoke(provider) is TelemetryConfiguration telemetryConfiguration)
+                    if (implFactory.Invoke(serviceProvider) is TelemetryConfiguration telemetryConfiguration)
                     {
                         var newConfig = new TelemetryConfiguration(telemetryConfiguration.InstrumentationKey, telemetryConfiguration.TelemetryChannel)
                         {
@@ -122,6 +123,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                                  * point to the first one.
                                  */
                                 var customProcessors = new List<ITelemetryProcessor>();
+
                                 var duplicateExceptionFilter = new DuplicateExceptionsFilter(
                                     quickPulseTelemetryProcessor,
                                     options.ServiceBusTriggeredFunctionNames);
@@ -129,8 +131,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                                 var functionExecutionTracesFilter = new FunctionExecutionTracesFilter(
                                     customProcessors.First());
                                 customProcessors.Insert(0, functionExecutionTracesFilter);
-                                var telemetryCounter = new TelemetryCounter(customProcessors.First());
-                                customProcessors.Insert(0, telemetryCounter);
 
                                 if (options.HasServiceBusTriggerFilter)
                                 {
@@ -153,6 +153,18 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                                         customProcessors.First(),
                                         options.DependencyTypeToFilter);
                                     customProcessors.Insert(0, dependencyFilter);
+                                }
+
+                                var processorFactoryServiceDescriptors = services
+                                    .Where(sd => sd.ServiceType == typeof(ITelemetryProcessorFactory))
+                                    .ToList();
+
+                                foreach (var processorFactoryServiceDescriptor in processorFactoryServiceDescriptors)
+                                {
+                                    var processorFactory = (ITelemetryProcessorFactory) processorFactoryServiceDescriptor
+                                        .ImplementationFactory(serviceProvider);
+                                    var processorAddedThroughDi = processorFactory.Create(customProcessors.First());
+                                    customProcessors.Insert(0, processorAddedThroughDi);
                                 }
 
                                 newConfig.TelemetryProcessorChainBuilder.Use(_ => processor);

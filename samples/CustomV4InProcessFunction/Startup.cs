@@ -42,11 +42,11 @@ public class Startup : FunctionsStartup
             .AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>()
             .AddSingleton<ITelemetryInitializer, TelemetryCounterInitializer>()
             /*
-             * When adding a instance of a telemetry initializer, you need to provide the service Type otherwise
+             * When adding an instance of a telemetry initializer, you need to provide the service Type otherwise
              * your initializer will not be used.
              *
              * <code>
-             * // Dot not use:
+             * // Do not use:
              * .AddSingleton(new TelemetryCounterInstanceInitializer("NiceValue"))
              * </code>
              */

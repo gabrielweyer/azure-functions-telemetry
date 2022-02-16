@@ -148,12 +148,14 @@ $defaultV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV
 $customV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
 $customV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
 $serviceBusNamespace = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
+$applicationInsightsName = $armDeploymentResult.Outputs.Item('applicationInsightsName').Value
 
 Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
 Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"
 Write-Verbose "Custom V3 In-Process Function App name is '$customV3InProcessFunctionAppName'"
 Write-Verbose "Custom V4 In-Process Function App name is '$customV4InProcessFunctionAppName'"
 Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
+Write-Verbose "Application Insights instance is '$applicationInsightsName'"
 
 Write-Host 'Deploying Default V3 In-Process Function App to Azure'
 
@@ -201,9 +203,15 @@ Publish-AzWebapp @publishCustomV4InProcessParameters | Out-Null
 
 Write-Host 'Setting local user secrets'
 
-dotnet user-secrets set Secret:ReallySecretValue "$secretValue" --id 074ca336-270b-4832-9a1a-60baf152b727 | Out-Null
+$userSecretsId = '074ca336-270b-4832-9a1a-60baf152b727'
+
+dotnet user-secrets set Secret:ReallySecretValue "$secretValue" --id $userSecretsId | Out-Null
 Write-verbose "Set secret 'Secret:ReallySecretValue'"
 
-$connectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamespace -Name RootManageSharedAccessKey
-dotnet user-secrets set ServiceBusConnection "$($connectionStrings.PrimaryConnectionString)" --id 074ca336-270b-4832-9a1a-60baf152b727 | Out-Null
+$serviceBusConnectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamespace -Name RootManageSharedAccessKey
+dotnet user-secrets set ServiceBusConnection "$($serviceBusConnectionStrings.PrimaryConnectionString)" --id $userSecretsId | Out-Null
 Write-verbose "Set secret 'ServiceBusConnection'"
+
+$applicationInsightsResource = Get-AzApplicationInsights -ResourceGroupName $resourceGroupName -Name $applicationInsightsName
+dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING "$($applicationInsightsResource.ConnectionString)" --id $userSecretsId | Out-Null
+Write-verbose "Set secret 'APPLICATIONINSIGHTS_CONNECTION_STRING'"

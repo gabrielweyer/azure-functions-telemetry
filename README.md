@@ -1,30 +1,147 @@
-# Azure Functions Limitations
+# Azure Functions Telemetry
 
-This project demonstrates the limitations of the Application Insights integration with Azure Functions `v3` and `v4`. This repository is supporting the blog post I wrote about [Azure Functions and their limitations][blog-post].
+The Application Insights integration for Azure Functions `v3` and `v4` suffers from a few quirks that can lead to a huge Application Insights bill:
 
-## Prerequisites
+- Telemetry processors are not supported, preventing developers from discarding telemetry items
+- Each Function execution records a trace when starting and on completion
+- Exceptions are logged twice for the HTTP binding
+- Exceptions are logged three times for the Service Bus binding
 
-- [Azurite][azurite] is used as the Azure blob emulator
-- [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line
+The next issue has no impact on the cost of Application Insights but rather is related to the development experience. `TelemetryConfiguration` is not registered in the Inversion Of Control container when the Application Insights connection string is not set. Emitting a custom metric requires to inject the `TelemetryConfiguration`. Running locally without having configured the Application Insights connection string will then result in an exception.
+
+The last issue is not related to Application Insights but also negatively impact developers' productivity. The custom Console logger provider used by the Azure Functions runtime does not include the stack trace when displaying an exception.
+
+If you’re not familiar with some of the more advanced features of Application Insights, I suggest you go through the below references before reading the rest of this document:
+
+- [Telemetry processors][telemetry-processors]
+- [Telemetry initializers][telemetry-initializers]
+
+In this repository I've attempted to address all the quirks listed above. **Warning**: The customisation is experimental. There may be undesired side effects around performance and missing telemetry. If you're experiencing issues such as missing telemetry, no exception being recorded when something doesn't work as expected I recommend disabling the custom integration and reproducing the problem without it.
+
+## Using the Application Insights customisation
+
+The customisation supports both `v3` and `v4` runtime.
+
+Copy the `src/Custom.FunctionsTelemetry` project into your solution and reference it from your Function App(s). You can get the latest version by copying the updated files over yours.
+
+**Note**: I haven’t created a `NuGet` package as the customisation is only used in a few Functions so far. Create an issue if you would like to consume a `NuGet` package.
+
+For the most basic integration, you need to provide:
+
+- `{ApplicationName}` used to set Application Insights' _Cloud role name_
+- `{TypeFromEntryAssembly}` typically would be `typeof(Startup)`. I read the [Assembly Informational Version][assembly-informational-version] of the entry assembly to set Application Insights' _Application version_
+
+In your `Startup` `class` add the below snippet:
+
+```csharp
+var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder("{ApplicationName}", {TypeFromEntryAssembly})
+    .Build();
+
+builder.Services
+    .AddCustomApplicationInsights(appInsightsOptions)
+    .AddCustomConsoleLogging();
+```
+
+The snippet above is catered for a Function App containing only HTTP bindings. When your Function contains only Service Bus bindings, you’ll want to use the below snippet:
+
+```csharp
+var serviceBusTriggeredFunctionNames = new List<string>
+{
+    "FunctionOneName",
+    "FunctionTwoName"
+};
+
+var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder("{ApplicationName}", {TypeFromEntryAssembly})
+    .WithServiceBusRequestInitializer()
+    .DiscardServiceBusDuplicateExceptions(serviceBusTriggeredFunctionNames)
+    .WithServiceBusTriggerFilter()
+    .Build();
+
+builder.Services
+    .AddCustomApplicationInsights(appInsightsOptions)
+    .AddCustomConsoleLogging();
+```
+
+**Note**: Having to specify the name of the Functions is not great and something that will be improved later on.
+
+I also support Function Apps containing both HTTP and Service Bus bindings. You can mix and match the configurations above.
+
+## What do I get?
+
+### Discarding Function execution traces
+
+This is implemented by [FunctionExecutionTracesFilter][function-execution-traces-filter] and always enabled.
+
+### Discarding duplicate exceptions
+
+This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter]. In order to discard the additional duplicate exception for the Service Bus binding, you’ll need to call `DiscardServiceBusDuplicateExceptions` and provide the function names. Hopefully this is something that will be improved later on.
+
+### Discarding health requests
+
+This is enabled by calling `WithHealthRequestFilter` and providing the function name (the argument provided to the `FunctionNameAttribute`). The telemetry processor used is [HealthRequestFilter][health-request-filter].
+
+### Better Service Bus binding "request"
+
+The _request name_ and _status code_ are not being set on the service bus triggered "requests". The [ServiceBusRequestInitializer][service-bus-request-initializer] can do this for you.
+
+- Request name: we use the Function name
+- Status code: `200` in case of success, `500` in case of failure
+
+You need to enable the `ServiceBusRequestInitializer` by calling `WithServiceBusRequestInitializer`.
+
+### Discarding Service Bus trigger traces
+
+This is recommended on high-volume services. This is done by calling `WithServiceBusTriggerFilter`. The telemetry processor used is [ServiceBusTriggerFilter][service-bus-trigger-filter].
+
+### Replacing the Console logging provider
+
+This is done by calling `AddCustomConsoleLogging`. You’ll then get stack traces in the console.
+
+### Telemetry initializer support
+
+**Note**: the built-in integration supports telemetry initializers.
+
+Telemetry initializers can either be registered using `TImplementation`:
+
+```csharp
+builder.Services.AddSingleton<ITelemetryInitializer, YourInitializer>();
+```
+
+Or an instance of the initializer:
+
+```csharp
+// Use:
+builder.Services.AddSingleton<ITelemetryInitializer>(new YourOtherInitializer("NiceValue"));
+// Do not use, otherwise your telemetry initializer will not be called:
+builder.Services.AddSingleton(new YourOtherInitializer("NiceValue"));
+```
+
+You can add as many telemetry initializers as you want.
+
+### Telemetry processor support
+
+**Note**: the built-in integration does **not** telemetry processors.
+
+```csharp
+builder.Services.AddApplicationInsightsTelemetryProcessor<YourTelemetryProcessor>();
+```
+
+You can add as many telemetry processors as you want.
+
+## Missing features and potential improvements
+
+I would like to detect at runtime if there are any Service Bus bindings and configure the integration accordingly. This would make `WithServiceBusRequestInitializer` and `DiscardServiceBusDuplicateExceptions` obsolete. This will be implemented if I'm not too lazy.
+
+## Demo
+
+The demo requires an Azure Service Bus namespace to run. Functions can run both locally and in Azure, when running locally I recommend to stop the Functions deployed in Azure otherwise the Service Bus triggers will compete for messages.
+
+Before being able to run and deploy the Functions you'll need to have the below software installed:
+
+- [Azurite][azurite] is used as the Azure blob emulator when running locally
+- [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line (you'll need the `v4` version if you want to be able to run the `v4` Functions locally)
 - [Powershell 7][powershell-7] to deploy to Azure
 - [Azure PowerShell][azure-powershell] to deploy to Azure
-
-## Software versions
-
-I used the Azure Functions Core Tools version `3.0.3160` to create the Function App (released on the 9th of December 2020). The latest version of the Azure Functions Core Tools I've been using is `4.0.3971`.
-
-NuGet packages:
-
-- `Microsoft.NET.Sdk.Functions`:
-  - `v3`: `3.0.13` (added automatically when creating the Function, updated later)
-  - `v4`: `4.0.1` (added automatically when creating the Function)
-- `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
-- `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection]):
-  - `v3`: `3.1.22`
-  - `v4`: `6.0.0`
-- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.30` (added manually following [Log custom telemetry in C# functions][custom-telemetry])
-
-## Getting started
 
 Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
@@ -36,20 +153,12 @@ Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 .\deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
 ```
 
-## Function Apps
+The project contains four Functions:
 
-- `DefaultV3InProcessFunction` and `DefaultV4InProcessFunction` demonstrate the limitations of In-Process Azure Functions `v3` / `v4` Application Insights integration
+- `DefaultV3InProcessFunction` and `DefaultV4InProcessFunction` demonstrate the quirks of In-Process Azure Functions `v3` / `v4` Application Insights integration
 - `CustomV3InProcessFunction` and `CustomV4InProcessFunction` demonstrate the workarounds I use to improve In-Process Azure Functions `v3` / `v4` Application Insights integration
 
 I've decided to commit the `local.settings.json` file. This is not the default or recommended approach but it makes it easier for new joiners to get started.
-
-You'll need to set the Application Insights connection string:
-
-```powershell
-dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING "{YourConnectionString}" --id 074ca336-270b-4832-9a1a-60baf152b727
-```
-
-### Default In-Process V3 and V4 Function Apps
 
 You can start the Function Apps by issuing the below commands:
 
@@ -63,69 +172,6 @@ cd .\samples\DefaultV4InProcessFunction\
 func start
 ```
 
-The Function Apps run on fixed ports locally:
-
-- `v3`: `7071`
-- `v4`: `7073`
-
-#### Default In-Process V4 - CustomEventFunction
-
-Navigate to `http://localhost:7073/event` in your favourite browser.
-
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
-
-![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is not registered](docs/img/telemetry-configuration-not-registered.png)
-
-Note: when using vanilla ASP.NET, `TelemetryConfiguration` is registered by calling `AddApplicationInsightsTelemetry()` in `Startup.cs` but this method [should not be called in Azure Functions][dont-call-add-app-insights-telemetry]:
-
-> Don't add `AddApplicationInsightsTelemetry()` to the services collection, which registers services that conflict with services provided by the environment.
-
-#### Default In-Process V4 - HttpExceptionThrowingFunction
-
-Navigate to `http://localhost:7073/exception` in your favourite browser.
-
-Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
-
-![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace-absent.png)
-
-This also demonstrates that the same exception appears twice in Application Insights:
-
-![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
-
-#### Default In-Process V4 - ProcessorFunction
-
-Navigate to `http://localhost:7073/processor` in your favourite browser.
-
-Demonstrates that our telemetry processor is not being called even though we added it using `AddApplicationInsightsTelemetryProcessor`.
-
-![Our telemetry processor is not being called for requests](docs/img/telemetry-processor-is-not-being-called.png)
-
-#### Default In-Process V4 - ServiceBusExceptionThrowingFunction
-
-You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus-exception` in your favourite browser.
-
-Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
-
-![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-eight-telemetry-items.png)
-
-#### Default In-Process V4 - TraceLogFunction
-
-Navigate to `http://localhost:7073/trace-log` in your favourite browser.
-
-Demonstrate that log events are not filtered before being sent to Live Metrics. This is not a limitation of Azure Functions, that's how Application Insights works and something you need to be aware of.
-
-![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
-
-#### Default In-Process V4 - UserSecretFunction
-
-Navigate to `http://localhost:7073/secret` in your favourite browser.
-
-Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
-
-### Custom In-Process V3 and V4 Function Apps
-
-You can start the Function Apps by issuing the below commands:
-
 ```powershell
 cd .\samples\CustomV3InProcessFunction\
 func start
@@ -136,42 +182,82 @@ cd .\samples\CustomV4InProcessFunction\
 func start
 ```
 
-The Function Apps run on fixed ports locally:
+The Function Apps run on fixed ports locally so that you can run all four at the same time:
 
-- `v3`: `7072`
-- `v4`: `7074`
+- Default `v3`: `7071`
+- Default `v4`: `7073`
+- Custom `v3`: `7072`
+- Custom `v4`: `7074`
 
-#### Custom In-Process V4 - AvailabilityFunction
+### AvailabilityFunction
 
-Navigate to `http://localhost:7074/availability` in your favourite browser.
+Navigate to `http://localhost:7074/availability` (Custom `v4`) in your favourite browser.
 
 Emits an availability telemetry items. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the processor is called for availability telemetry items.
 
-#### Custom In-Process V4 - CustomEventFunction
+### CustomEventFunction
 
-Navigate to `http://localhost:7074/event` in your favourite browser.
+You'll need to delete the Application Insights connection string secret in order to reproduce this error. Stop all the Functions and then run:
 
-Demonstrate that when the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+```powershell
+dotnet user-secrets list --id 074ca336-270b-4832-9a1a-60baf152b727
+```
 
-![Without the setting `APPINSIGHTS_INSTRUMENTATIONKEY` / `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+Make a note of the value of the `APPLICATIONINSIGHTS_CONNECTION_STRING` secret then delete it:
 
-#### Custom In-Process V4 - DependencyFunction
+```powershell
+dotnet user-secrets remove APPLICATIONINSIGHTS_CONNECTION_STRING --id 074ca336-270b-4832-9a1a-60baf152b727
+```
 
-Navigate to `http://localhost:7074/dependency` in your favourite browser.
+Finally once done, you can add the secret again:
+
+```powershell
+dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '{YourConnectionString}' --id 074ca336-270b-4832-9a1a-60baf152b727
+```
+
+Navigate to `http://localhost:7073/event` (Default `v4`) in your favourite browser.
+
+Demonstrate that when the setting `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
+
+![Without the setting `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is not registered](docs/img/telemetry-configuration-not-registered.png)
+
+Note: when using vanilla ASP.NET, `TelemetryConfiguration` is registered by calling `AddApplicationInsightsTelemetry()` in `Startup.cs` but this method [should not be called in Azure Functions][dont-call-add-app-insights-telemetry]:
+
+> Don't add `AddApplicationInsightsTelemetry()` to the services collection, which registers services that conflict with services provided by the environment.
+
+Navigate to `http://localhost:7074/event` (Custom `v4`) in your favourite browser.
+
+Demonstrate that when the setting `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
+
+![Without the setting `APPLICATIONINSIGHTS_CONNECTION_STRING`, TelemetryConfiguration is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+
+### DependencyFunction
+
+Navigate to `http://localhost:7074/dependency` (Custom `v4`) in your favourite browser.
 
 Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies, you can also modify the implementation to discard multiple dependency types.
 
-#### Custom In-Process V4 - HealthFunction
+### HealthFunction
 
-Navigate to `http://localhost:7074/health` in your favourite browser.
+Navigate to `http://localhost:7074/health` (Custom `v4`) in your favourite browser.
 
 To keep Function Apps on a consumption plan alive and limit the number of cold starts, developers tend to use Application Insights [URL ping test][url-ping-test]. These results in many requests being recorded in Application Insights. I've configured App Insights to discard such requests.
 
 Note that `HEAD` is more commonly used than `GET` for ping tests but it's easier to issue a `GET` with a web browser.
 
-### Custom In-Process V4 - HttpExceptionThrowingFunction
+### HttpExceptionThrowingFunction
 
-Navigate to `http://localhost:7074/exception` in your favourite browser.
+Navigate to `http://localhost:7073/exception` (Default `v4`) in your favourite browser.
+
+Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
+
+![No stack trace in the console when an exception is thrown](docs/img/console-stack-trace-absent.png)
+
+This also demonstrates that the same exception appears twice in Application Insights:
+
+![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
+
+Navigate to `http://localhost:7074/exception` (Custom `v4`) in your favourite browser.
 
 Demonstrates that the stack trace is present in the console logs when an exception is thrown.
 
@@ -181,9 +267,15 @@ This also demonstrates that the same exception appears only once in Application 
 
 ![The same exception is logged only once for the HTTP binding](docs/img/http-binding-exception-logged-once.png)
 
-#### Custom In-Process V4 - ProcessorFunction
+### ProcessorFunction
 
-Navigate to `http://localhost:7074/processor` in your favourite browser.
+Navigate to `http://localhost:7073/processor` (Default `v4`) in your favourite browser.
+
+Demonstrates that our telemetry processor is not being called even though we added it using `AddApplicationInsightsTelemetryProcessor`.
+
+![Our telemetry processor is not being called for requests](docs/img/telemetry-processor-is-not-being-called.png)
+
+Navigate to `http://localhost:7074/processor` (Custom `v4`) in your favourite browser.
 
 Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
@@ -191,9 +283,15 @@ Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 Note that the processor is also called for request telemetry items.
 
-#### Custom In-Process V4 - ServiceBusExceptionThrowingFunction
+### ServiceBusExceptionThrowingFunction
 
-You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus-exception` in your favourite browser.
+You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus-exception` (Default `v4`) in your favourite browser.
+
+Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of eight telemetry items are emitted during the Function execution.
+
+![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-eight-telemetry-items.png)
+
+You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus-exception` (Custom `v4`) in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of two telemetry items are emitted during the Function execution.
 
@@ -201,7 +299,21 @@ Demonstrate that a single exception thrown by the Function is recorded only once
 
 I'm also setting the "request" `URL` and "response" code using `ServiceBusRequestInitializer`.
 
-#### Custom In-Process V4 - discarding SystemTraceMiddleware logs
+### TraceLogFunction
+
+Navigate to `http://localhost:7073/trace-log` (Default `v4`) / `http://localhost:7074/trace-log` (Custom `v4`) in your favourite browser.
+
+Demonstrate that log events are not filtered before being sent to Live Metrics. This is not a limitation of Azure Functions, that's how Application Insights works and something you need to be aware of.
+
+![A `Trace` log event is displayed in the Live Metrics](docs/img/trace-log-live-metrics.png)
+
+### UserSecretFunction
+
+Navigate to `http://localhost:7073/secret` (Default `v4`) / `http://localhost:7074/secret` (Custom `v4`) in your favourite browser.
+
+Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
+
+### Discarding SystemTraceMiddleware logs
 
 The `SystemTraceMiddleware` emits two log events per HTTP Function execution when running locally:
 
@@ -217,6 +329,37 @@ These can be suppressed by adding the below `Value` to `local.settings.json` (no
 
 Anthony Chu has [documented how to suppress some logs][anthony-chu-suppress-logs].
 
+## Q&A
+
+### Why so much code to support telemetry processors?
+
+There is an [opened GitHub issue][telemetry-processor-support-github-issue] about the lack of telemetry processors support in Azure Functions. The thread provides a workaround to enable telemetry processors but the telemetry processors added in this fashion will not be called for request telemetry items.
+
+## Appendix
+
+### Software versions
+
+I used the Azure Functions Core Tools version `3.0.3160` to create the Function App (released on the 9th of December 2020). The latest version of the Azure Functions Core Tools I've been using is `4.0.3971`.
+
+NuGet packages:
+
+- `Microsoft.NET.Sdk.Functions`:
+  - `v3`: `3.0.13` (added automatically when creating the Function, updated later)
+  - `v4`: `4.0.1` (added automatically when creating the Function)
+- `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
+- `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection]):
+  - `v3`: `3.1.22`
+  - `v4`: `6.0.0`
+- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.30` (added manually following [Log custom telemetry in C# functions][custom-telemetry])
+
+### Supporting telemetry processors
+
+The code in `AddCustomApplicationInsights` retrieves the configured built-in telemetry processors, adds them to a new telemetry processor chain and builds the chain. This gives us the opportunity to add our own processors to the chain.
+
+The first built-in processor in the chain is `OperationFilteringTelemetryProcessor`, this processor discards all the dependencies considered internal to the Azure Functions runtime (such as access to blob storage for the distributed lock and the calls to Azure Service Bus for the Service Bus binding).
+
+One of the side-effect of the approach I'm using is that the Azure Functions runtime will reference the initial instance of `OperationFilteringTelemetryProcessor` and will call it directly when tracking requests manually. Normally the `OperationFilteringTelemetryProcessor` instance points to the second processor in the chain (`QuickPulseTelemetryProcessor`). One way for our processors to be called is to point the existing `OperationFilteringTelemetryProcessor` instance to our first processor and point our last processor to `QuickPulseTelemetryProcessor`. This is done through some pretty dodgy untested code but it works :tm:.
+
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
 [dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
@@ -225,7 +368,15 @@ Anthony Chu has [documented how to suppress some logs][anthony-chu-suppress-logs
 [azure-powershell]: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.1.0
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
-[blog-post]: https://gabrielweyer.net/2020/12/20/azure-functions-and-their-limitations/
-[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-limitations/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216
+[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216
 [url-ping-test]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/availability-overview
 [anthony-chu-suppress-logs]: https://github.com/anthonychu/functions-log-suppression#readme
+[telemetry-processors]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#filtering
+[telemetry-initializers]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#addmodify-properties-itelemetryinitializer
+[assembly-informational-version]: https://docs.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
+[function-execution-traces-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/FunctionExecutionTracesFilter.cs
+[duplicate-exceptions-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/DuplicateExceptionsFilter.cs
+[health-request-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/HealthRequestFilter.cs
+[service-bus-request-initializer]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusRequestInitializer.cs
+[service-bus-trigger-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusTriggerFilter.cs
+[telemetry-processor-support-github-issue]: https://github.com/Azure/azure-functions-host/issues/3741

@@ -60,7 +60,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         /// (e.g. <code>[FunctionName("AppendActionConsumer")]</code>).
         ///
         /// If you do not call this function or forget to provide one of the Service Bus triggered Function name, you'll
-        /// end with duplicate exceptions.
+        /// end up with duplicate exceptions.
         /// </summary>
         /// <param name="functionNames"></param>
         /// <returns></returns>

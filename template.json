@@ -634,6 +634,10 @@
         "serviceBusNamespace": {
             "type": "string",
             "value": "[variables('serviceBusNamespace').name]"
+        },
+        "applicationInsightsName": {
+            "type": "string",
+            "value": "[variables('applicationInsights').name]"
         }
     }
 }

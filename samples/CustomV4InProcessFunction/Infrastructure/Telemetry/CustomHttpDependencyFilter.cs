@@ -1,5 +1,4 @@
 using System;
-using Custom.FunctionsTelemetry.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;

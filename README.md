@@ -235,9 +235,26 @@ Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not 
 
 ### DependencyFunction
 
+Navigate to `http://localhost:7073/dependency` (Default `v4`) in your favourite browser.
+
+Four telemetry items are recorded:
+
+- The request itself
+- The _Executing ..._ and _Executed ..._ traces
+- The custom dependency we've manually tracked
+
+![Dependency Function default telemetry](docs/img/dependency-function-default.png)
+
 Navigate to `http://localhost:7074/dependency` (Custom `v4`) in your favourite browser.
 
-Discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies.
+Only the request is recorded:
+
+- The _Executing ..._ and _Executed ..._ traces have been discarded by the `FunctionExecutionTracesFilter`
+- The custom dependency we've manually tracked has been discarded by the `CustomHttpDependencyFilter`
+
+![Dependency Function custom telemetry](docs/img/dependency-function-custom.png)
+
+The `CustomHttpDependencyFilter` discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies.
 
 ### HealthFunction
 

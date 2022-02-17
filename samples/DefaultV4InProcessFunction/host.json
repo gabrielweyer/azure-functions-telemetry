@@ -4,7 +4,7 @@
         "logLevel": {
             "default": "Information",
             "Azure.Messaging.ServiceBus": "Warning",
-            "Azure.Core": "Warning",
+            "Azure.Core": "Error",
             "Microsoft.AspNetCore": "Warning"
         },
         "applicationInsights": {

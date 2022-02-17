@@ -258,11 +258,17 @@ The `CustomHttpDependencyFilter` discards a specific telemetry type. This is use
 
 ### HealthFunction
 
-Navigate to `http://localhost:7074/health` (Custom `v4`) in your favourite browser.
-
-To keep Function Apps on a consumption plan alive and limit the number of cold starts, developers tend to use Application Insights [URL ping test][url-ping-test]. This results in many requests being recorded in Application Insights. I've configured App Insights to discard such requests.
+To keep Function Apps on a consumption plan alive and limit the number of cold starts, developers tend to use Application Insights [URL ping test][url-ping-test]. This results in many requests being recorded in Application Insights.
 
 `HEAD` is more commonly used than `GET` for ping tests but it's easier to issue a `GET` with a web browser.
+
+Navigate to `http://localhost:7073/health` (Default `v4`) in your favourite browser.
+
+The Health request is recorded in Application Insights.
+
+Navigate to `http://localhost:7074/health` (Custom `v4`) in your favourite browser.
+
+The Health request is discarded by the `HealthRequestFilter` which is configured by `WithHealthRequestFilter`.
 
 ### HttpExceptionThrowingFunction
 

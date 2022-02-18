@@ -308,6 +308,35 @@ Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 Note that the processor is also called for request telemetry items.
 
+### ServiceBusFunction
+
+You can send a message to the `defaultv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus` (Default `v4`) in your favourite browser.
+
+The Default Function does not have a _Request URL_ or a _Response code_:
+
+![Service Bus binding: no request URL and no response code for the Default App](docs/img/service-bus-binding-no-request-url-no-response-code-default.png)
+
+Four telemetry items are recorded for the Default Function execution:
+
+- The request itself
+- The _Executing ..._ and _Executed ..._ traces
+- The _Trigger Details..._ trace
+
+![Service Bus binding: default telemetry](docs/img/service-bus-binding-default.png)
+
+You can send a message to the `customv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus` (Custom `v4`) in your favourite browser.
+
+The Custom Function has both the _Request URL_ and _Response code_ set:
+
+![Service Bus binding: request URL and response code are set for the Custom App](docs/img/service-bus-binding-request-url-and-response-code-custom.png)
+
+Only the request is recorded for the Custom Function execution:
+
+- The _Executing ..._ and _Executed ..._ traces have been discarded by the `FunctionExecutionTracesFilter`
+- The _Trigger Details..._ trace has been discarded by the `ServiceBusTriggerFilter`
+
+![Service Bus binding: custom telemetry](docs/img/service-bus-binding-custom.png)
+
 ### ServiceBusExceptionThrowingFunction
 
 You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus-exception` (Default `v4`) in your favourite browser.

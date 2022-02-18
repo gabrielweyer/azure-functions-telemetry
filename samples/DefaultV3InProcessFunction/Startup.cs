@@ -1,7 +1,6 @@
 using DefaultV3InProcessFunction;
 using DefaultV3InProcessFunction.Functions.UserSecret;
 using DefaultV3InProcessFunction.Infrastructure.Telemetry;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,10 +10,6 @@ namespace DefaultV3InProcessFunction
 {
     public class Startup : FunctionsStartup
     {
-        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
-        {
-        }
-
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services.AddOptions<SecretOptions>()
@@ -22,15 +17,6 @@ namespace DefaultV3InProcessFunction
                 {
                     configuration.GetSection("Secret").Bind(settings);
                 });
-
-            var applicationDescriptor = new ApplicationDescriptor
-            {
-                Name = "defaultv3inprocess",
-                Version = "local"
-            };
-
-            builder.Services.AddSingleton(applicationDescriptor);
-            builder.Services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
 
             builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
         }

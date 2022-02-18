@@ -338,6 +338,18 @@ Navigate to `http://localhost:7073/secret` (Default `v4`) / `http://localhost:70
 
 Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
 
+### Application Version and Cloud Role Name
+
+Another point to note is that by default the _Application Version_ is not set and the _Cloud Role Name_ will be the Function App Azure resource name:
+
+![Default Cloud Role Name and Application Version](docs/img/cloud-role-name-application-version-default.png)
+
+You can add a telemetry initializer to set the Application Version and Cloud Role Name.
+
+For the custom Function, each telemetry will be stamped with the Assembly Informational Version and the configured application name:
+
+![Custom Cloud Role Name and Application Version](docs/img/cloud-role-name-application-version-custom.png)
+
 ### Discarding SystemTraceMiddleware logs
 
 The `SystemTraceMiddleware` emits two log events per HTTP Function execution when running locally:

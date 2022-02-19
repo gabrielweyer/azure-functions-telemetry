@@ -1,0 +1,25 @@
+name: Build
+on:
+  push:
+    paths-ignore:
+      - '.vscode/**'
+      - 'deploy/**'
+      - 'docs/**'
+      - deploy.ps1
+      - LICENSE
+      - README.md
+env:
+  BUILD_CONFIGURATION: Release
+jobs:
+  Build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore NuGet packages
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration ${BUILD_CONFIGURATION} --no-restore
+      - name: Test
+        run: dotnet test --configuration ${BUILD_CONFIGURATION} --no-build

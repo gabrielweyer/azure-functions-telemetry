@@ -33,7 +33,7 @@ You need:
 Select the subscription you want to deploy to before running this script.
 
 .LINK
-https://github.com/gabrielweyer/azure-functions-limitations/blob/main/README.md
+https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/README.md
 
 #>
 

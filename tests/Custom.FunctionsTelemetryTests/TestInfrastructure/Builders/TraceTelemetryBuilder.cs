@@ -68,7 +68,8 @@ public class TraceTelemetryBuilder
     public static TraceTelemetry AsServiceBusTrigger()
     {
         var traceTelemetry = new TraceTelemetryBuilder(null).Build();
-        traceTelemetry.Properties["prop__{OriginalFormat}"] = "Trigger Details: MessageId: {MessageId}, SequenceNumber: {SequenceNumber}, DeliveryCount: {DeliveryCount}, EnqueuedTimeUtc: {EnqueuedTimeUtc}, LockedUntilUtc: {LockedUntilUtc}, SessionId: {SessionId}";
+        traceTelemetry.Properties["prop__{OriginalFormat}"] =
+            "Trigger Details: MessageId: {MessageId}, SequenceNumber: {SequenceNumber}, DeliveryCount: {DeliveryCount}, EnqueuedTimeUtc: {EnqueuedTimeUtc}, LockedUntilUtc: {LockedUntilUtc}, SessionId: {SessionId}";
         return traceTelemetry;
     }
 

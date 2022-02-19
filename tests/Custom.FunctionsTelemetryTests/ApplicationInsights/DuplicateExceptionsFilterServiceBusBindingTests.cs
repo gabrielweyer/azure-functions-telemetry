@@ -16,7 +16,7 @@ public class DuplicateExceptionsFilterServiceBusBindingTests
     {
         _innerProcessor = new MockTelemetryProcessor();
 
-        _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string> {"QueueFunction"});
+        _target = new DuplicateExceptionsFilter(_innerProcessor, new List<string> { "QueueFunction" });
     }
 
     [Fact]

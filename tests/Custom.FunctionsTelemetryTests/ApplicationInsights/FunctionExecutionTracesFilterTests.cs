@@ -65,7 +65,8 @@ public class FunctionExecutionTracesFilterTests
         // Arrange
         var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.ServiceBusListener)
             .WithSeverityLevel(SeverityLevel.Error)
-            .WithMessage("Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
+            .WithMessage(
+                "Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
             .Build();
 
         // Act

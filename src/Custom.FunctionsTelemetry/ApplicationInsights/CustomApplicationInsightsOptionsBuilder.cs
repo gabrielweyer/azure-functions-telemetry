@@ -7,7 +7,6 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
     {
         private readonly string _applicationName;
         private readonly Type _typeFromEntryAssembly;
-        private bool _hasServiceBusRequestInitializer;
         private bool _hasServiceBusTriggerFilter;
         private List<string> _serviceBusTriggeredFunctionNames;
         private string _healthCheckFunctionName;
@@ -22,24 +21,9 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         {
             _applicationName = applicationName;
             _typeFromEntryAssembly = typeFromEntryAssembly;
-            _hasServiceBusRequestInitializer = false;
             _hasServiceBusTriggerFilter = false;
             _serviceBusTriggeredFunctionNames = new List<string>();
             _healthCheckFunctionName = null;
-        }
-
-        /// <summary>
-        /// The <see cref="ServiceBusRequestInitializer"/> sets the response code and url on Function Apps "requests"
-        /// that were triggered by a Service Bus binding.
-        ///
-        /// These two values are left blank in the default implementation.
-        /// </summary>
-        /// <returns></returns>
-        public CustomApplicationInsightsOptionsBuilder WithServiceBusRequestInitializer()
-        {
-            _hasServiceBusRequestInitializer = true;
-
-            return this;
         }
 
         /// <summary>
@@ -64,6 +48,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
         /// </summary>
         /// <param name="functionNames"></param>
         /// <returns></returns>
+        [Obsolete("The library now attempts to determine the Service Bus triggered Functions. This remains available as an escape hatch to allow you to override the list of Functions if you're not satisfied with the result. Ultimately this setting will be removed.")]
         public CustomApplicationInsightsOptionsBuilder DiscardServiceBusDuplicateExceptions(List<string> functionNames)
         {
             _serviceBusTriggeredFunctionNames = functionNames;
@@ -89,9 +74,10 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
             {
                 ApplicationName = _applicationName,
                 TypeFromEntryAssembly = _typeFromEntryAssembly,
-                HasServiceBusRequestInitializer = _hasServiceBusRequestInitializer,
                 HasServiceBusTriggerFilter = _hasServiceBusTriggerFilter,
+#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
                 ServiceBusTriggeredFunctionNames = _serviceBusTriggeredFunctionNames,
+#pragma warning restore CS0618
                 HealthCheckFunctionName = _healthCheckFunctionName,
             };
     }

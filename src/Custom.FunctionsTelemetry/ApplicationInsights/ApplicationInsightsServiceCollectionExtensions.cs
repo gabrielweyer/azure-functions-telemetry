@@ -30,7 +30,17 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
             services.AddSingleton(applicationDescriptor);
             services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
 
-            if (options.HasServiceBusRequestInitializer)
+#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
+            var serviceBusTriggeredFunctionName = options.ServiceBusTriggeredFunctionNames;
+#pragma warning restore CS0618
+
+            if (!serviceBusTriggeredFunctionName.Any())
+            {
+                serviceBusTriggeredFunctionName = FunctionsFinder
+                    .GetServiceBusTriggeredFunctionNames(options.TypeFromEntryAssembly);
+            }
+
+            if (serviceBusTriggeredFunctionName.Any())
             {
                 services.AddSingleton<ITelemetryInitializer, ServiceBusRequestInitializer>();
             }
@@ -51,6 +61,8 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
                 {
                     if (implFactory.Invoke(serviceProvider) is TelemetryConfiguration telemetryConfiguration)
                     {
+
+
                         var newConfig = new TelemetryConfiguration(telemetryConfiguration.InstrumentationKey, telemetryConfiguration.TelemetryChannel)
                         {
                             ApplicationIdProvider = telemetryConfiguration.ApplicationIdProvider
@@ -126,7 +138,7 @@ namespace Custom.FunctionsTelemetry.ApplicationInsights
 
                                 var duplicateExceptionFilter = new DuplicateExceptionsFilter(
                                     quickPulseTelemetryProcessor,
-                                    options.ServiceBusTriggeredFunctionNames);
+                                    serviceBusTriggeredFunctionName);
                                 customProcessors.Insert(0, duplicateExceptionFilter);
                                 var functionExecutionTracesFilter = new FunctionExecutionTracesFilter(
                                     customProcessors.First());

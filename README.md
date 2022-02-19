@@ -49,17 +49,9 @@ builder.Services
 The snippet above is catered for a Function App containing only HTTP bindings. When your Function contains only Service Bus bindings, you’ll want to use the below snippet:
 
 ```csharp
-var serviceBusTriggeredFunctionNames = new List<string>
-{
-    "FunctionOneName",
-    "FunctionTwoName"
-};
-
 var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
         "{ApplicationName}",
         {TypeFromEntryAssembly})
-    .WithServiceBusRequestInitializer()
-    .DiscardServiceBusDuplicateExceptions(serviceBusTriggeredFunctionNames)
     .WithServiceBusTriggerFilter()
     .Build();
 
@@ -67,8 +59,6 @@ builder.Services
     .AddCustomApplicationInsights(appInsightsOptions)
     .AddCustomConsoleLogging();
 ```
-
-:memo: Having to specify the name of the Functions is not great and something that will hopefully be improved later on.
 
 I also support Function Apps containing both HTTP and Service Bus bindings. You can mix and match the snippets above.
 
@@ -80,7 +70,7 @@ This is implemented by [FunctionExecutionTracesFilter][function-execution-traces
 
 ### Discarding duplicate exceptions
 
-This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter]. In order to discard the additional Service Bus binding duplicate exception, you’ll need to call `DiscardServiceBusDuplicateExceptions` and provide the Functions names. Hopefully this is something that will be improved later on.
+This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter].
 
 ### Discarding health requests
 
@@ -93,7 +83,7 @@ The _request name_ and _status code_ are not being set on the service bus trigge
 - Request name: I use the Function name
 - Status code: `200` in case of success, `500` in case of failure
 
-You need to enable the `ServiceBusRequestInitializer` by calling `WithServiceBusRequestInitializer`.
+The `ServiceBusRequestInitializer` is always enabled.
 
 ### Discarding Service Bus trigger traces
 
@@ -133,10 +123,6 @@ builder.Services.AddApplicationInsightsTelemetryProcessor<YourTelemetryProcessor
 ```
 
 You can add as many telemetry processors as you want.
-
-## Missing features and potential improvements
-
-I would like to detect at runtime if there are any Service Bus bindings and configure the integration accordingly. This would make `WithServiceBusRequestInitializer` and `DiscardServiceBusDuplicateExceptions` obsolete. This will be implemented if I'm not too lazy.
 
 ## Demo
 

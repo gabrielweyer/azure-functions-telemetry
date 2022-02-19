@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Custom.FunctionsTelemetry.ApplicationInsights;
 using Custom.FunctionsTelemetry.Logging;
 using CustomV4InProcessFunction;
@@ -16,12 +15,6 @@ public class Startup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
-        var serviceBusTriggeredFunctionNames = new List<string>
-        {
-            "ServiceBusFunction",
-            "ServiceBusExceptionThrowingFunction"
-        };
-
         builder.Services.AddOptions<SecretOptions>()
             .Configure<IConfiguration>((settings, configuration) =>
             {
@@ -32,8 +25,6 @@ public class Startup : FunctionsStartup
                 "customv4inprocess",
                 typeof(Startup))
             .WithHealthRequestFilter("HealthFunction")
-            .WithServiceBusRequestInitializer()
-            .DiscardServiceBusDuplicateExceptions(serviceBusTriggeredFunctionNames)
             .WithServiceBusTriggerFilter()
             .Build();
 

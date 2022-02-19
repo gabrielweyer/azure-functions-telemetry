@@ -13,6 +13,6 @@ public static class ProcessorFunction
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
         HttpRequest request)
     {
-        return new OkObjectResult(new { SomeSortOfFilter.InvocationCount });
+        return new OkObjectResult(new { TelemetryCounterProcessor.InvocationCount });
     }
 }

@@ -18,6 +18,6 @@ public class Startup : FunctionsStartup
                 configuration.GetSection("Secret").Bind(settings);
             });
 
-        builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
+        builder.Services.AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>();
     }
 }

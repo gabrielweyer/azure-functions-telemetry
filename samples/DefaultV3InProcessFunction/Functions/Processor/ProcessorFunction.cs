@@ -13,7 +13,7 @@ namespace DefaultV3InProcessFunction.Functions.Processor
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
             HttpRequest request)
         {
-            return new OkObjectResult(new { SomeSortOfFilter.InvocationCount });
+            return new OkObjectResult(new { TelemetryCounterProcessor.InvocationCount });
         }
     }
 }

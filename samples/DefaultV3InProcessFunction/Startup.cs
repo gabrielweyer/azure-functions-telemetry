@@ -18,7 +18,7 @@ namespace DefaultV3InProcessFunction
                     configuration.GetSection("Secret").Bind(settings);
                 });
 
-            builder.Services.AddApplicationInsightsTelemetryProcessor<SomeSortOfFilter>();
+            builder.Services.AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>();
         }
     }
 }

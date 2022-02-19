@@ -9,7 +9,7 @@ The Application Insights integration for Azure Functions `v3` and `v4` suffers f
 
 The next issue has no impact on the cost of Application Insights but rather is related to the development experience. `TelemetryConfiguration` is not registered in the Inversion Of Control container when the Application Insights connection string is not set. Emitting a custom metric requires to inject the `TelemetryConfiguration`. Running locally without having configured the Application Insights connection string will then result in an exception.
 
-The last issue is not related to Application Insights but also negatively impact developers' productivity. The custom Console logger provider used by the Azure Functions runtime does not include the stack trace when displaying an exception.
+The last issue is not related to Application Insights but also negatively impact developers' productivity. The custom Console logger provider used by the Azure Functions runtime does not include the stack trace when displaying an exception (for the HTTP binding at least).
 
 If you’re not familiar with some of the more advanced features of Application Insights, I suggest you go through the below references before reading the rest of this document:
 
@@ -191,6 +191,8 @@ The Function Apps run on fixed ports locally so that you can run all four Functi
 - Custom `v3`: `7072`
 - Custom `v4`: `7074`
 
+You can call the different endpoints using a [Postman collection][postman-collection].
+
 ### AvailabilityFunction
 
 Navigate to `http://localhost:7074/availability` (Custom `v4`) in your favourite browser.
@@ -272,7 +274,7 @@ The Health request is discarded by the `HealthRequestFilter` which is configured
 
 ### HttpExceptionThrowingFunction
 
-Navigate to `http://localhost:7073/exception` (Default `v4`) in your favourite browser.
+Navigate to `http://localhost:7073/http-exception` (Default `v4`) in your favourite browser.
 
 Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
 
@@ -282,7 +284,7 @@ This also demonstrates that the same exception appears twice in Application Insi
 
 ![The same exception is logged twice for the HTTP binding](docs/img/http-binding-exception-logged-twice.png)
 
-Navigate to `http://localhost:7074/exception` (Custom `v4`) in your favourite browser.
+Navigate to `http://localhost:7074/http-exception` (Custom `v4`) in your favourite browser.
 
 Demonstrates that the stack trace is present in the console logs when an exception is thrown.
 
@@ -306,7 +308,7 @@ Demonstrates that our `TelemetryCounter` telemetry processor is being called:
 
 ![Our telemetry processor is even being called for requests](docs/img/telemetry-counter-is-being-called.png)
 
-Note that the processor is also called for request telemetry items.
+Note that the processor is also called for request telemetry items. When running in Azure you might get different results on each request as you might be hitting different instances.
 
 ### ServiceBusFunction
 
@@ -446,3 +448,4 @@ One of the side-effect of the approach I'm using is that the Azure Functions run
 [service-bus-request-initializer]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusRequestInitializer.cs
 [service-bus-trigger-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusTriggerFilter.cs
 [telemetry-processor-support-github-issue]: https://github.com/Azure/azure-functions-host/issues/3741
+[postman-collection]: docs/postman/FunctionsTelemetry.postman_collection.json

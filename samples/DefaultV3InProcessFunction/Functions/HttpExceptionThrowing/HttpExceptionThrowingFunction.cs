@@ -10,7 +10,7 @@ namespace DefaultV3InProcessFunction.Functions.HttpExceptionThrowing
     {
         [FunctionName(nameof(HttpExceptionThrowingFunction))]
         public static IActionResult RunGetException(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "exception")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "http-exception")]
             HttpRequest request)
         {
             throw new InvalidOperationException("The only goal of this function is to throw an Exception.");

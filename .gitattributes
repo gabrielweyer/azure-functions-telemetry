@@ -1,1 +1,3 @@
+docs/postman/*.json eol=lf
+
 *.ps1 linguist-vendored

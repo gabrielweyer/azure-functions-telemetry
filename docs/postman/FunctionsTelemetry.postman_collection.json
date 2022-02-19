@@ -1,0 +1,396 @@
+{
+	"info": {
+		"_postman_id": "2277e7ab-41be-4923-bb65-696b080be2db",
+		"name": "Functions Telemetry",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Default",
+			"item": [
+				{
+					"name": "Custom Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/event",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dependency",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/dependency",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"dependency"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/health",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HTTP Exception",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/http-exception",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"http-exception"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Processor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/processor",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"processor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Bus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/service-bus",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"service-bus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Bus Exception",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/service-bus-exception",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"service-bus-exception"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trace Log",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/trace-log",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"trace-log"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Secret",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{DefaultFunctionBaseUri}}/secret",
+							"host": [
+								"{{DefaultFunctionBaseUri}}"
+							],
+							"path": [
+								"secret"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Custom",
+			"item": [
+				{
+					"name": "Availability",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/availability",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"availability"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Custom Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/event",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Dependency",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/dependency",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"dependency"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/health",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "HTTP Exception",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/http-exception",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"http-exception"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initializer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/initializer",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"initializer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Instance Initializer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/instance-initializer",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"instance-initializer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Processor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/processor",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"processor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Bus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/service-bus",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"service-bus"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service Bus Exception",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/service-bus-exception",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"service-bus-exception"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Trace Log",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/trace-log",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"trace-log"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Secret",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CustomFunctionBaseUri}}/secret",
+							"host": [
+								"{{CustomFunctionBaseUri}}"
+							],
+							"path": [
+								"secret"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

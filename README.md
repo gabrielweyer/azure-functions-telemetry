@@ -426,7 +426,7 @@ One of the side-effect of the approach I'm using is that the Azure Functions run
 [azure-powershell]: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.1.0
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
-[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/4f5f212a5c5e3ce067d23eb564ba24655999f918/src/Custom.FunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L212-L216
+[default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/81a44091df4263442bb0e205a3942cfa5bfedb70/src/AzureFunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L231-L235
 [url-ping-test]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/availability-overview
 [anthony-chu-suppress-logs]: https://github.com/anthonychu/functions-log-suppression#readme
 [telemetry-processors]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#filtering

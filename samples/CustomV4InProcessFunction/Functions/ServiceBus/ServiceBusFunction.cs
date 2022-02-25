@@ -1,6 +1,6 @@
 using Microsoft.Azure.WebJobs;
 
-namespace CustomV4InProcessFunction.Functions.ServiceBus;
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Functions.ServiceBus;
 
 public static class ServiceBusFunction
 {

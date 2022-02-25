@@ -2,7 +2,7 @@ using System.Threading;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace DefaultV4InProcessFunction.Infrastructure.Telemetry;
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Infrastructure.Telemetry;
 
 public class TelemetryCounterProcessor : ITelemetryProcessor
 {

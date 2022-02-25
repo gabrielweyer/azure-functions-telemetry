@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomV3InProcessFunction",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{307699FB-B6E0-4326-8D53-2872E0CE737D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom.FunctionsTelemetryTests", "tests\Custom.FunctionsTelemetryTests\Custom.FunctionsTelemetryTests.csproj", "{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionsTelemetryTests", "tests\AzureFunctionsTelemetryTests\AzureFunctionsTelemetryTests.csproj", "{55E4560C-DFD9-41CD-88DF-7E8427DFCA35}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E7564337-E755-4355-A470-33731471CE2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Custom.FunctionsTelemetry", "src\Custom.FunctionsTelemetry\Custom.FunctionsTelemetry.csproj", "{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionsTelemetry", "src\AzureFunctionsTelemetry\AzureFunctionsTelemetry.csproj", "{B82D9052-8BC8-4EF7-9F15-7C6D362504FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultV4InProcessFunction", "samples\DefaultV4InProcessFunction\DefaultV4InProcessFunction.csproj", "{E46EC551-91A7-40F4-A19C-905C67E9DDA9}"
 EndProject

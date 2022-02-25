@@ -1,15 +1,15 @@
-using Custom.FunctionsTelemetry.ApplicationInsights;
-using Custom.FunctionsTelemetry.Logging;
-using CustomV3InProcessFunction;
-using CustomV3InProcessFunction.Functions.UserSecret;
-using CustomV3InProcessFunction.Infrastructure.Telemetry;
+using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
+using Gabo.AzureFunctionsTelemetry.Logging;
+using Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction;
+using Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.UserSecret;
+using Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace CustomV3InProcessFunction
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction
 {
     public class Startup : FunctionsStartup
     {

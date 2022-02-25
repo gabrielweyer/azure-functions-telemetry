@@ -3,7 +3,7 @@ using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace CustomV3InProcessFunction.Infrastructure.Telemetry
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastructure.Telemetry
 {
     /// <summary>
     /// <para>Even though this telemetry initializer enriches the telemetry, the main goal is to demonstrate that you need to be

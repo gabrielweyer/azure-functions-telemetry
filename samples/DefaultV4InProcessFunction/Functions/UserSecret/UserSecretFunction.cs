@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Options;
 
-namespace DefaultV4InProcessFunction.Functions.UserSecret;
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Functions.UserSecret;
 
 public class UserSecretFunction
 {

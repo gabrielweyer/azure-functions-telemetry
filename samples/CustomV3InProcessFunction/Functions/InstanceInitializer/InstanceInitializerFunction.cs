@@ -1,12 +1,12 @@
 using System.Linq;
-using CustomV3InProcessFunction.Infrastructure.Telemetry;
+using Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace CustomV3InProcessFunction.Functions.InstanceInitializer
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.InstanceInitializer
 {
     public class InstanceInitializerFunction
     {

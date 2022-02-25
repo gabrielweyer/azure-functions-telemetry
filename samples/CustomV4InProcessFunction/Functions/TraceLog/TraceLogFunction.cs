@@ -4,7 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CustomV4InProcessFunction.Functions.TraceLog;
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Functions.TraceLog;
 
 public class TraceLogFunction
 {

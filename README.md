@@ -24,7 +24,7 @@ In this repository I've attempted to address all the quirks listed above.
 
 The customisation supports both `v3` and `v4` runtime.
 
-Copy the `src/Custom.FunctionsTelemetry` project into your solution and reference it from your Function App(s). You can get the latest version by copying the updated files over yours.
+Copy the `src/AzureFunctionsTelemetry` project into your solution and reference it from your Function App(s). You can get the latest version by copying the updated files over yours.
 
 :memo: I haven’t packaged the library into a `NuGet` package yet as the customisation is only used in a few Functions so far. Create an issue if you would like to consume a `NuGet` package.
 
@@ -432,10 +432,10 @@ One of the side-effect of the approach I'm using is that the Azure Functions run
 [telemetry-processors]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#filtering
 [telemetry-initializers]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#addmodify-properties-itelemetryinitializer
 [assembly-informational-version]: https://docs.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
-[function-execution-traces-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/FunctionExecutionTracesFilter.cs
-[duplicate-exceptions-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/DuplicateExceptionsFilter.cs
-[health-request-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/HealthRequestFilter.cs
-[service-bus-request-initializer]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusRequestInitializer.cs
-[service-bus-trigger-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/Custom.FunctionsTelemetry/ApplicationInsights/ServiceBusTriggerFilter.cs
+[function-execution-traces-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/FunctionExecutionTracesFilter.cs
+[duplicate-exceptions-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/DuplicateExceptionsFilter.cs
+[health-request-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/HealthRequestFilter.cs
+[service-bus-request-initializer]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/ServiceBusRequestInitializer.cs
+[service-bus-trigger-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/ServiceBusTriggerFilter.cs
 [telemetry-processor-support-github-issue]: https://github.com/Azure/azure-functions-host/issues/3741
 [postman-collection]: docs/postman/FunctionsTelemetry.postman_collection.json

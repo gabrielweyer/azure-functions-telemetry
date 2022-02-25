@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DefaultV4InProcessFunction.Functions.Dependency
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Functions.Dependency
 {
     public class DependencyFunction
     {

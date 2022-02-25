@@ -1,12 +1,12 @@
-using DefaultV3InProcessFunction;
-using DefaultV3InProcessFunction.Functions.UserSecret;
-using DefaultV3InProcessFunction.Infrastructure.Telemetry;
+using Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction;
+using Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Functions.UserSecret;
+using Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace DefaultV3InProcessFunction
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction
 {
     public class Startup : FunctionsStartup
     {

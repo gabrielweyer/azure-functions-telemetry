@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <RootNamespace>Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction</RootNamespace>
+    <AssemblyName>Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <InformationalVersion>3.0.0.0</InformationalVersion>
@@ -24,6 +26,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Custom.FunctionsTelemetry\Custom.FunctionsTelemetry.csproj" />
+    <ProjectReference Include="..\..\src\AzureFunctionsTelemetry\AzureFunctionsTelemetry.csproj" />
   </ItemGroup>
 </Project>

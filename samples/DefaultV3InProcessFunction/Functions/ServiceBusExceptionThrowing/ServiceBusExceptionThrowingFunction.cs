@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Azure.WebJobs;
 
-namespace DefaultV3InProcessFunction.Functions.ServiceBusExceptionThrowing
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Functions.ServiceBusExceptionThrowing
 {
     public static class ServiceBusExceptionThrowingFunction
     {

@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Azure.WebJobs;
 
 namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Functions.ServiceBusExceptionThrowing;

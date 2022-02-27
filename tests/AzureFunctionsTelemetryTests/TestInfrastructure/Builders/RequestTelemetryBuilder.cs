@@ -1,4 +1,3 @@
-using System;
 using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;

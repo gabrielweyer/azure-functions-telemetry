@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using FluentAssertions;
 using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 using Microsoft.AspNetCore.Http;

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
 {
     public class CustomApplicationInsightsOptionsBuilder

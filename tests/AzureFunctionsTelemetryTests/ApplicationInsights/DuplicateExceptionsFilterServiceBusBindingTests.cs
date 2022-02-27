@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;
 using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Mocks;

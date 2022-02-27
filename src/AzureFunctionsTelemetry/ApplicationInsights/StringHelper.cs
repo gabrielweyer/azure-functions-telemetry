@@ -1,5 +1,3 @@
-using System;
-
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
 {
     internal static class StringHelper

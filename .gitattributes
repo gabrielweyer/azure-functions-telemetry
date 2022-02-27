@@ -1,3 +1,5 @@
 docs/postman/*.json eol=lf
 
+*.DotSettings eol=lf
+
 *.ps1 linguist-vendored

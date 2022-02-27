@@ -1,42 +1,41 @@
-namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
+namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
+
+internal class FunctionExecutionTracesFilter : ITelemetryProcessor
 {
-    internal class FunctionExecutionTracesFilter : ITelemetryProcessor
+    private readonly ITelemetryProcessor _next;
+
+    public FunctionExecutionTracesFilter(ITelemetryProcessor next)
     {
-        private readonly ITelemetryProcessor _next;
+        _next = next;
+    }
 
-        public FunctionExecutionTracesFilter(ITelemetryProcessor next)
+    public void Process(ITelemetry item)
+    {
+        if (item is TraceTelemetry trace)
         {
-            _next = next;
-        }
-
-        public void Process(ITelemetry item)
-        {
-            if (item is TraceTelemetry trace)
+            if (TelemetryHelper.IsFunctionStartedTelemetry(trace))
             {
-                if (TelemetryHelper.IsFunctionStartedTelemetry(trace))
-                {
-                    return;
-                }
-
-                if (TelemetryHelper.IsFunctionCompletedTelemetry(trace))
-                {
-                    return;
-                }
-
-                if (IsServiceBusBindingMessageErrorProcessingTrace(trace))
-                {
-                    return;
-                }
+                return;
             }
 
-            _next.Process(item);
+            if (TelemetryHelper.IsFunctionCompletedTelemetry(trace))
+            {
+                return;
+            }
+
+            if (IsServiceBusBindingMessageErrorProcessingTrace(trace))
+            {
+                return;
+            }
         }
 
-        private static bool IsServiceBusBindingMessageErrorProcessingTrace(TraceTelemetry trace) =>
-            trace.SeverityLevel == SeverityLevel.Error &&
-            TelemetryHelper.TryGetCategory(trace, out var category) &&
-            StringHelper.IsSame(FunctionRuntimeCategory.ServiceBusListener, category) &&
-            !string.IsNullOrEmpty(trace.Message) &&
-            trace.Message.StartsWith("Message processing error", StringComparison.OrdinalIgnoreCase);
+        _next.Process(item);
     }
+
+    private static bool IsServiceBusBindingMessageErrorProcessingTrace(TraceTelemetry trace) =>
+        trace.SeverityLevel == SeverityLevel.Error &&
+        TelemetryHelper.TryGetCategory(trace, out var category) &&
+        StringHelper.IsSame(FunctionRuntimeCategory.ServiceBusListener, category) &&
+        !string.IsNullOrEmpty(trace.Message) &&
+        trace.Message.StartsWith("Message processing error", StringComparison.OrdinalIgnoreCase);
 }

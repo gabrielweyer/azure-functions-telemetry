@@ -1,14 +1,13 @@
-namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
-{
-    internal class ApplicationDescriptor
-    {
-        public ApplicationDescriptor(string name, string version)
-        {
-            Name = name;
-            Version = version;
-        }
+namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
-        public string Name { get; }
-        public string Version { get; }
+internal class ApplicationDescriptor
+{
+    public ApplicationDescriptor(string name, string version)
+    {
+        Name = name;
+        Version = version;
     }
+
+    public string Name { get; }
+    public string Version { get; }
 }

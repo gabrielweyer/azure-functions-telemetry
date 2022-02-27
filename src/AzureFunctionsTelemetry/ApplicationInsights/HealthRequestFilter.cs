@@ -1,26 +1,25 @@
-namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
+namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
+
+public class HealthRequestFilter : ITelemetryProcessor
 {
-    public class HealthRequestFilter : ITelemetryProcessor
+    private readonly ITelemetryProcessor _next;
+    private readonly string _healthCheckFunctionName;
+
+    public HealthRequestFilter(ITelemetryProcessor next, string healthCheckFunctionName)
     {
-        private readonly ITelemetryProcessor _next;
-        private readonly string _healthCheckFunctionName;
+        _next = next;
+        _healthCheckFunctionName = healthCheckFunctionName;
+    }
 
-        public HealthRequestFilter(ITelemetryProcessor next, string healthCheckFunctionName)
+    public void Process(ITelemetry item)
+    {
+        if (item is RequestTelemetry request &&
+            request.ResponseCode == "200" &&
+            StringHelper.IsSame(_healthCheckFunctionName, request.Name))
         {
-            _next = next;
-            _healthCheckFunctionName = healthCheckFunctionName;
+            return;
         }
 
-        public void Process(ITelemetry item)
-        {
-            if (item is RequestTelemetry request &&
-                request.ResponseCode == "200" &&
-                StringHelper.IsSame(_healthCheckFunctionName, request.Name))
-            {
-                return;
-            }
-
-            _next.Process(item);
-        }
+        _next.Process(item);
     }
 }

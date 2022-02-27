@@ -1,18 +1,17 @@
-namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
+namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
+
+internal class ApplicationInitializer : ITelemetryInitializer
 {
-    internal class ApplicationInitializer : ITelemetryInitializer
+    private readonly ApplicationDescriptor _applicationDescriptor;
+
+    public ApplicationInitializer(ApplicationDescriptor applicationDescriptor)
     {
-        private readonly ApplicationDescriptor _applicationDescriptor;
+        _applicationDescriptor = applicationDescriptor;
+    }
 
-        public ApplicationInitializer(ApplicationDescriptor applicationDescriptor)
-        {
-            _applicationDescriptor = applicationDescriptor;
-        }
-
-        public void Initialize(ITelemetry telemetry)
-        {
-            telemetry.Context.Cloud.RoleName = _applicationDescriptor.Name;
-            telemetry.Context.Component.Version = _applicationDescriptor.Version;
-        }
+    public void Initialize(ITelemetry telemetry)
+    {
+        telemetry.Context.Cloud.RoleName = _applicationDescriptor.Name;
+        telemetry.Context.Component.Version = _applicationDescriptor.Version;
     }
 }

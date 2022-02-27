@@ -1,7 +1,6 @@
-namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights
+namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
+
+internal static class StringHelper
 {
-    internal static class StringHelper
-    {
-        public static bool IsSame(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
-    }
+    public static bool IsSame(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 }

@@ -1,9 +1,4 @@
-using Gabo.AzureFunctionsTelemetry;
-using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
-using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;
-using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Mocks;
 using Microsoft.ApplicationInsights.DataContracts;
-using Xunit;
 
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 

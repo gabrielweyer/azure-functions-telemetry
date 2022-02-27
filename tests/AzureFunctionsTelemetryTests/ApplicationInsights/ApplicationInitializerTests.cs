@@ -1,7 +1,3 @@
-using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
-using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;
-using Xunit;
-
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
 public class ApplicationInitializerTests

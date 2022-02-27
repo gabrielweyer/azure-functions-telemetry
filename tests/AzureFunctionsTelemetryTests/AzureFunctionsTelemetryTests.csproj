@@ -10,6 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Using Include="Gabo.AzureFunctionsTelemetry" />
+    <Using Include="Gabo.AzureFunctionsTelemetry.ApplicationInsights" />
+    <Using Include="Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders" />
+    <Using Include="Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Mocks" />
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.4.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.13" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />

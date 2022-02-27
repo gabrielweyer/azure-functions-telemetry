@@ -1,9 +1,3 @@
-using Gabo.AzureFunctionsTelemetry;
-using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
-using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;
-using Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Mocks;
-using Xunit;
-
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
 public class DuplicateExceptionsFilterHttpBindingTests

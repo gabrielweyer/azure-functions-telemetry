@@ -1,4 +1,3 @@
-using Gabo.AzureFunctionsTelemetry;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.Azure.WebJobs.Logging;
 

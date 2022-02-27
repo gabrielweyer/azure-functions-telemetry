@@ -1,10 +1,7 @@
-using FluentAssertions;
-using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Xunit;
 
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 

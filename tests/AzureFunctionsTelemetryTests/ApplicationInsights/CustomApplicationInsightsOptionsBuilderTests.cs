@@ -1,7 +1,3 @@
-using FluentAssertions;
-using Gabo.AzureFunctionsTelemetry.ApplicationInsights;
-using Xunit;
-
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
 public class CustomApplicationInsightsOptionsBuilderTests

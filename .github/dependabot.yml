@@ -5,3 +5,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "saturday"
+    ignore:
+      - dependency-name: "Microsoft.NET.Sdk.Functions"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.DependencyInjection"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.Extensions.Logging.Console"
+        update-types: ["version-update:semver-major"]

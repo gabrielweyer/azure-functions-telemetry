@@ -6,7 +6,6 @@ using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPuls
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-[assembly: InternalsVisibleTo("Gabo.AzureFunctionsTelemetryTests")]
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
 public static class ApplicationInsightsServiceCollectionExtensions

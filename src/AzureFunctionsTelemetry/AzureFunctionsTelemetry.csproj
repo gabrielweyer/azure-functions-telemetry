@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Gabo.AzureFunctionsTelemetryTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Microsoft.ApplicationInsights.Channel" />
     <Using Include="Microsoft.ApplicationInsights.DataContracts" />
     <Using Include="Microsoft.ApplicationInsights.Extensibility" />

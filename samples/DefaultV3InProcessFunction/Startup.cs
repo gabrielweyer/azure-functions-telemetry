@@ -6,19 +6,18 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
-namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction
-{
-    public class Startup : FunctionsStartup
-    {
-        public override void Configure(IFunctionsHostBuilder builder)
-        {
-            builder.Services.AddOptions<SecretOptions>()
-                .Configure<IConfiguration>((settings, configuration) =>
-                {
-                    configuration.GetSection("Secret").Bind(settings);
-                });
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction;
 
-            builder.Services.AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>();
-        }
+public class Startup : FunctionsStartup
+{
+    public override void Configure(IFunctionsHostBuilder builder)
+    {
+        builder.Services.AddOptions<SecretOptions>()
+            .Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration.GetSection("Secret").Bind(settings);
+            });
+
+        builder.Services.AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>();
     }
 }

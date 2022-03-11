@@ -20,6 +20,7 @@ public class InitializerFunction
     [FunctionName(nameof(InitializerFunction))]
     public IActionResult RunGetProcessor(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "initializer")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         return new OkObjectResult(new

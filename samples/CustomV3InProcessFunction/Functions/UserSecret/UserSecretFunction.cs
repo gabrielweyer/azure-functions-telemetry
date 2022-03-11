@@ -4,28 +4,28 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Options;
 
-namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.UserSecret
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.UserSecret;
+
+public class UserSecretFunction
 {
-    public class UserSecretFunction
+    private readonly SecretOptions _options;
+
+    public UserSecretFunction(IOptions<SecretOptions> options)
     {
-        private readonly SecretOptions _options;
-
-        public UserSecretFunction(IOptions<SecretOptions> options)
-        {
-            _options = options.Value;
-        }
-
-        [FunctionName(nameof(UserSecretFunction))]
-        public IActionResult RunGetSecret(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
-            HttpRequest request)
-        {
-            return new OkObjectResult(_options);
-        }
+        _options = options.Value;
     }
 
-    public class SecretOptions
+    [FunctionName(nameof(UserSecretFunction))]
+    public IActionResult RunGetSecret(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
+        HttpRequest request)
     {
-        public string ReallySecretValue { get; set; }
+        return new OkObjectResult(_options);
     }
+}
+
+public class SecretOptions
+{
+    public string ReallySecretValue { get; set; }
 }

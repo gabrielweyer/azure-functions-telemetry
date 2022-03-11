@@ -45,7 +45,7 @@ public class TelemetryCounterInstanceInitializer : ITelemetryInitializer
 
     public void Initialize(ITelemetry telemetry)
     {
-        if(telemetry is ISupportProperties itemProperties &&
+        if (telemetry is ISupportProperties itemProperties &&
            !itemProperties.Properties.ContainsKey(CustomPropertyName))
         {
             itemProperties.Properties[CustomPropertyName] = _customPropertyValue;

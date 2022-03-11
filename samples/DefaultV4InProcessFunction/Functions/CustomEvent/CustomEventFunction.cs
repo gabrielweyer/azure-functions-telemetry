@@ -20,6 +20,7 @@ public class CustomEventFunction
     [FunctionName(nameof(CustomEventFunction))]
     public IActionResult RunGetAppInsightsEvent(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "event")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         var @event = new EventTelemetry

@@ -14,16 +14,16 @@ internal static class FunctionsFinder
         try
         {
             return (from exportedType in typeFromEntryAssembly.Assembly.ExportedTypes
-                from method in exportedType.GetMethods()
-                from parameter in method.GetParameters()
-                let parameterCustomAttributes = parameter.CustomAttributes
-                from parameterCustomAttribute in parameterCustomAttributes
-                where "Microsoft.Azure.WebJobs.ServiceBusTriggerAttribute"
-                    .Equals(parameterCustomAttribute.AttributeType.FullName)
-                from methodCustomAttribute in method.CustomAttributes
-                where "Microsoft.Azure.WebJobs.FunctionNameAttribute"
-                    .Equals(methodCustomAttribute.AttributeType.FullName)
-                select (string)methodCustomAttribute.ConstructorArguments.First().Value).ToList();
+                    from method in exportedType.GetMethods()
+                    from parameter in method.GetParameters()
+                    let parameterCustomAttributes = parameter.CustomAttributes
+                    from parameterCustomAttribute in parameterCustomAttributes
+                    where "Microsoft.Azure.WebJobs.ServiceBusTriggerAttribute"
+                        .Equals(parameterCustomAttribute.AttributeType.FullName)
+                    from methodCustomAttribute in method.CustomAttributes
+                    where "Microsoft.Azure.WebJobs.FunctionNameAttribute"
+                        .Equals(methodCustomAttribute.AttributeType.FullName)
+                    select (string)methodCustomAttribute.ConstructorArguments.First().Value).ToList();
         }
         catch
         {

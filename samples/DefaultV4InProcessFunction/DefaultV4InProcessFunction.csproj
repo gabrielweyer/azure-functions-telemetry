@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
+    <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction</AssemblyName>
@@ -10,6 +11,9 @@
     <FileVersion>2.0.0.0</FileVersion>
     <InformationalVersion>3.0.0.0</InformationalVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.2.0" />

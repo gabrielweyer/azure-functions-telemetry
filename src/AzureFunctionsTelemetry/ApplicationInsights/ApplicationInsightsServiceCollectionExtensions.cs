@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Microsoft.ApplicationInsights.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
 using Microsoft.Extensions.DependencyInjection;
@@ -122,7 +121,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
                             throw new InvalidOperationException("We expect `OperationFilteringTelemetryProcessor` to have a private field named `_next`.");
                         }
 
-                        var quickPulseTelemetryProcessor = (ITelemetryProcessor) operationFilteringProcessorNextField
+                        var quickPulseTelemetryProcessor = (ITelemetryProcessor)operationFilteringProcessorNextField
                             .GetValue(processor);
 
                         /*
@@ -161,7 +160,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
 
                         foreach (var processorFactoryServiceDescriptor in processorFactoryServiceDescriptors)
                         {
-                            var processorFactory = (ITelemetryProcessorFactory) processorFactoryServiceDescriptor
+                            var processorFactory = (ITelemetryProcessorFactory)processorFactoryServiceDescriptor
                                 .ImplementationFactory(serviceProvider);
                             var processorAddedThroughDi = processorFactory.Create(customProcessors.First());
                             customProcessors.Insert(0, processorAddedThroughDi);

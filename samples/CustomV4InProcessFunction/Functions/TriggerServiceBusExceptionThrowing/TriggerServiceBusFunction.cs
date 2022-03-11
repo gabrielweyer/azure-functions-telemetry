@@ -10,6 +10,7 @@ public static class TriggerServiceBusExceptionThrowingFunction
     [FunctionName(nameof(TriggerServiceBusExceptionThrowingFunction))]
     public static IActionResult RunGetTriggerServiceBusException(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus-exception")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request,
         [ServiceBus("customv4inprocess-exception-queue", Connection = "ServiceBusConnection")]
         out string message)

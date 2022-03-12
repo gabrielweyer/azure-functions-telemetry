@@ -20,6 +20,7 @@ public class DependencyFunction
     [FunctionName(nameof(DependencyFunction))]
     public IActionResult RunGetAppInsightsDependency(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "dependency")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         var dependency = new DependencyTelemetry(

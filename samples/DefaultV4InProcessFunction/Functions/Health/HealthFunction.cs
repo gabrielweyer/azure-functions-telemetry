@@ -11,7 +11,7 @@ public static class HealthFunction
     [FunctionName(nameof(HealthFunction))]
     public static IActionResult RunHeadHealth(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "health")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request) =>
         new OkResult();
 }
-

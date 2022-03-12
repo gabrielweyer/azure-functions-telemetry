@@ -46,14 +46,13 @@ public class ApplicationInitializerTests
     public void GivenTraceTelemetry_ThenStampApplicationNameAndVersion()
     {
         // Arrange
-        var requestTelemetry = new TraceTelemetryBuilder("Function.FunctionName")
-            .Build();
+        var traceTelemetry = TraceTelemetryBuilder.AsFunctionStarted();
 
         // Act
-        _target.Initialize(requestTelemetry);
+        _target.Initialize(traceTelemetry);
 
         // Assert
-        Assert.Equal(_applicationDescriptor.Name, requestTelemetry.Context.Cloud.RoleName);
-        Assert.Equal(_applicationDescriptor.Version, requestTelemetry.Context.Component.Version);
+        Assert.Equal(_applicationDescriptor.Name, traceTelemetry.Context.Cloud.RoleName);
+        Assert.Equal(_applicationDescriptor.Version, traceTelemetry.Context.Component.Version);
     }
 }

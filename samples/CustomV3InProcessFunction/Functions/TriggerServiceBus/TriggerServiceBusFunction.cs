@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.TriggerServiceBus
-{
-    public static class TriggerServiceBusFunction
-    {
-        [FunctionName(nameof(TriggerServiceBusFunction))]
-        public static IActionResult RunGetTriggerServiceBus(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus")]
-            HttpRequest request,
-            [ServiceBus("customv3inprocess-queue", Connection = "ServiceBusConnection")]
-            out string message)
-        {
-            message = "{ 'Name': 'SomeName' }";
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.TriggerServiceBus;
 
-            return new OkResult();
-        }
+public static class TriggerServiceBusFunction
+{
+    [FunctionName(nameof(TriggerServiceBusFunction))]
+    public static IActionResult RunGetTriggerServiceBus(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "service-bus")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
+        HttpRequest request,
+        [ServiceBus("customv3inprocess-queue", Connection = "ServiceBusConnection")]
+        out string message)
+    {
+        message = "{ 'Name': 'SomeName' }";
+
+        return new OkResult();
     }
 }

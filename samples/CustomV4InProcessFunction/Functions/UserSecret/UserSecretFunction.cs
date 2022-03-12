@@ -18,6 +18,7 @@ public class UserSecretFunction
     [FunctionName(nameof(UserSecretFunction))]
     public IActionResult RunGetSecret(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "secret")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         return new OkObjectResult(_options);

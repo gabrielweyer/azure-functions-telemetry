@@ -1,4 +1,3 @@
-using System.Linq;
 using Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastructure.Telemetry;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
@@ -6,36 +5,36 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.Processor
+namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Functions.Processor;
+
+public class ProcessorFunction
 {
-    public class ProcessorFunction
+    private readonly TelemetryCounterProcessor _telemetryCounterProcessor;
+
+    public ProcessorFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        private readonly TelemetryCounterProcessor _telemetryCounterProcessor;
+        _telemetryCounterProcessor = telemetryConfiguration.TelemetryProcessors
+            .Single(p => p is TelemetryCounterProcessor) as TelemetryCounterProcessor;
+    }
 
-        public ProcessorFunction(TelemetryConfiguration telemetryConfiguration)
+    [FunctionName(nameof(ProcessorFunction))]
+    public IActionResult RunGetProcessor(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
+        HttpRequest request)
+    {
+        return new OkObjectResult(new
         {
-            _telemetryCounterProcessor = telemetryConfiguration.TelemetryProcessors
-                .Single(p => p is TelemetryCounterProcessor) as TelemetryCounterProcessor;
-        }
-
-        [FunctionName(nameof(ProcessorFunction))]
-        public IActionResult RunGetProcessor(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
-            HttpRequest request)
-        {
-            return new OkObjectResult(new
-            {
-                _telemetryCounterProcessor.AvailabilityTelemetryCount,
-                _telemetryCounterProcessor.DependencyTelemetryCount,
-                _telemetryCounterProcessor.EventTelemetryCount,
-                _telemetryCounterProcessor.ExceptionTelemetryCount,
-                _telemetryCounterProcessor.MetricTelemetryCount,
-                _telemetryCounterProcessor.PageViewPerformanceTelemetryCount,
-                _telemetryCounterProcessor.PageViewTelemetryCount,
-                _telemetryCounterProcessor.RequestTelemetryCount,
-                _telemetryCounterProcessor.TraceTelemetryCount,
-                _telemetryCounterProcessor.OtherTelemetryCount
-            });
-        }
+            _telemetryCounterProcessor.AvailabilityTelemetryCount,
+            _telemetryCounterProcessor.DependencyTelemetryCount,
+            _telemetryCounterProcessor.EventTelemetryCount,
+            _telemetryCounterProcessor.ExceptionTelemetryCount,
+            _telemetryCounterProcessor.MetricTelemetryCount,
+            _telemetryCounterProcessor.PageViewPerformanceTelemetryCount,
+            _telemetryCounterProcessor.PageViewTelemetryCount,
+            _telemetryCounterProcessor.RequestTelemetryCount,
+            _telemetryCounterProcessor.TraceTelemetryCount,
+            _telemetryCounterProcessor.OtherTelemetryCount
+        });
     }
 }

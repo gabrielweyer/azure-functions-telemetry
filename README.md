@@ -46,22 +46,6 @@ builder.Services
     .AddCustomConsoleLogging();
 ```
 
-The snippet above is catered for a Function App containing only HTTP bindings. When your Function contains only Service Bus bindings, you’ll want to use the below snippet:
-
-```csharp
-var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
-        "{ApplicationName}",
-        {TypeFromEntryAssembly})
-    .WithServiceBusTriggerFilter()
-    .Build();
-
-builder.Services
-    .AddCustomApplicationInsights(appInsightsOptions)
-    .AddCustomConsoleLogging();
-```
-
-I also support Function Apps containing both HTTP and Service Bus bindings. You can mix and match the snippets above.
-
 ## What do I get?
 
 ### Discarding Function execution traces
@@ -406,7 +390,7 @@ NuGet packages:
   - `v4`: `4.0.1` (added automatically when creating the Function)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
 - `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection]):
-  - `v3`: `3.1.22`
+  - `v3`: `3.1.23`
   - `v4`: `6.0.0`
 - `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.30` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 

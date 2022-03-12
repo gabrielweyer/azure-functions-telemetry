@@ -54,18 +54,4 @@ public class DuplicateExceptionsFilterHttpBindingTests
         // Assert
         Assert.True(_innerProcessor.WasProcessorCalled);
     }
-
-    [Fact]
-    public void GivenCategoryIsHostResults_WhenTelemetryIsNotException_ThenKeepTelemetry()
-    {
-        // Arrange
-        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostResults)
-            .Build();
-
-        // Act
-        _target.Process(traceTelemetry);
-
-        // Assert
-        Assert.True(_innerProcessor.WasProcessorCalled);
-    }
 }

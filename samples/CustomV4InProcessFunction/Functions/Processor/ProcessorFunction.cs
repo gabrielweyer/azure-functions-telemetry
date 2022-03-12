@@ -20,6 +20,7 @@ public class ProcessorFunction
     [FunctionName(nameof(ProcessorFunction))]
     public IActionResult RunGetProcessor(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "processor")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         return new OkObjectResult(new

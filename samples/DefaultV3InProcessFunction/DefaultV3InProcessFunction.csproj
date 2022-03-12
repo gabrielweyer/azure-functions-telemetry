@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction</AssemblyName>
     <UserSecretsId>074ca336-270b-4832-9a1a-60baf152b727</UserSecretsId>
@@ -10,10 +12,13 @@
     <InformationalVersion>3.0.0.0</InformationalVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.2.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.3.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.30" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.22" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.23" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.13" />
   </ItemGroup>
   <ItemGroup>

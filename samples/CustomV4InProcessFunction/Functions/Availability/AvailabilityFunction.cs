@@ -20,6 +20,7 @@ public class AvailabilityFunction
     [FunctionName(nameof(AvailabilityFunction))]
     public IActionResult RunGetAppInsightsAvailability(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "availability")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         var availability = new AvailabilityTelemetry(

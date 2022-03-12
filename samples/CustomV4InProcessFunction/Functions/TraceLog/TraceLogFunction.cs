@@ -18,6 +18,7 @@ public class TraceLogFunction
     [FunctionName(nameof(TraceLogFunction))]
     public IActionResult RunGetVerboseLog(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "trace-log")]
+        [SuppressMessage("Style", "IDE0060", Justification = "Can't use discard as it breaks the binding")]
         HttpRequest request)
     {
         _logger.LogTrace("I'm a log with Personally Identifiable Information");

@@ -1,23 +1,21 @@
-using System.Threading;
 using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Infrastructure.Telemetry
+namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Infrastructure.Telemetry;
+
+public class TelemetryCounterProcessor : ITelemetryProcessor
 {
-    public class TelemetryCounterProcessor : ITelemetryProcessor
+    private readonly ITelemetryProcessor _next;
+    public static int InvocationCount;
+
+    public TelemetryCounterProcessor(ITelemetryProcessor next)
     {
-        private readonly ITelemetryProcessor _next;
-        public static int InvocationCount;
+        _next = next;
+    }
 
-        public TelemetryCounterProcessor(ITelemetryProcessor next)
-        {
-            _next = next;
-        }
-
-        public void Process(ITelemetry item)
-        {
-            Interlocked.Increment(ref InvocationCount);
-            _next.Process(item);
-        }
+    public void Process(ITelemetry item)
+    {
+        Interlocked.Increment(ref InvocationCount);
+        _next.Process(item);
     }
 }

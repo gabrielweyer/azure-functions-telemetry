@@ -58,35 +58,13 @@ public class FunctionExecutionTracesFilterTests
     public void GivenServiceBusBindingMessageProcessingErrorTrace_ThenFilterOutTelemetry()
     {
         // Arrange
-        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.ServiceBusListener)
-            .WithSeverityLevel(SeverityLevel.Error)
-            .WithMessage(
-                "Message processing error (Action=ProcessMessageCallback, EntityPath=custom-exception-queue, Endpoint=prefixsb.servicebus.windows.net)")
-            .Build();
+        var traceTelemetry = TraceTelemetryBuilder.AsServiceBusBindingMessageProcessingError();
 
         // Act
         _target.Process(traceTelemetry);
 
         // Assert
         Assert.False(_innerProcessor.WasProcessorCalled);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void GivenHostExecutorTrace_WhenNoMessage_ThenKeepTelemetry(string message)
-    {
-        // Arrange
-        var traceTelemetry = new TraceTelemetryBuilder(FunctionRuntimeCategory.HostExecutor)
-            .WithSeverityLevel(SeverityLevel.Error)
-            .WithMessage(message)
-            .Build();
-
-        // Act
-        _target.Process(traceTelemetry);
-
-        // Assert
-        Assert.True(_innerProcessor.WasProcessorCalled);
     }
 
     [Fact]

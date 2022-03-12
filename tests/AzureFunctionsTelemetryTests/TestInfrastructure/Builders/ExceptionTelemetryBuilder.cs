@@ -6,8 +6,8 @@ namespace Gabo.AzureFunctionsTelemetryTests.TestInfrastructure.Builders;
 public class ExceptionTelemetryBuilder
 {
     private readonly string _category;
-    private string _eventId;
-    private string _eventName;
+    private string? _eventId;
+    private string? _eventName;
 
     public ExceptionTelemetryBuilder(string category)
     {

@@ -16,8 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.30" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.22" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.23" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.23" Condition="'$(TargetFramework)' == 'net6.0'" />
   </ItemGroup>
 
 </Project>

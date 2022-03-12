@@ -46,22 +46,6 @@ builder.Services
     .AddCustomConsoleLogging();
 ```
 
-The snippet above is catered for a Function App containing only HTTP bindings. When your Function contains only Service Bus bindings, you’ll want to use the below snippet:
-
-```csharp
-var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
-        "{ApplicationName}",
-        {TypeFromEntryAssembly})
-    .WithServiceBusTriggerFilter()
-    .Build();
-
-builder.Services
-    .AddCustomApplicationInsights(appInsightsOptions)
-    .AddCustomConsoleLogging();
-```
-
-I also support Function Apps containing both HTTP and Service Bus bindings. You can mix and match the snippets above.
-
 ## What do I get?
 
 ### Discarding Function execution traces

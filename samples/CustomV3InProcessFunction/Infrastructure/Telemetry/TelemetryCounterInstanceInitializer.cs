@@ -53,31 +53,31 @@ public class TelemetryCounterInstanceInitializer : ITelemetryInitializer
 
         switch (telemetry)
         {
-            case AvailabilityTelemetry _:
+            case AvailabilityTelemetry:
                 Interlocked.Increment(ref AvailabilityTelemetryCount);
                 break;
-            case DependencyTelemetry _:
+            case DependencyTelemetry:
                 Interlocked.Increment(ref DependencyTelemetryCount);
                 break;
-            case EventTelemetry _:
+            case EventTelemetry:
                 Interlocked.Increment(ref EventTelemetryCount);
                 break;
-            case ExceptionTelemetry _:
+            case ExceptionTelemetry:
                 Interlocked.Increment(ref ExceptionTelemetryCount);
                 break;
-            case MetricTelemetry _:
+            case MetricTelemetry:
                 Interlocked.Increment(ref MetricTelemetryCount);
                 break;
-            case PageViewPerformanceTelemetry _:
+            case PageViewPerformanceTelemetry:
                 Interlocked.Increment(ref PageViewPerformanceTelemetryCount);
                 break;
-            case PageViewTelemetry _:
+            case PageViewTelemetry:
                 Interlocked.Increment(ref PageViewTelemetryCount);
                 break;
-            case RequestTelemetry _:
+            case RequestTelemetry:
                 Interlocked.Increment(ref RequestTelemetryCount);
                 break;
-            case TraceTelemetry _:
+            case TraceTelemetry:
                 Interlocked.Increment(ref TraceTelemetryCount);
                 break;
             default:

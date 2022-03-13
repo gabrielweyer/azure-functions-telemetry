@@ -23,7 +23,7 @@ internal class ServiceBusTriggerFilter : ITelemetryProcessor
         _next.Process(item);
     }
 
-    private static bool HasTriggerDetailsTemplate(TraceTelemetry trace) =>
+    private static bool HasTriggerDetailsTemplate(ISupportProperties trace) =>
         trace.Properties.TryGetValue("prop__{OriginalFormat}", out var template) &&
         StringHelper.IsSame(ServiceBusTriggerLogTemplate, template);
 }

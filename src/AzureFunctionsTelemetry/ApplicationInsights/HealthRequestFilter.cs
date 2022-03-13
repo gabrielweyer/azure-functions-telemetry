@@ -13,8 +13,7 @@ public class HealthRequestFilter : ITelemetryProcessor
 
     public void Process(ITelemetry item)
     {
-        if (item is RequestTelemetry request &&
-            request.ResponseCode == "200" &&
+        if (item is RequestTelemetry { ResponseCode: "200" } request &&
             StringHelper.IsSame(_healthCheckFunctionName, request.Name))
         {
             return;

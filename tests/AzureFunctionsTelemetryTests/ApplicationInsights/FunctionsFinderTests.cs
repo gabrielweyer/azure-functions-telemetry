@@ -8,32 +8,32 @@ namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
 public class FunctionsFinderTests
 {
-    private static readonly List<string> FoundFunctions;
+    private static readonly List<string> _foundFunctions;
 
     static FunctionsFinderTests()
     {
-        FoundFunctions = FunctionsFinder.GetServiceBusTriggeredFunctionNames(typeof(FunctionsFinderTests));
+        _foundFunctions = FunctionsFinder.GetServiceBusTriggeredFunctionNames(typeof(FunctionsFinderTests));
     }
 
     [Fact]
     public void GivenStaticServiceBusFunction_ThenFound()
     {
         // Assert
-        FoundFunctions.Should().Contain(nameof(StaticServiceBusFunction));
+        _foundFunctions.Should().Contain(nameof(StaticServiceBusFunction));
     }
 
     [Fact]
     public void GivenInstanceServiceBusFunction_ThenFound()
     {
         // Assert
-        FoundFunctions.Should().Contain(nameof(InstanceServiceBusFunction));
+        _foundFunctions.Should().Contain(nameof(InstanceServiceBusFunction));
     }
 
     [Fact]
     public void GivenHttpFunction_ThenNotFound()
     {
         // Assert
-        FoundFunctions.Should().NotContain(nameof(HttpFunction));
+        _foundFunctions.Should().NotContain(nameof(HttpFunction));
     }
 }
 

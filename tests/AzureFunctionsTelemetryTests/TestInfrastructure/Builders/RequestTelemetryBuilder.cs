@@ -6,7 +6,7 @@ public static class RequestTelemetryBuilder
 {
     public static RequestTelemetry AsServiceBus()
     {
-        return new()
+        return new RequestTelemetry
         {
             Success = true,
             Name = "ServiceBusFunction",
@@ -17,7 +17,7 @@ public static class RequestTelemetryBuilder
 
     public static RequestTelemetry AsHttp()
     {
-        return new()
+        return new RequestTelemetry
         {
             Success = true,
             Name = "HttpFunction",

@@ -1,16 +1,17 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Azure.WebJobs.Logging;
 
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
 internal static class TelemetryHelper
 {
-    public static bool TryGetCategory(ISupportProperties telemetry, out string category) =>
+    public static bool TryGetCategory(ISupportProperties telemetry, [NotNullWhen(true)] out string? category) =>
         telemetry.Properties.TryGetValue(LogConstants.CategoryNameKey, out category);
 
-    private static bool TryGetEventId(ISupportProperties telemetry, out string eventId) =>
+    private static bool TryGetEventId(ISupportProperties telemetry, [NotNullWhen(true)] out string? eventId) =>
         telemetry.Properties.TryGetValue(LogConstants.EventIdKey, out eventId);
 
-    private static bool TryGetEventName(ISupportProperties telemetry, out string eventName) =>
+    private static bool TryGetEventName(ISupportProperties telemetry, [NotNullWhen(true)] out string? eventName) =>
         telemetry.Properties.TryGetValue(LogConstants.EventNameKey, out eventName);
 
     public static bool IsFunctionStartedTelemetry(ISupportProperties trace) =>

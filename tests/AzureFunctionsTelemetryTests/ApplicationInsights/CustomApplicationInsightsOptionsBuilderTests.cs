@@ -12,14 +12,7 @@ public class CustomApplicationInsightsOptionsBuilderTests
         var actualOptions = builder.Build();
 
         // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions
-        {
-            ApplicationName = "some-name",
-            TypeFromEntryAssembly = typeof(StringHelper),
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-            ServiceBusTriggeredFunctionNames = new List<string>()
-#pragma warning restore CS0618
-        };
+        var expectedOptions = new CustomApplicationInsightsOptions("some-name", typeof(StringHelper));
         actualOptions.Should().BeEquivalentTo(expectedOptions);
     }
 
@@ -34,15 +27,10 @@ public class CustomApplicationInsightsOptionsBuilderTests
         var actualOptions = builder.Build();
 
         // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions
-        {
-            ApplicationName = "some-name",
-            TypeFromEntryAssembly = typeof(StringHelper),
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-            ServiceBusTriggeredFunctionNames = new List<string>(),
-#pragma warning restore CS0618
-            HealthCheckFunctionName = "HealthFunction"
-        };
+        var expectedOptions = new CustomApplicationInsightsOptions(
+            "some-name",
+            typeof(StringHelper),
+            healthCheckFunctionName: "HealthFunction");
         actualOptions.Should().BeEquivalentTo(expectedOptions);
     }
 
@@ -60,14 +48,10 @@ public class CustomApplicationInsightsOptionsBuilderTests
         var actualOptions = builder.Build();
 
         // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions
-        {
-            ApplicationName = "some-name",
-            TypeFromEntryAssembly = typeof(StringHelper),
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-            ServiceBusTriggeredFunctionNames = serviceBusFunctionNames,
-#pragma warning restore CS0618
-        };
+        var expectedOptions = new CustomApplicationInsightsOptions(
+            "some-name",
+            typeof(StringHelper),
+            serviceBusTriggeredFunctionNames: serviceBusFunctionNames);
         actualOptions.Should().BeEquivalentTo(expectedOptions);
     }
 
@@ -82,15 +66,22 @@ public class CustomApplicationInsightsOptionsBuilderTests
         var actualOptions = builder.Build();
 
         // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions
-        {
-            ApplicationName = "some-name",
-            TypeFromEntryAssembly = typeof(StringHelper),
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-            ServiceBusTriggeredFunctionNames = new List<string>(),
-#pragma warning restore CS0618
-            HasServiceBusTriggerFilter = true
-        };
+        var expectedOptions = new CustomApplicationInsightsOptions(
+            "some-name",
+            typeof(StringHelper),
+            true);
         actualOptions.Should().BeEquivalentTo(expectedOptions);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void GivenEmptyOrWhiteSpaceHealthCheckFunctionName_ThenThrows(string functionName)
+    {
+        // Arrange
+        var builder = new CustomApplicationInsightsOptionsBuilder("some-name", typeof(StringHelper));
+
+        // Act & Assert
+        Assert.ThrowsAny<Exception>(() => builder.WithHealthRequestFilter(functionName));
     }
 }

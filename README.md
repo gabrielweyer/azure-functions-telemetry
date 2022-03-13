@@ -31,7 +31,7 @@ Copy the `src/AzureFunctionsTelemetry` project into your solution and reference 
 For the most basic integration, you need to provide:
 
 - `{ApplicationName}` used to set Application Insights' _Cloud role name_
-- `{TypeFromEntryAssembly}` typically would be `typeof(Startup)`. I read the [Assembly Informational Version][assembly-informational-version] of the entry assembly to set Application Insights' _Application version_
+- `{TypeFromEntryAssembly}` typically would be `typeof(Startup)`. I read the [Assembly Informational Version][assembly-informational-version] of the entry assembly to set Application Insights' _Application version_ (I use _unknown_ as a fallback)
 
 In your `Startup` `class` add the below snippet:
 

@@ -6,14 +6,14 @@ public class CustomApplicationInsightsOptionsBuilder
     private readonly Type _typeFromEntryAssembly;
     private bool _hasServiceBusTriggerFilter;
     private List<string> _serviceBusTriggeredFunctionNames;
-    private string _healthCheckFunctionName;
+    private string? _healthCheckFunctionName;
 
     /// <summary>
     /// Helps you configure Application Insights.
     /// </summary>
     /// <param name="applicationName">Will be used as the 'Cloud role name'.</param>
-    /// <param name="typeFromEntryAssembly">The `AssemblyInformationalVersion` of the assembly will be used as the
-    /// 'Application version'.</param>
+    /// <param name="typeFromEntryAssembly">The 'AssemblyInformationalVersion' of the assembly will be used as the
+    /// 'Application version'. Falls back to 'unknown'.</param>
     public CustomApplicationInsightsOptionsBuilder(string applicationName, Type typeFromEntryAssembly)
     {
         _applicationName = applicationName;
@@ -61,20 +61,23 @@ public class CustomApplicationInsightsOptionsBuilder
     /// <returns></returns>
     public CustomApplicationInsightsOptionsBuilder WithHealthRequestFilter(string healthCheckFunctionName)
     {
+        if (string.IsNullOrWhiteSpace(healthCheckFunctionName))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(healthCheckFunctionName),
+                healthCheckFunctionName,
+                "The health check Function Name should not be empty or consist only of white-space characters.");
+        }
+
         _healthCheckFunctionName = healthCheckFunctionName;
 
         return this;
     }
 
-    public CustomApplicationInsightsOptions Build() =>
-        new CustomApplicationInsightsOptions()
-        {
-            ApplicationName = _applicationName,
-            TypeFromEntryAssembly = _typeFromEntryAssembly,
-            HasServiceBusTriggerFilter = _hasServiceBusTriggerFilter,
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-            ServiceBusTriggeredFunctionNames = _serviceBusTriggeredFunctionNames,
-#pragma warning restore CS0618
-            HealthCheckFunctionName = _healthCheckFunctionName,
-        };
+    public CustomApplicationInsightsOptions Build() => new(
+        _applicationName,
+        _typeFromEntryAssembly,
+        _hasServiceBusTriggerFilter,
+        _healthCheckFunctionName,
+        _serviceBusTriggeredFunctionNames);
 }

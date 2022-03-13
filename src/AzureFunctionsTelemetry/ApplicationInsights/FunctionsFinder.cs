@@ -23,11 +23,19 @@ internal static class FunctionsFinder
                     from methodCustomAttribute in method.CustomAttributes
                     where "Microsoft.Azure.WebJobs.FunctionNameAttribute"
                         .Equals(methodCustomAttribute.AttributeType.FullName)
-                    select (string)methodCustomAttribute.ConstructorArguments.First().Value).ToList();
+                    select (string?)methodCustomAttribute.ConstructorArguments.First().Value)
+                .WhereNotNull()
+                .ToList();
         }
         catch
         {
             return new List<string>();
         }
+    }
+
+    private static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+        where T : class
+    {
+        return source.Where(item => item != null)!;
     }
 }

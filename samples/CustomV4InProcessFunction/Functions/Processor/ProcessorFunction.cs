@@ -13,8 +13,8 @@ public class ProcessorFunction
 
     public ProcessorFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        _telemetryCounterProcessor = telemetryConfiguration.TelemetryProcessors
-            .Single(p => p is TelemetryCounterProcessor) as TelemetryCounterProcessor;
+        _telemetryCounterProcessor = (TelemetryCounterProcessor)telemetryConfiguration.TelemetryProcessors
+            .Single(p => p is TelemetryCounterProcessor);
     }
 
     [FunctionName(nameof(ProcessorFunction))]

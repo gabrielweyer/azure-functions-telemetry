@@ -13,8 +13,8 @@ public class InitializerFunction
 
     public InitializerFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        _telemetryCounterInitializer = telemetryConfiguration.TelemetryInitializers
-            .Single(p => p is TelemetryCounterInitializer) as TelemetryCounterInitializer;
+        _telemetryCounterInitializer = (TelemetryCounterInitializer)telemetryConfiguration.TelemetryInitializers
+            .Single(p => p is TelemetryCounterInitializer);
     }
 
     [FunctionName(nameof(InitializerFunction))]

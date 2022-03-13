@@ -13,8 +13,9 @@ public class InstanceInitializerFunction
 
     public InstanceInitializerFunction(TelemetryConfiguration telemetryConfiguration)
     {
-        _telemetryCounterInstanceInitializer = telemetryConfiguration.TelemetryInitializers
-            .Single(p => p is TelemetryCounterInstanceInitializer) as TelemetryCounterInstanceInitializer;
+        _telemetryCounterInstanceInitializer = (TelemetryCounterInstanceInitializer)telemetryConfiguration
+            .TelemetryInitializers
+            .Single(p => p is TelemetryCounterInstanceInitializer);
     }
 
     [FunctionName(nameof(InstanceInitializerFunction))]

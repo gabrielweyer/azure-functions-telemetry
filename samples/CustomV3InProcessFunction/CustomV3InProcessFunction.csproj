@@ -4,6 +4,7 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <RootNamespace>Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>

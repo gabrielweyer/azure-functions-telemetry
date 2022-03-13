@@ -27,5 +27,5 @@ public class UserSecretFunction
 
 public class SecretOptions
 {
-    public string ReallySecretValue { get; set; }
+    public string ReallySecretValue { get; set; } = default!;
 }

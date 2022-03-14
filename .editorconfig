@@ -12,11 +12,11 @@ insert_final_newline = true
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
-[*.{cs,csx,vb,vbx}]
+[*.{cs,csx}]
 indent_size = 4
 
 # Xml project files
-[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+[*.{csproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
 indent_size = 2
 
 # Xml config files
@@ -34,7 +34,7 @@ end_of_line = lf
 indent_size = 2
 
 # Dotnet code style settings:
-[*.{cs,vb}]
+[*.cs]
 
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true

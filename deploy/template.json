@@ -91,7 +91,7 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces",
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2021-11-01",
             "name": "[variables('serviceBusNamespace').name]",
             "location": "[parameters('location')]",
             "sku": {
@@ -103,7 +103,7 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').queue)]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -125,7 +125,7 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').exceptionQueue)]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -191,7 +191,7 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').queue)]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -213,7 +213,7 @@
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
-            "apiVersion": "2017-04-01",
+            "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').exceptionQueue)]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
@@ -278,8 +278,8 @@
             }
         },
         {
-            "apiVersion": "2019-06-01",
             "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-08-01",
             "name": "[variables('defaultV3InProcessFunctionApp').storageName]",
             "location": "[parameters('location')]",
             "kind": "StorageV2",
@@ -292,7 +292,7 @@
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2019-08-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('defaultV3InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
@@ -306,7 +306,7 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2019-08-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('defaultV3InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
@@ -323,7 +323,7 @@
             "resources": [
                 {
                     "type": "config",
-                    "apiVersion": "2019-08-01",
+                    "apiVersion": "2021-03-01",
                     "name": "appsettings",
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('defaultV3InProcessFunctionApp').storageName)]",
@@ -346,8 +346,8 @@
             ]
         },
         {
-            "apiVersion": "2019-06-01",
             "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-08-01",
             "name": "[variables('customV3InProcessFunctionApp').storageName]",
             "location": "[parameters('location')]",
             "kind": "StorageV2",
@@ -360,7 +360,7 @@
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2019-08-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('customV3InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
@@ -374,7 +374,7 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2019-08-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('customV3InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
@@ -391,7 +391,7 @@
             "resources": [
                 {
                     "type": "config",
-                    "apiVersion": "2019-08-01",
+                    "apiVersion": "2021-03-01",
                     "name": "appsettings",
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('customV3InProcessFunctionApp').storageName)]",
@@ -414,8 +414,8 @@
             ]
         },
         {
-            "apiVersion": "2021-06-01",
             "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-08-01",
             "name": "[variables('defaultV4InProcessFunctionApp').storageName]",
             "location": "[parameters('location')]",
             "kind": "StorageV2",
@@ -428,7 +428,7 @@
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2021-02-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('defaultV4InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
@@ -442,7 +442,7 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2021-02-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('defaultV4InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
@@ -459,7 +459,7 @@
             "resources": [
                 {
                     "type": "config",
-                    "apiVersion": "2021-02-01",
+                    "apiVersion": "2021-03-01",
                     "name": "appsettings",
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('defaultV4InProcessFunctionApp').storageName)]",
@@ -482,8 +482,8 @@
             ]
         },
         {
-            "apiVersion": "2021-06-01",
             "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-08-01",
             "name": "[variables('customV4InProcessFunctionApp').storageName]",
             "location": "[parameters('location')]",
             "kind": "StorageV2",
@@ -496,7 +496,7 @@
         },
         {
             "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2021-02-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('customV4InProcessFunctionApp').hostingPlanName]",
             "location": "[parameters('location')]",
             "kind": "",
@@ -510,7 +510,7 @@
         },
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2021-02-01",
+            "apiVersion": "2021-03-01",
             "name": "[variables('customV4InProcessFunctionApp').functionAppName]",
             "location": "[parameters('location')]",
             "identity": {
@@ -527,7 +527,7 @@
             "resources": [
                 {
                     "type": "config",
-                    "apiVersion": "2021-02-01",
+                    "apiVersion": "2021-03-01",
                     "name": "appsettings",
                     "dependsOn": [
                         "[resourceId('Microsoft.Storage/storageAccounts', variables('customV4InProcessFunctionApp').storageName)]",

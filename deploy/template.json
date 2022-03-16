@@ -22,96 +22,41 @@
             }
         }
     },
-    "functions": [
-        {
-            "namespace": "gabo",
-            "members": {
-                "resourceName": {
-                    "parameters": [
-                        {
-                            "name": "prefix",
-                            "type": "string"
-                        },
-                        {
-                            "name": "serviceName",
-                            "type": "string"
-                        }
-                    ],
-                    "output": {
-                        "type": "string",
-                        "value": "[concat(parameters('prefix'), '-', parameters('serviceName'))]"
-                    }
-                },
-                "storageName": {
-                    "parameters": [
-                        {
-                            "name": "prefix",
-                            "type": "string"
-                        },
-                        {
-                            "name": "serviceName",
-                            "type": "string"
-                        }
-                    ],
-                    "output": {
-                        "type": "string",
-                        "value": "[concat(parameters('prefix'), '7', parameters('serviceName'))]"
-                    }
-                },
-                "serviceBusNamespace": {
-                    "parameters": [
-                        {
-                            "name": "prefix",
-                            "type": "string"
-                        },
-                        {
-                            "name": "serviceName",
-                            "type": "string"
-                        }
-                    ],
-                    "output": {
-                        "type": "string",
-                        "value": "[concat(parameters('prefix'), parameters('serviceName'))]"
-                    }
-                }
-            }
-        }
-    ],
     "variables": {
         "applicationInsights": {
-            "name": "[gabo.resourceName(parameters('resourceNamePrefix'), 'appi')]",
-            "workspaceName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'log')]"
+            "name": "[concat(parameters('resourceNamePrefix'), '-appi')]",
+            "workspaceName": "[concat(parameters('resourceNamePrefix'), '-log')]"
         },
         "defaultV3InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv3inprocess-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv3inprocess-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'defaultv3inprocess')]",
+            "hostingPlanName": "[concat(parameters('resourceNamePrefix'), '-defaultv3inprocess-plan')]",
+            "functionAppName": "[concat(parameters('resourceNamePrefix'), '-defaultv3inprocess-func')]",
+            "storageName": "[concat(parameters('resourceNamePrefix'), '7defaultv3inprocess')]",
             "queue": "defaultv3inprocess-queue",
             "exceptionQueue": "defaultv3inprocess-exception-queue"
         },
         "defaultV4InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv4inprocess-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'defaultv4inprocess-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'defaultv4inprocess')]",
+            "hostingPlanName": "[concat(parameters('resourceNamePrefix'), '-defaultv4inprocess-plan')]",
+            "functionAppName": "[concat(parameters('resourceNamePrefix'), '-defaultv4inprocess-func')]",
+            "storageName": "[concat(parameters('resourceNamePrefix'), '7defaultv4inprocess')]",
             "queue": "defaultv4inprocess-queue",
             "exceptionQueue": "defaultv4inprocess-exception-queue"
         },
         "customV3InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv3inprocess-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv3inprocess-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'customv3inprocess')]",
+            "hostingPlanName": "[concat(parameters('resourceNamePrefix'), '-customv3inprocess-plan')]",
+            "functionAppName": "[concat(parameters('resourceNamePrefix'), '-customv3inprocess-func')]",
+            "storageName": "[concat(parameters('resourceNamePrefix'), '7customv3inprocess')]",
             "queue": "customv3inprocess-queue",
             "exceptionQueue": "customv3inprocess-exception-queue"
         },
         "customV4InProcessFunctionApp": {
-            "hostingPlanName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv4inprocess-plan')]",
-            "functionAppName": "[gabo.resourceName(parameters('resourceNamePrefix'), 'customv4inprocess-func')]",
-            "storageName": "[gabo.storageName(parameters('resourceNamePrefix'), 'customv4inprocess')]",
+            "hostingPlanName": "[concat(parameters('resourceNamePrefix'), '-customv4inprocess-plan')]",
+            "functionAppName": "[concat(parameters('resourceNamePrefix'), '-customv4inprocess-func')]",
+            "storageName": "[concat(parameters('resourceNamePrefix'), '7customv4inprocess')]",
             "queue": "customv4inprocess-queue",
             "exceptionQueue": "customv4inprocess-exception-queue"
         },
         "serviceBusNamespace": {
-            "name": "[gabo.serviceBusNamespace(parameters('resourceNamePrefix'), 'sb')]"
+            "name": "[concat(parameters('resourceNamePrefix'), 'sb')]"
         }
     },
     "resources": [

@@ -99,14 +99,12 @@
                 "tier": "Basic"
             },
             "properties": {
-                "zoneRedundant": false
             }
         },
         {
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').queue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -129,7 +127,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV3InProcessFunctionApp').exceptionQueue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -152,7 +149,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV4InProcessFunctionApp').queue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -175,7 +171,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('defaultV4InProcessFunctionApp').exceptionQueue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -198,7 +193,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').queue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -221,7 +215,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2017-04-01",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV3InProcessFunctionApp').exceptionQueue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -244,7 +237,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV4InProcessFunctionApp').queue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],
@@ -267,7 +259,6 @@
             "type": "Microsoft.ServiceBus/namespaces/queues",
             "apiVersion": "2021-06-01-preview",
             "name": "[concat(variables('serviceBusNamespace').name, '/', variables('customV4InProcessFunctionApp').exceptionQueue)]",
-            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNamespace').name)]"
             ],

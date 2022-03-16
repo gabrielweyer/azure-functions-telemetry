@@ -11,6 +11,7 @@
         },
         "resourceNamePrefix": {
             "type": "string",
+            "maxLength": 5,
             "metadata": {
                 "description": "Used to create a unique name. For example, with a 'hello' prefix and an Application Insights resource, the resource name will be 'hello-appi'."
             }

@@ -2,6 +2,7 @@
 param location string = resourceGroup().location
 
 @description('Used to create a unique name. For example, with a \'hello\' prefix and an Application Insights resource, the resource name will be \'hello-appi\'.')
+@maxLength(5)
 param resourceNamePrefix string
 
 @description('Used to populate \'Secret:ReallySecretValue\'.')

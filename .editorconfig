@@ -33,6 +33,10 @@ indent_size = 4
 end_of_line = lf
 indent_size = 2
 
+[*.bicep]
+end_of_line = lf
+indent_size = 2
+
 # Dotnet code style settings:
 [*.cs]
 

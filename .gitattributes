@@ -1,5 +1,10 @@
+# Postman
 docs/postman/*.json eol=lf
 
+# Rider
 *.DotSettings eol=lf
+
+# Bicep
+*.bicep eol=lf
 
 *.ps1 linguist-vendored

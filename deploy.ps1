@@ -124,7 +124,7 @@ Write-Verbose "Created (or updated) resource group '$resourceGroupName'"
 
 Write-Host 'Deploying ARM template (takes a while)'
 
-$templatePath = Join-Path $PSScriptRoot 'deploy' 'template.json'
+$templatePath = Join-Path $PSScriptRoot 'deploy' 'template.bicep'
 
 $templateParameters = @{
     location = $Location

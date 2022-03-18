@@ -118,6 +118,7 @@ Before being able to deploy and run the Functions you'll need to have the below 
 - [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line (you'll need the `v4` version if you want to be able to run the `v4` Functions locally)
 - [Powershell 7][powershell-7] to deploy to Azure
 - [Azure PowerShell][azure-powershell] to deploy to Azure
+- [Bicep CLI][bicep-cli] to deploy to Azure
 
 Run `deploy.ps1` to deploy the project to Azure. This will deploy:
 
@@ -423,3 +424,4 @@ One of the side-effect of the approach I'm using is that the Azure Functions run
 [service-bus-trigger-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/ServiceBusTriggerFilter.cs
 [telemetry-processor-support-github-issue]: https://github.com/Azure/azure-functions-host/issues/3741
 [postman-collection]: docs/postman/FunctionsTelemetry.postman_collection.json
+[bicep-cli]: https://docs.microsoft.com/en-au/azure/azure-resource-manager/bicep/install#install-manually

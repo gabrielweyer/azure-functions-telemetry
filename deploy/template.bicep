@@ -9,44 +9,44 @@ param resourceNamePrefix string
 @secure()
 param reallySecretValue string
 
-var applicationInsights = {
+var applicationInsightsSettings = {
   name: '${resourceNamePrefix}-appi'
   workspaceName: '${resourceNamePrefix}-log'
 }
-var defaultV3InProcessFunctionApp = {
+var defaultV3InProcessFunctionAppSettings = {
   hostingPlanName: '${resourceNamePrefix}-defaultv3inprocess-plan'
   functionAppName: '${resourceNamePrefix}-defaultv3inprocess-func'
   storageName: '${resourceNamePrefix}7defaultv3inprocess'
   queue: 'defaultv3inprocess-queue'
   exceptionQueue: 'defaultv3inprocess-exception-queue'
 }
-var defaultV4InProcessFunctionApp = {
+var defaultV4InProcessFunctionAppSettings = {
   hostingPlanName: '${resourceNamePrefix}-defaultv4inprocess-plan'
   functionAppName: '${resourceNamePrefix}-defaultv4inprocess-func'
   storageName: '${resourceNamePrefix}7defaultv4inprocess'
   queue: 'defaultv4inprocess-queue'
   exceptionQueue: 'defaultv4inprocess-exception-queue'
 }
-var customV3InProcessFunctionApp = {
+var customV3InProcessFunctionAppSettings = {
   hostingPlanName: '${resourceNamePrefix}-customv3inprocess-plan'
   functionAppName: '${resourceNamePrefix}-customv3inprocess-func'
   storageName: '${resourceNamePrefix}7customv3inprocess'
   queue: 'customv3inprocess-queue'
   exceptionQueue: 'customv3inprocess-exception-queue'
 }
-var customV4InProcessFunctionApp = {
+var customV4InProcessFunctionAppSettings = {
   hostingPlanName: '${resourceNamePrefix}-customv4inprocess-plan'
   functionAppName: '${resourceNamePrefix}-customv4inprocess-func'
   storageName: '${resourceNamePrefix}7customv4inprocess'
   queue: 'customv4inprocess-queue'
   exceptionQueue: 'customv4inprocess-exception-queue'
 }
-var serviceBusNamespace = {
+var serviceBusNamespaceSettings = {
   name: '${resourceNamePrefix}sb'
 }
 
-resource applicationInsights_workspaceName 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: applicationInsights.workspaceName
+resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: applicationInsightsSettings.workspaceName
   location: location
   properties: {
     sku: {
@@ -59,18 +59,18 @@ resource applicationInsights_workspaceName 'Microsoft.OperationalInsights/worksp
   }
 }
 
-resource applicationInsights_name 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsights.name
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: applicationInsightsSettings.name
   location: location
   kind: 'web'
   properties: {
     Application_Type: 'web'
-    WorkspaceResourceId: applicationInsights_workspaceName.id
+    WorkspaceResourceId: workspace.id
   }
 }
 
-resource serviceBusNamespace_name 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
-  name: serviceBusNamespace.name
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
+  name: serviceBusNamespaceSettings.name
   location: location
   sku: {
     name: 'Basic'
@@ -79,8 +79,8 @@ resource serviceBusNamespace_name 'Microsoft.ServiceBus/namespaces@2021-11-01' =
   properties: {}
 }
 
-resource serviceBusNamespace_name_defaultV3InProcessFunctionApp_queue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${defaultV3InProcessFunctionApp.queue}'
+resource defaultV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${defaultV3InProcessFunctionAppSettings.queue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -96,12 +96,12 @@ resource serviceBusNamespace_name_defaultV3InProcessFunctionApp_queue 'Microsoft
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_defaultV3InProcessFunctionApp_exceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${defaultV3InProcessFunctionApp.exceptionQueue}'
+resource defaultV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${defaultV3InProcessFunctionAppSettings.exceptionQueue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -117,12 +117,12 @@ resource serviceBusNamespace_name_defaultV3InProcessFunctionApp_exceptionQueue '
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_defaultV4InProcessFunctionApp_queue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${defaultV4InProcessFunctionApp.queue}'
+resource defaultV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${defaultV4InProcessFunctionAppSettings.queue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -138,12 +138,12 @@ resource serviceBusNamespace_name_defaultV4InProcessFunctionApp_queue 'Microsoft
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_defaultV4InProcessFunctionApp_exceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${defaultV4InProcessFunctionApp.exceptionQueue}'
+resource defaultV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${defaultV4InProcessFunctionAppSettings.exceptionQueue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -159,12 +159,12 @@ resource serviceBusNamespace_name_defaultV4InProcessFunctionApp_exceptionQueue '
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_customV3InProcessFunctionApp_queue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${customV3InProcessFunctionApp.queue}'
+resource customV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${customV3InProcessFunctionAppSettings.queue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -180,12 +180,12 @@ resource serviceBusNamespace_name_customV3InProcessFunctionApp_queue 'Microsoft.
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_customV3InProcessFunctionApp_exceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${customV3InProcessFunctionApp.exceptionQueue}'
+resource customV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${customV3InProcessFunctionAppSettings.exceptionQueue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -201,12 +201,12 @@ resource serviceBusNamespace_name_customV3InProcessFunctionApp_exceptionQueue 'M
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_customV4InProcessFunctionApp_queue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${customV4InProcessFunctionApp.queue}'
+resource customV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${customV4InProcessFunctionAppSettings.queue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -222,12 +222,12 @@ resource serviceBusNamespace_name_customV4InProcessFunctionApp_queue 'Microsoft.
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource serviceBusNamespace_name_customV4InProcessFunctionApp_exceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespace.name}/${customV4InProcessFunctionApp.exceptionQueue}'
+resource customV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
+  name: '${serviceBusNamespaceSettings.name}/${customV4InProcessFunctionAppSettings.exceptionQueue}'
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -243,12 +243,12 @@ resource serviceBusNamespace_name_customV4InProcessFunctionApp_exceptionQueue 'M
     enableExpress: false
   }
   dependsOn: [
-    serviceBusNamespace_name
+    serviceBusNamespace
   ]
 }
 
-resource defaultV3InProcessFunctionApp_storageName 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: defaultV3InProcessFunctionApp.storageName
+resource defaultV3InProcessStorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: defaultV3InProcessFunctionAppSettings.storageName
   location: location
   kind: 'StorageV2'
   sku: {
@@ -259,8 +259,8 @@ resource defaultV3InProcessFunctionApp_storageName 'Microsoft.Storage/storageAcc
   }
 }
 
-resource defaultV3InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: defaultV3InProcessFunctionApp.hostingPlanName
+resource defaultV3InProcessHostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: defaultV3InProcessFunctionAppSettings.hostingPlanName
   location: location
   kind: ''
   sku: {
@@ -273,8 +273,8 @@ resource defaultV3InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarm
   properties: {}
 }
 
-resource defaultV3InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-03-01' = {
-  name: defaultV3InProcessFunctionApp.functionAppName
+resource defaultV3InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: defaultV3InProcessFunctionAppSettings.functionAppName
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -282,33 +282,32 @@ resource defaultV3InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021
   kind: 'functionapp'
   properties: {
     httpsOnly: true
-    serverFarmId: defaultV3InProcessFunctionApp_hostingPlanName.id
+    serverFarmId: defaultV3InProcessHostingPlan.id
   }
 }
 
-resource defaultV3InProcessFunctionApp_functionAppName_appsettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${defaultV3InProcessFunctionApp.functionAppName}/appsettings'
+resource defaultV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${defaultV3InProcessFunctionAppSettings.functionAppName}/appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV3InProcessFunctionApp.storageName};AccountKey=${listKeys(defaultV3InProcessFunctionApp.storageName, '2019-06-01').keys[0].value}'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights_name.id, '2020-02-02').ConnectionString
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
     FUNCTIONS_EXTENSION_VERSION: '~3'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${defaultV3InProcessFunctionApp.storageName};AccountKey=${listKeys(defaultV3InProcessFunctionApp.storageName, '2019-06-01').keys[0].value}'
-    WEBSITE_CONTENTSHARE: defaultV3InProcessFunctionApp.functionAppName
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${defaultV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
+    WEBSITE_CONTENTSHARE: defaultV3InProcessFunctionAppSettings.functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
-    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
+    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceSettings.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
   }
   dependsOn: [
-    defaultV3InProcessFunctionApp_storageName
-    defaultV3InProcessFunctionApp_functionAppName
-
-    serviceBusNamespace_name
+    defaultV3InProcessStorageAccount
+    defaultV3InProcessFunctionApp
+    serviceBusNamespace
   ]
 }
 
-resource customV3InProcessFunctionApp_storageName 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: customV3InProcessFunctionApp.storageName
+resource customV3InProcessStorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: customV3InProcessFunctionAppSettings.storageName
   location: location
   kind: 'StorageV2'
   sku: {
@@ -319,8 +318,8 @@ resource customV3InProcessFunctionApp_storageName 'Microsoft.Storage/storageAcco
   }
 }
 
-resource customV3InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: customV3InProcessFunctionApp.hostingPlanName
+resource customV3InProcessHostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: customV3InProcessFunctionAppSettings.hostingPlanName
   location: location
   kind: ''
   sku: {
@@ -333,8 +332,8 @@ resource customV3InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms
   properties: {}
 }
 
-resource customV3InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-03-01' = {
-  name: customV3InProcessFunctionApp.functionAppName
+resource customV3InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: customV3InProcessFunctionAppSettings.functionAppName
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -342,33 +341,32 @@ resource customV3InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-
   kind: 'functionapp'
   properties: {
     httpsOnly: true
-    serverFarmId: customV3InProcessFunctionApp_hostingPlanName.id
+    serverFarmId: customV3InProcessHostingPlan.id
   }
 }
 
-resource customV3InProcessFunctionApp_functionAppName_appsettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${customV3InProcessFunctionApp.functionAppName}/appsettings'
+resource customV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${customV3InProcessFunctionAppSettings.functionAppName}/appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV3InProcessFunctionApp.storageName};AccountKey=${listKeys(customV3InProcessFunctionApp.storageName, '2019-06-01').keys[0].value}'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights_name.id, '2020-02-02').ConnectionString
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
     FUNCTIONS_EXTENSION_VERSION: '~3'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${customV3InProcessFunctionApp.storageName};AccountKey=${listKeys(customV3InProcessFunctionApp.storageName, '2019-06-01').keys[0].value}'
-    WEBSITE_CONTENTSHARE: customV3InProcessFunctionApp.functionAppName
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${customV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
+    WEBSITE_CONTENTSHARE: customV3InProcessFunctionAppSettings.functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
-    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
+    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceSettings.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
   }
   dependsOn: [
-    customV3InProcessFunctionApp_storageName
-    customV3InProcessFunctionApp_functionAppName
-
-    serviceBusNamespace_name
+    customV3InProcessStorageAccount
+    customV3InProcessFunctionApp
+    serviceBusNamespace
   ]
 }
 
-resource defaultV4InProcessFunctionApp_storageName 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: defaultV4InProcessFunctionApp.storageName
+resource defaultV4InProcessStorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: defaultV4InProcessFunctionAppSettings.storageName
   location: location
   kind: 'StorageV2'
   sku: {
@@ -379,8 +377,8 @@ resource defaultV4InProcessFunctionApp_storageName 'Microsoft.Storage/storageAcc
   }
 }
 
-resource defaultV4InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: defaultV4InProcessFunctionApp.hostingPlanName
+resource defaultV4InProcessHostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: defaultV4InProcessFunctionAppSettings.hostingPlanName
   location: location
   kind: ''
   sku: {
@@ -393,8 +391,8 @@ resource defaultV4InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarm
   properties: {}
 }
 
-resource defaultV4InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-03-01' = {
-  name: defaultV4InProcessFunctionApp.functionAppName
+resource defaultV4InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: defaultV4InProcessFunctionAppSettings.functionAppName
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -402,33 +400,32 @@ resource defaultV4InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021
   kind: 'functionapp'
   properties: {
     httpsOnly: true
-    serverFarmId: defaultV4InProcessFunctionApp_hostingPlanName.id
+    serverFarmId: defaultV4InProcessHostingPlan.id
   }
 }
 
-resource defaultV4InProcessFunctionApp_functionAppName_appsettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${defaultV4InProcessFunctionApp.functionAppName}/appsettings'
+resource defaultV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${defaultV4InProcessFunctionAppSettings.functionAppName}/appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV4InProcessFunctionApp.storageName};AccountKey=${listKeys(defaultV4InProcessFunctionApp.storageName, '2021-06-01').keys[0].value}'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights_name.id, '2020-02-02').ConnectionString
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${defaultV4InProcessFunctionApp.storageName};AccountKey=${listKeys(defaultV4InProcessFunctionApp.storageName, '2021-06-01').keys[0].value}'
-    WEBSITE_CONTENTSHARE: defaultV4InProcessFunctionApp.functionAppName
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${defaultV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
+    WEBSITE_CONTENTSHARE: defaultV4InProcessFunctionAppSettings.functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
-    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
+    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceSettings.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
   }
   dependsOn: [
-    defaultV4InProcessFunctionApp_storageName
-    defaultV4InProcessFunctionApp_functionAppName
-
-    serviceBusNamespace_name
+    defaultV4InProcessStorageAccount
+    defaultV4InProcessFunctionApp
+    serviceBusNamespace
   ]
 }
 
-resource customV4InProcessFunctionApp_storageName 'Microsoft.Storage/storageAccounts@2021-08-01' = {
-  name: customV4InProcessFunctionApp.storageName
+resource customV4InProcessStorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: customV4InProcessFunctionAppSettings.storageName
   location: location
   kind: 'StorageV2'
   sku: {
@@ -439,8 +436,8 @@ resource customV4InProcessFunctionApp_storageName 'Microsoft.Storage/storageAcco
   }
 }
 
-resource customV4InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: customV4InProcessFunctionApp.hostingPlanName
+resource customV4InProcessHostingPlanName 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: customV4InProcessFunctionAppSettings.hostingPlanName
   location: location
   kind: ''
   sku: {
@@ -453,8 +450,8 @@ resource customV4InProcessFunctionApp_hostingPlanName 'Microsoft.Web/serverfarms
   properties: {}
 }
 
-resource customV4InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-03-01' = {
-  name: customV4InProcessFunctionApp.functionAppName
+resource customV4InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: customV4InProcessFunctionAppSettings.functionAppName
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -462,34 +459,33 @@ resource customV4InProcessFunctionApp_functionAppName 'Microsoft.Web/sites@2021-
   kind: 'functionapp'
   properties: {
     httpsOnly: true
-    serverFarmId: customV4InProcessFunctionApp_hostingPlanName.id
+    serverFarmId: customV4InProcessHostingPlanName.id
   }
 }
 
-resource customV4InProcessFunctionApp_functionAppName_appsettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${customV4InProcessFunctionApp.functionAppName}/appsettings'
+resource customV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+  name: '${customV4InProcessFunctionAppSettings.functionAppName}/appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV4InProcessFunctionApp.storageName};AccountKey=${listKeys(customV4InProcessFunctionApp.storageName, '2021-06-01').keys[0].value}'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights_name.id, '2020-02-02').ConnectionString
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
     FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${customV4InProcessFunctionApp.storageName};AccountKey=${listKeys(customV4InProcessFunctionApp.storageName, '2021-06-01').keys[0].value}'
-    WEBSITE_CONTENTSHARE: customV4InProcessFunctionApp.functionAppName
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${customV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
+    WEBSITE_CONTENTSHARE: customV4InProcessFunctionAppSettings.functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
-    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
+    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespaceSettings.name, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
   }
   dependsOn: [
-    customV4InProcessFunctionApp_storageName
-    customV4InProcessFunctionApp_functionAppName
-
-    serviceBusNamespace_name
+    customV4InProcessStorageAccount
+    customV4InProcessFunctionApp
+    serviceBusNamespace
   ]
 }
 
-output defaultV3InProcessFunctionAppName string = defaultV3InProcessFunctionApp.functionAppName
-output defaultV4InProcessFunctionAppName string = defaultV4InProcessFunctionApp.functionAppName
-output customV3InProcessFunctionAppName string = customV3InProcessFunctionApp.functionAppName
-output customV4InProcessFunctionAppName string = customV4InProcessFunctionApp.functionAppName
-output serviceBusNamespace string = serviceBusNamespace.name
-output applicationInsightsName string = applicationInsights.name
+output defaultV3InProcessFunctionAppName string = defaultV3InProcessFunctionAppSettings.functionAppName
+output defaultV4InProcessFunctionAppName string = defaultV4InProcessFunctionAppSettings.functionAppName
+output customV3InProcessFunctionAppName string = customV3InProcessFunctionAppSettings.functionAppName
+output customV4InProcessFunctionAppName string = customV4InProcessFunctionAppSettings.functionAppName
+output serviceBusNamespace string = serviceBusNamespaceSettings.name
+output applicationInsightsName string = applicationInsightsSettings.name

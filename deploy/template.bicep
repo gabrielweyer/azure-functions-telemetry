@@ -80,7 +80,8 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
 }
 
 resource defaultV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${defaultV3InProcessFunctionAppSettings.queue}'
+  parent: serviceBusNamespace
+  name: defaultV3InProcessFunctionAppSettings.queue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -95,13 +96,11 @@ resource defaultV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource defaultV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${defaultV3InProcessFunctionAppSettings.exceptionQueue}'
+  parent: serviceBusNamespace
+  name: defaultV3InProcessFunctionAppSettings.exceptionQueue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -116,13 +115,11 @@ resource defaultV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queue
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource defaultV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${defaultV4InProcessFunctionAppSettings.queue}'
+  parent: serviceBusNamespace
+  name: defaultV4InProcessFunctionAppSettings.queue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -137,13 +134,11 @@ resource defaultV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource defaultV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${defaultV4InProcessFunctionAppSettings.exceptionQueue}'
+  parent: serviceBusNamespace
+  name: defaultV4InProcessFunctionAppSettings.exceptionQueue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -158,13 +153,11 @@ resource defaultV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queue
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource customV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${customV3InProcessFunctionAppSettings.queue}'
+  parent: serviceBusNamespace
+  name: customV3InProcessFunctionAppSettings.queue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -179,13 +172,11 @@ resource customV3InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource customV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${customV3InProcessFunctionAppSettings.exceptionQueue}'
+  parent: serviceBusNamespace
+  name: customV3InProcessFunctionAppSettings.exceptionQueue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -200,13 +191,11 @@ resource customV3InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource customV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${customV4InProcessFunctionAppSettings.queue}'
+  parent: serviceBusNamespace
+  name: customV4InProcessFunctionAppSettings.queue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -221,13 +210,11 @@ resource customV4InProcessQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource customV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = {
-  name: '${serviceBusNamespaceSettings.name}/${customV4InProcessFunctionAppSettings.exceptionQueue}'
+  parent: serviceBusNamespace
+  name: customV4InProcessFunctionAppSettings.exceptionQueue
   properties: {
     lockDuration: 'PT30S'
     maxSizeInMegabytes: 1024
@@ -242,9 +229,6 @@ resource customV4InProcessExceptionQueue 'Microsoft.ServiceBus/namespaces/queues
     enablePartitioning: false
     enableExpress: false
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }
 
 resource defaultV3InProcessStorageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
@@ -287,7 +271,8 @@ resource defaultV3InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
 }
 
 resource defaultV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${defaultV3InProcessFunctionAppSettings.functionAppName}/appsettings'
+  parent: defaultV3InProcessFunctionApp
+  name: 'appsettings'
   properties: {
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
     APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
@@ -301,7 +286,6 @@ resource defaultV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@20
   }
   dependsOn: [
     defaultV3InProcessStorageAccount
-    defaultV3InProcessFunctionApp
     serviceBusNamespace
   ]
 }
@@ -346,7 +330,8 @@ resource customV3InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
 }
 
 resource customV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${customV3InProcessFunctionAppSettings.functionAppName}/appsettings'
+  parent: customV3InProcessFunctionApp
+  name: 'appsettings'
   properties: {
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV3InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV3InProcessFunctionAppSettings.storageName, '2019-06-01').keys[0].value}'
     APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
@@ -360,7 +345,6 @@ resource customV3InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@202
   }
   dependsOn: [
     customV3InProcessStorageAccount
-    customV3InProcessFunctionApp
     serviceBusNamespace
   ]
 }
@@ -405,7 +389,8 @@ resource defaultV4InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
 }
 
 resource defaultV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${defaultV4InProcessFunctionAppSettings.functionAppName}/appsettings'
+  parent: defaultV4InProcessFunctionApp
+  name: 'appsettings'
   properties: {
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${defaultV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(defaultV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
     APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
@@ -419,7 +404,6 @@ resource defaultV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@20
   }
   dependsOn: [
     defaultV4InProcessStorageAccount
-    defaultV4InProcessFunctionApp
     serviceBusNamespace
   ]
 }
@@ -464,7 +448,8 @@ resource customV4InProcessFunctionApp 'Microsoft.Web/sites@2021-03-01' = {
 }
 
 resource customV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@2021-03-01' = {
-  name: '${customV4InProcessFunctionAppSettings.functionAppName}/appsettings'
+  parent: customV4InProcessFunctionApp
+  name: 'appsettings'
   properties: {
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${customV4InProcessFunctionAppSettings.storageName};AccountKey=${listKeys(customV4InProcessFunctionAppSettings.storageName, '2021-06-01').keys[0].value}'
     APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsights.id, '2020-02-02').ConnectionString
@@ -478,7 +463,6 @@ resource customV4InProcessFunctionAppAppSettings 'Microsoft.Web/sites/config@202
   }
   dependsOn: [
     customV4InProcessStorageAccount
-    customV4InProcessFunctionApp
     serviceBusNamespace
   ]
 }

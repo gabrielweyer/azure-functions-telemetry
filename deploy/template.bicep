@@ -19,24 +19,28 @@ var functions = [
     displayName: 'defaultV3InProcess'
     hostingPlanName: '${resourceNamePrefix}-defaultv3inprocess-plan'
     functionAppName: '${resourceNamePrefix}-defaultv3inprocess-func'
+    functionRuntimeVersion: 3
     storageName: '${resourceNamePrefix}7defaultv3inprocess'
   }
   {
     displayName: 'defaultV4InProcess'
     hostingPlanName: '${resourceNamePrefix}-defaultv4inprocess-plan'
     functionAppName: '${resourceNamePrefix}-defaultv4inprocess-func'
+    functionRuntimeVersion: 4
     storageName: '${resourceNamePrefix}7defaultv4inprocess'
   }
   {
     displayName: 'customV3InProcess'
     hostingPlanName: '${resourceNamePrefix}-customv3inprocess-plan'
     functionAppName: '${resourceNamePrefix}-customv3inprocess-func'
+    functionRuntimeVersion: 3
     storageName: '${resourceNamePrefix}7customv3inprocess'
   }
   {
     displayName: 'customV4InProcess'
     hostingPlanName: '${resourceNamePrefix}-customv4inprocess-plan'
     functionAppName: '${resourceNamePrefix}-customv4inprocess-func'
+    functionRuntimeVersion: 4
     storageName: '${resourceNamePrefix}7customv4inprocess'
   }
 ]
@@ -115,6 +119,7 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
     storageName: function.storageName
     hostingPlanName: function.hostingPlanName
     functionAppName: function.functionAppName
+    functionRuntimeVersion: function.functionRuntimeVersion
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', '2021-06-01-preview').primaryConnectionString
     reallySecretValue: reallySecretValue

@@ -10,6 +10,13 @@ param hostingPlanName string
 @description('Function App name.')
 param functionAppName string
 
+@description('Function runtime version (v3 or v4).')
+@allowed([
+  3
+  4
+])
+param functionRuntimeVersion int
+
 @description('Application Insights connection string.')
 @secure()
 param applicationInsightsConnectionString string
@@ -21,6 +28,8 @@ param serviceBusConnectionString string
 @description('Used to populate "Secret:ReallySecretValue".')
 @secure()
 param reallySecretValue string
+
+var functionsExtensionsVersion = '~${functionRuntimeVersion}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageName
@@ -67,7 +76,7 @@ resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   properties: {
     AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
-    FUNCTIONS_EXTENSION_VERSION: '~3'
+    FUNCTIONS_EXTENSION_VERSION: functionsExtensionsVersion
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     WEBSITE_CONTENTSHARE: functionAppName

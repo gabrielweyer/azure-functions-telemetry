@@ -126,14 +126,17 @@ Write-Host 'Deploying ARM template (takes a while)'
 
 $templatePath = Join-Path $PSScriptRoot 'deploy' 'template.bicep'
 
+$deploymentNameSuffix = "$((Get-Date).ToString('yyyyMMdd-HHmmss'))-$((New-Guid).Guid.Substring(0, 4))"
+
 $templateParameters = @{
     location = $Location
     resourceNamePrefix = $ResourceNamePrefix
     reallySecretValue = $secretValue
+    deploymentNameSuffix = $deploymentNameSuffix
 }
 
 $createEnvironmentDeploymentParameters = @{
-    Name = "deploy-$((Get-Date).ToString('yyyyMMdd-HHmmss'))-$((New-Guid).Guid.Substring(0, 4))"
+    Name = "deploy-$deploymentNameSuffix"
     ResourceGroupName = $resourceGroupName
     TemplateFile = $templatePath
     TemplateParameterObject = $templateParameters

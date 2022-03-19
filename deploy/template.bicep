@@ -9,6 +9,9 @@ param resourceNamePrefix string
 @secure()
 param reallySecretValue string
 
+@description('Expected to be unique, used to name nested deployments.')
+param deploymentNameSuffix string
+
 var applicationInsightsSettings = {
   name: '${resourceNamePrefix}-appi'
   workspaceName: '${resourceNamePrefix}-log'
@@ -113,7 +116,7 @@ resource queues 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = [f
 }]
 
 module functionAppModule './functionApp.bicep' = [for function in functions:  {
-  name: '${function.displayName}FunctionAppDeploy'
+  name: '${function.displayName}-${deploymentNameSuffix}'
   params: {
     location: location
     storageName: function.storageName

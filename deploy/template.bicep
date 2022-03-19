@@ -17,48 +17,53 @@ var applicationInsightsSettings = {
   workspaceName: '${resourceNamePrefix}-log'
 }
 
+var defaultV3InProcessFunctionDisplayName = 'defaultV3InProcess'
+var defaultV4InProcessFunctionDisplayName = 'defaultV4InProcess'
+var customV3InProcessFunctionDisplayName = 'customV3InProcess'
+var customV4InProcessFunctionDisplayName = 'customV4InProcess'
+
 var functions = [
   {
-    displayName: 'defaultV3InProcess'
-    hostingPlanName: '${resourceNamePrefix}-defaultv3inprocess-plan'
-    functionAppName: '${resourceNamePrefix}-defaultv3inprocess-func'
+    displayName: defaultV3InProcessFunctionDisplayName
+    hostingPlanName: '${resourceNamePrefix}-${toLower(defaultV3InProcessFunctionDisplayName)}-plan'
+    functionAppName: '${resourceNamePrefix}-${toLower(defaultV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
-    storageName: '${resourceNamePrefix}7defaultv3inprocess'
+    storageName: '${resourceNamePrefix}7${toLower(defaultV3InProcessFunctionDisplayName)}'
   }
   {
-    displayName: 'defaultV4InProcess'
-    hostingPlanName: '${resourceNamePrefix}-defaultv4inprocess-plan'
-    functionAppName: '${resourceNamePrefix}-defaultv4inprocess-func'
+    displayName: defaultV4InProcessFunctionDisplayName
+    hostingPlanName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-plan'
+    functionAppName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
-    storageName: '${resourceNamePrefix}7defaultv4inprocess'
+    storageName: '${resourceNamePrefix}7${toLower(defaultV4InProcessFunctionDisplayName)}'
   }
   {
-    displayName: 'customV3InProcess'
-    hostingPlanName: '${resourceNamePrefix}-customv3inprocess-plan'
-    functionAppName: '${resourceNamePrefix}-customv3inprocess-func'
+    displayName: customV3InProcessFunctionDisplayName
+    hostingPlanName: '${resourceNamePrefix}-${toLower(customV3InProcessFunctionDisplayName)}-plan'
+    functionAppName: '${resourceNamePrefix}-${toLower(customV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
-    storageName: '${resourceNamePrefix}7customv3inprocess'
+    storageName: '${resourceNamePrefix}7${toLower(customV3InProcessFunctionDisplayName)}'
   }
   {
-    displayName: 'customV4InProcess'
-    hostingPlanName: '${resourceNamePrefix}-customv4inprocess-plan'
-    functionAppName: '${resourceNamePrefix}-customv4inprocess-func'
+    displayName: customV4InProcessFunctionDisplayName
+    hostingPlanName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-plan'
+    functionAppName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
-    storageName: '${resourceNamePrefix}7customv4inprocess'
+    storageName: '${resourceNamePrefix}7${toLower(customV4InProcessFunctionDisplayName)}'
   }
 ]
 
 var serviceBusSettings = {
   name: '${resourceNamePrefix}sb'
   queueNames: [
-    'defaultv3inprocess-queue'
-    'defaultv3inprocess-exception-queue'
-    'defaultv4inprocess-queue'
-    'defaultv4inprocess-exception-queue'
-    'customv3inprocess-queue'
-    'customv3inprocess-exception-queue'
-    'customv4inprocess-queue'
-    'customv4inprocess-exception-queue'
+    '${toLower(defaultV3InProcessFunctionDisplayName)}-queue'
+    '${toLower(defaultV3InProcessFunctionDisplayName)}-exception-queue'
+    '${toLower(defaultV4InProcessFunctionDisplayName)}-queue'
+    '${toLower(defaultV4InProcessFunctionDisplayName)}-exception-queue'
+    '${toLower(customV3InProcessFunctionDisplayName)}-queue'
+    '${toLower(customV3InProcessFunctionDisplayName)}-exception-queue'
+    '${toLower(customV4InProcessFunctionDisplayName)}-queue'
+    '${toLower(customV4InProcessFunctionDisplayName)}-exception-queue'
   ]
 }
 

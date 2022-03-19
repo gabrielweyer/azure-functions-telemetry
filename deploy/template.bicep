@@ -115,13 +115,10 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
     storageName: function.storageName
     hostingPlanName: function.hostingPlanName
     functionAppName: function.functionAppName
-    applicationInsightsId: applicationInsights.id
-    serviceBusNamespace: serviceBusSettings.name
+    applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
+    serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', '2021-06-01-preview').primaryConnectionString
     reallySecretValue: reallySecretValue
   }
-  dependsOn: [
-    serviceBusNamespace
-  ]
 }]
 
 output defaultV3InProcessFunctionAppName string = functions[0].functionAppName

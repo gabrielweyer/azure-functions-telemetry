@@ -10,11 +10,13 @@ param hostingPlanName string
 @description('Function App name.')
 param functionAppName string
 
-@description('Application Insights resource Id.')
-param applicationInsightsId string
+@description('Application Insights connection string.')
+@secure()
+param applicationInsightsConnectionString string
 
-@description('Service Bus namespace.')
-param serviceBusNamespace string
+@description('Service Bus connection string.')
+@secure()
+param serviceBusConnectionString string
 
 @description('Used to populate "Secret:ReallySecretValue".')
 @secure()
@@ -63,17 +65,14 @@ resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   parent: functionApp
   name: 'appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${listKeys(storageName, '2019-06-01').keys[0].value}'
-    APPLICATIONINSIGHTS_CONNECTION_STRING: reference(applicationInsightsId, '2020-02-02').ConnectionString
+    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     FUNCTIONS_EXTENSION_VERSION: '~3'
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${listKeys(storageName, '2019-06-01').keys[0].value}'
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
     WEBSITE_CONTENTSHARE: functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
-    ServiceBusConnection: listKeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', serviceBusNamespace, 'RootManageSharedAccessKey'), '2017-04-01').primaryConnectionString
+    ServiceBusConnection: serviceBusConnectionString
   }
-  dependsOn: [
-    storageAccount
-  ]
 }

@@ -122,13 +122,13 @@ New-AzResourceGroup @createResourceGroupParameters | Out-Null
 
 Write-Verbose "Created (or updated) resource group '$resourceGroupName'"
 
-Write-Host 'Deploying ARM template (takes a while)'
+Write-Host 'Deploying Bicep file (takes a while)'
 
-$templatePath = Join-Path $PSScriptRoot 'deploy' 'template.bicep'
+$bicepPath = Join-Path $PSScriptRoot 'deploy' 'main.bicep'
 
 $deploymentNameSuffix = "$((Get-Date).ToString('yyyyMMdd-HHmmss'))-$((New-Guid).Guid.Substring(0, 4))"
 
-$templateParameters = @{
+$bicepParameters = @{
     location = $Location
     resourceNamePrefix = $ResourceNamePrefix
     reallySecretValue = $secretValue
@@ -138,20 +138,20 @@ $templateParameters = @{
 $createEnvironmentDeploymentParameters = @{
     Name = "deploy-$deploymentNameSuffix"
     ResourceGroupName = $resourceGroupName
-    TemplateFile = $templatePath
-    TemplateParameterObject = $templateParameters
+    TemplateFile = $bicepPath
+    TemplateParameterObject = $bicepParameters
     SkipTemplateParameterPrompt = $true
     Force = $true
 }
 
-$armDeploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
+$deploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
 
-$defaultV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
-$defaultV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
-$customV3InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
-$customV4InProcessFunctionAppName = $armDeploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
-$serviceBusNamespace = $armDeploymentResult.Outputs.Item('serviceBusNamespace').Value
-$applicationInsightsName = $armDeploymentResult.Outputs.Item('applicationInsightsName').Value
+$defaultV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
+$defaultV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
+$customV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
+$customV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
+$serviceBusNamespace = $deploymentResult.Outputs.Item('serviceBusNamespace').Value
+$applicationInsightsName = $deploymentResult.Outputs.Item('applicationInsightsName').Value
 
 Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
 Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"

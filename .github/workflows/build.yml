@@ -1,6 +1,18 @@
 name: Build
 on:
   push:
+    branches:
+      - main
+    paths-ignore:
+      - '.vscode/**'
+      - 'deploy/**'
+      - 'docs/**'
+      - deploy.ps1
+      - LICENSE
+      - README.md
+  pull_request:
+    branches:
+      - main
     paths-ignore:
       - '.vscode/**'
       - 'deploy/**'
@@ -11,15 +23,17 @@ on:
 env:
   BUILD_CONFIGURATION: Release
 jobs:
-  Build:
+  build:
+    name: Build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Restore NuGet packages
         run: dotnet restore
-      - name: Format
+      - name: Dotnet format
         run: dotnet format --verify-no-changes
       - name: Build
         run: dotnet build --configuration ${BUILD_CONFIGURATION} --no-restore

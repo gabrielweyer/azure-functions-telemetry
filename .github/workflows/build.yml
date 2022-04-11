@@ -38,4 +38,11 @@ jobs:
       - name: Build
         run: dotnet build --configuration ${BUILD_CONFIGURATION} --no-restore
       - name: Test
-        run: dotnet test --configuration ${BUILD_CONFIGURATION} --no-build
+        run: dotnet test --configuration ${BUILD_CONFIGURATION} --no-build --logger:"trx;LogFilePrefix=test-results"
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-results
+          path: './**/*.trx'
+          if-no-files-found: error

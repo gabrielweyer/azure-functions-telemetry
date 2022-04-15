@@ -39,3 +39,10 @@ jobs:
           name: test-results
           path: './artifacts/test-results/**/*.trx'
           if-no-files-found: error
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: code-coverage
+          path: './artifacts/coverage-report'
+          if-no-files-found: error

@@ -37,7 +37,7 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: './artifacts/test-results/**/*.trx'
+          path: './artifacts/test-results/**/*.html'
           if-no-files-found: error
       - name: Upload coverage report
         uses: actions/upload-artifact@v3

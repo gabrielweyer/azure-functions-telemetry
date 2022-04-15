@@ -94,8 +94,8 @@ class Build : NukeBuild
                         .SetProjectFile(p.TestProject)
                         .SetFramework(p.Framework)
                         .SetResultsDirectory(testResultsDirectory)
-                        .SetLoggers($"trx;LogFileName={testResultsName}.trx");
-                }));
+                        .SetLoggers($"html;LogFileName={testResultsName}.html");
+                }), completeOnFailure: true);
         });
 
     Target GenerateCoverage => _ => _

@@ -11,16 +11,6 @@ on:
       - deploy.ps1
       - LICENSE
       - README.md
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '.vscode/**'
-      - 'deploy/**'
-      - 'docs/**'
-      - deploy.ps1
-      - LICENSE
-      - README.md
   schedule:
     - cron: '25 17 * * 5'
 

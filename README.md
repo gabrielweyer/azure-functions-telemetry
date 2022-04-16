@@ -387,11 +387,11 @@ I used the Azure Functions Core Tools version `3.0.3160` to create the Function 
 NuGet packages:
 
 - `Microsoft.NET.Sdk.Functions`:
-  - `v3`: `3.0.13` (added automatically when creating the Function, updated later)
-  - `v4`: `4.0.1` (added automatically when creating the Function)
+  - `v3`: `3.1.0` (added automatically when creating the Function, updated later)
+  - `v4`: `4.1.0` (added automatically when creating the Function, updated later)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
-- `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection]):
-  - `v3`: `3.1.23`
+- `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection], updated later):
+  - `v3`: `3.1.24`
   - `v4`: `6.0.0`
 - `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.30` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 

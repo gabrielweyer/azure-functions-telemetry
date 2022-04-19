@@ -4,7 +4,7 @@
 <#
 
 .SYNOPSIS
-Deploys the project to Azure.
+Deploys the sample Functions to Azure.
 
 .DESCRIPTION
 Provisions the below resources in Azure:
@@ -29,6 +29,7 @@ You need:
 
 - PowerShell 7 (https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2)
 - Azure PowerShell (https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.1.0)
+- Bicep CLI (https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#install-manually)
 
 Select the subscription you want to deploy to before running this script.
 
@@ -48,30 +49,7 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
-function Publish-FunctionApp {
-    param(
-        [Parameter()]
-        [string]$FunctionName
-    )
-
-    $outputPath = Join-Path $PSScriptRoot 'out' $FunctionName
-    $sourcePath = Join-Path $PSScriptRoot 'samples' $FunctionName
-
-    dotnet clean --configuration Release --output $outputPath $sourcePath | Out-Null
-
-    dotnet publish --configuration Release --output $outputPath $sourcePath | Out-Null
-
-    $archivePath = Join-Path $outputPath "$FunctionName.zip"
-
-    $compressParameters = @{
-        Path = Join-Path $outputPath '*'
-        CompressionLevel = 'Fastest'
-        DestinationPath = $archivePath
-    }
-    Compress-Archive @compressParameters
-
-    $archivePath
-}
+$outputPath = Join-Path $PSScriptRoot '..' 'artifacts' 'out'
 
 $resourceGroupName = "$ResourceNamePrefix-rg"
 $secretValue = 'TopSecret'
@@ -85,30 +63,6 @@ if ($null -eq $selectedSubscription) {
 } else {
     Write-Verbose "Deploying to subscription '$($selectedSubscription.Id) ($($selectedSubscription.Name))'"
 }
-
-Write-Host 'Publishing Default V3 In-Process Function App to file system'
-
-$defaultV3InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultV3InProcessFunction'
-
-Write-Verbose "Published Default V3 In-Process Function App to '$defaultV3InProcessFunctionArchivePath'"
-
-Write-Host 'Publishing Default V4 In-Process Function App to file system'
-
-$defaultV4InProcessFunctionArchivePath = Publish-FunctionApp 'DefaultV4InProcessFunction'
-
-Write-Verbose "Published Default V4 In-Process Function App to '$defaultV4InProcessFunctionArchivePath'"
-
-Write-Host 'Publishing Custom V3 In-Process Function App to file system'
-
-$customV3InProcessFunctionArchivePath = Publish-FunctionApp 'CustomV3InProcessFunction'
-
-Write-Verbose "Published Custom V3 In-Process Function App to '$customV3InProcessFunctionArchivePath'"
-
-Write-Host 'Publishing Custom V4 In-Process Function App to file system'
-
-$customV4InProcessFunctionArchivePath = Publish-FunctionApp 'CustomV4InProcessFunction'
-
-Write-Verbose "Published Custom V4 In-Process Function App to '$customV4InProcessFunctionArchivePath'"
 
 Write-Host 'Creating (or updating) resource group'
 
@@ -124,7 +78,7 @@ Write-Verbose "Created (or updated) resource group '$resourceGroupName'"
 
 Write-Host 'Deploying Bicep file (takes a while)'
 
-$bicepPath = Join-Path $PSScriptRoot 'deploy' 'main.bicep'
+$bicepPath = Join-Path $PSScriptRoot 'main.bicep'
 
 $deploymentNameSuffix = "$((Get-Date).ToString('yyyyMMdd-HHmmss'))-$((New-Guid).Guid.Substring(0, 4))"
 
@@ -162,6 +116,8 @@ Write-Verbose "Application Insights instance is '$applicationInsightsName'"
 
 Write-Host 'Deploying Default V3 In-Process Function App to Azure'
 
+$defaultV3InProcessFunctionArchivePath = Join-Path $outputPath 'DefaultV3InProcessFunction.zip'
+
 $publishDefaultV3InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $defaultV3InProcessFunctionAppName
@@ -172,6 +128,8 @@ $publishDefaultV3InProcessParameters = @{
 Publish-AzWebapp @publishDefaultV3InProcessParameters | Out-Null
 
 Write-Host 'Deploying Default V4 In-Process Function App to Azure'
+
+$defaultV4InProcessFunctionArchivePath = Join-Path $outputPath 'DefaultV4InProcessFunction.zip'
 
 $publishDefaultV4InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
@@ -184,6 +142,8 @@ Publish-AzWebapp @publishDefaultV4InProcessParameters | Out-Null
 
 Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
 
+$customV3InProcessFunctionArchivePath = Join-Path $outputPath 'CustomV3InProcessFunction.zip'
+
 $publishCustomV3InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $customV3InProcessFunctionAppName
@@ -195,6 +155,8 @@ Publish-AzWebapp @publishCustomV3InProcessParameters | Out-Null
 
 Write-Host 'Deploying Custom V4 In-Process Function App to Azure'
 
+$customV4InProcessFunctionArchivePath = Join-Path $outputPath 'CustomV4InProcessFunction.zip'
+
 $publishCustomV4InProcessParameters = @{
     ResourceGroupName = $resourceGroupName
     Name = $customV4InProcessFunctionAppName
@@ -204,17 +166,21 @@ $publishCustomV4InProcessParameters = @{
 
 Publish-AzWebapp @publishCustomV4InProcessParameters | Out-Null
 
-Write-Host 'Setting local user secrets'
+if ($null -eq $Env:GITHUB_ACTIONS) {
+    Write-Host 'Setting local user secrets'
 
-$userSecretsId = '074ca336-270b-4832-9a1a-60baf152b727'
+    $userSecretsId = '074ca336-270b-4832-9a1a-60baf152b727'
 
-dotnet user-secrets set Secret:ReallySecretValue "$secretValue" --id $userSecretsId | Out-Null
-Write-verbose "Set secret 'Secret:ReallySecretValue'"
+    dotnet user-secrets set Secret:ReallySecretValue "$secretValue" --id $userSecretsId | Out-Null
+    Write-verbose "Set secret 'Secret:ReallySecretValue'"
 
-$serviceBusConnectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamespace -Name RootManageSharedAccessKey
-dotnet user-secrets set ServiceBusConnection "$($serviceBusConnectionStrings.PrimaryConnectionString)" --id $userSecretsId | Out-Null
-Write-verbose "Set secret 'ServiceBusConnection'"
+    $serviceBusConnectionStrings = Get-AzServiceBusKey -ResourceGroup $resourceGroupName -Namespace $serviceBusNamespace -Name RootManageSharedAccessKey
+    dotnet user-secrets set ServiceBusConnection "$($serviceBusConnectionStrings.PrimaryConnectionString)" --id $userSecretsId | Out-Null
+    Write-verbose "Set secret 'ServiceBusConnection'"
 
-$applicationInsightsResource = Get-AzApplicationInsights -ResourceGroupName $resourceGroupName -Name $applicationInsightsName
-dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING "$($applicationInsightsResource.ConnectionString)" --id $userSecretsId | Out-Null
-Write-verbose "Set secret 'APPLICATIONINSIGHTS_CONNECTION_STRING'"
+    $applicationInsightsResource = Get-AzApplicationInsights -ResourceGroupName $resourceGroupName -Name $applicationInsightsName
+    dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING "$($applicationInsightsResource.ConnectionString)" --id $userSecretsId | Out-Null
+    Write-verbose "Set secret 'APPLICATIONINSIGHTS_CONNECTION_STRING'"
+} else {
+    Write-Host 'Skipping setting local user secrets as we''re running in GitHub Actions'
+}

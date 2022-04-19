@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
@@ -21,10 +22,13 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main() => Execute<Build>(x => x.GenerateCoverage);
+    public static int Main() => Execute<Build>(x => x.Publish);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+
+    [Parameter("Whether we publish the sample Functions to file system - Default is false")]
+    readonly bool Package;
 
     [Solution] readonly Solution Solution;
 
@@ -34,6 +38,7 @@ class Build : NukeBuild
     static AbsolutePath ArtifactsDirectory => RootDirectory / "artifacts";
     static AbsolutePath TestResultsDirectory => ArtifactsDirectory / "test-results";
     static AbsolutePath CodeCoverageDirectory => ArtifactsDirectory / "coverage-report";
+    static AbsolutePath PublishDirectory => ArtifactsDirectory / "out";
 
 #pragma warning disable CA1822 // Can't make this static as it breaks NUKE
     Target Clean => _ => _
@@ -107,5 +112,36 @@ class Build : NukeBuild
                 .SetReports($"{TestResultsDirectory}/**/coverage.cobertura.xml")
                 .SetTargetDirectory(CodeCoverageDirectory)
                 .SetReportTypes(ReportTypes.Html));
+        });
+
+    Target Publish => _ => _
+        .DependsOn(GenerateCoverage)
+        .OnlyWhenStatic(() => Package)
+        .Executes(() =>
+        {
+            var functionProjects =
+                from functionProject in Solution.AllProjects
+                where functionProject.Name.EndsWith("Function")
+                select functionProject;
+
+            var outDirectories = new List<(string ProjectName, string OutPath)>();
+
+            DotNetPublish(s => s
+                .SetConfiguration(Configuration)
+                .EnableNoBuild()
+                .CombineWith(functionProjects, (ss, p) =>
+                {
+                    var output = PublishDirectory / p.Name;
+                    outDirectories.Add((p.Name, output));
+
+                    return ss
+                        .SetProject(p)
+                        .SetOutput(output);
+                }));
+
+            foreach (var (projectName, outPath) in outDirectories)
+            {
+                CompressionTasks.CompressZip(outPath, PublishDirectory / $"{projectName}.zip");
+            }
         });
 }

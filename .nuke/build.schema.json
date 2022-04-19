@@ -46,6 +46,10 @@
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
         },
+        "Package": {
+          "type": "boolean",
+          "description": "Whether we publish the sample Functions to file system - Default is false"
+        },
         "Partition": {
           "type": "string",
           "description": "Partition to use on CI"
@@ -74,6 +78,7 @@
               "Clean",
               "Compile",
               "GenerateCoverage",
+              "Publish",
               "Restore",
               "Test",
               "VerifyFormat"
@@ -93,6 +98,7 @@
               "Clean",
               "Compile",
               "GenerateCoverage",
+              "Publish",
               "Restore",
               "Test",
               "VerifyFormat"

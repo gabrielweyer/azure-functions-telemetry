@@ -31,7 +31,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Build
-        run: ./build.sh
+        run: ./build.sh --package
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -44,5 +44,17 @@ jobs:
         if: always()
         with:
           name: code-coverage
-          path: './artifacts/coverage-report'
+          path: artifacts/coverage-report
+          if-no-files-found: error
+      - name: Upload infrstructure artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy
+          path: deploy
+          if-no-files-found: error
+      - name: Upload binary artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: deploy
+          path: artifacts/out/*.zip
           if-no-files-found: error

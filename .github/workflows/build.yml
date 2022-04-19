@@ -46,15 +46,35 @@ jobs:
           name: code-coverage
           path: artifacts/coverage-report
           if-no-files-found: error
-      - name: Upload infrstructure artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: deploy
-          path: deploy
+          path: |
+            deploy
+            artifacts/out/*.zip
           if-no-files-found: error
-      - name: Upload binary artifacts
-        uses: actions/upload-artifact@v3
+  release:
+    name: Release
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-20.04
+    needs: Build
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
         with:
           name: deploy
-          path: artifacts/out/*.zip
-          if-no-files-found: error
+      - name: Sign-in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+      - name: Deploy
+        uses: azure/powershell@v1
+        with:
+          inlineScript: |
+            deploy/deploy.ps1 -Location ${{ env.AZURE_LOCATION }} -ResourceNamePrefix ${{ env.RESOURCE_NAME_PREFIX }}
+          azPSVersion: 'latest'
+        env:
+          AZURE_LOCATION: australiaeast
+          RESOURCE_NAME_PREFIX: gabow

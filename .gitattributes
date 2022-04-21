@@ -7,4 +7,6 @@ docs/postman/*.json eol=lf
 # Bicep
 *.bicep eol=lf
 
+# Vendored extensions
+*.sh linguist-vendored
 *.ps1 linguist-vendored

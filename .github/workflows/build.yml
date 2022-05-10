@@ -1,23 +1,24 @@
 name: Build
+
 on:
   push:
     branches:
       - main
     paths-ignore:
+      - .github/workflows/security-scanning.yml
+      - .github/workflows/skipped-build.yml
       - '.vscode/**'
-      - 'deploy/**'
       - 'docs/**'
-      - deploy.ps1
       - LICENSE
       - README.md
   pull_request:
     branches:
       - main
     paths-ignore:
+      - .github/workflows/security-scanning.yml
+      - .github/workflows/skipped-build.yml
       - '.vscode/**'
-      - 'deploy/**'
       - 'docs/**'
-      - deploy.ps1
       - LICENSE
       - README.md
 

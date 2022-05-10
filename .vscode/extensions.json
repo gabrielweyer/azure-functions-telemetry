@@ -1,10 +1,11 @@
 {
     "recommendations": [
-        "ms-azuretools.vscode-azurefunctions",
         "Azurite.azurite",
+        "ms-azuretools.vscode-azurefunctions",
         "ms-azuretools.vscode-bicep",
         "ms-dotnettools.csharp",
+        "ms-vscode.powershell",
         "EditorConfig.EditorConfig",
-        "ms-vscode.powershell"
+        "redhat.vscode-yaml"
     ]
 }

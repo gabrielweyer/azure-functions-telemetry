@@ -5,10 +5,13 @@ on:
     branches:
       - main
     paths-ignore:
+      - .github/workflows/build.yml
+      - .github/workflows/skipped-build.yml
       - '.vscode/**'
       - 'deploy/**'
       - 'docs/**'
-      - deploy.ps1
+      - build.ps1
+      - build.sh
       - LICENSE
       - README.md
   schedule:

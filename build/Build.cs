@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Nuke.Common;
 using Nuke.Common.CI;
-using Nuke.Common.Execution;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
@@ -12,7 +11,6 @@ using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-[CheckBuildProjectConfigurations]
 [ShutdownDotNetAfterServerBuild]
 class Build : NukeBuild
 {
@@ -95,11 +93,18 @@ class Build : NukeBuild
                     var testResultsName = $"{p.TestProject.Path.NameWithoutExtension}-{p.Framework}";
                     var testResultsDirectory = TestResultsDirectory / testResultsName;
 
+                    var loggers = new List<string> { $"html;LogFileName={testResultsName}.html" };
+
+                    if (!IsLocalBuild)
+                    {
+                        loggers.Add($"GitHubActions;annotations.titleFormat=$test ({p.Framework})");
+                    }
+
                     return ss
                         .SetProjectFile(p.TestProject)
                         .SetFramework(p.Framework)
                         .SetResultsDirectory(testResultsDirectory)
-                        .SetLoggers($"html;LogFileName={testResultsName}.html");
+                        .SetLoggers(loggers);
                 }), completeOnFailure: true);
         });
 

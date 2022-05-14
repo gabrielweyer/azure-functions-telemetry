@@ -60,6 +60,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-20.04
     needs: Build
+    concurrency: deploy
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3

@@ -83,5 +83,6 @@ resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue
     ServiceBusConnection: serviceBusConnectionString
+    'Testing:IsEnabled': 'false'
   }
 }

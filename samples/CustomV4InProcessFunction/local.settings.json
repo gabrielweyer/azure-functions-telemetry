@@ -4,7 +4,8 @@
         "AzureWebJobsStorage": "UseDevelopmentStorage=true",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
         "ServiceBusConnection": "",
-        "logging:logLevel:Microsoft.Azure.WebJobs.Script.WebHost.Middleware.SystemTraceMiddleware": "None"
+        "logging:logLevel:Microsoft.Azure.WebJobs.Script.WebHost.Middleware.SystemTraceMiddleware": "None",
+        "Testing:IsEnabled": false
     },
     "Host": {
         "LocalHttpPort": 7074

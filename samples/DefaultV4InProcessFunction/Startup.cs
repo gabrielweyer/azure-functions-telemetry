@@ -1,6 +1,8 @@
 using Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction;
 using Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Functions.UserSecret;
+using Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Infrastructure;
 using Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Infrastructure.Telemetry;
+using Microsoft.ApplicationInsights.Channel;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,11 +14,16 @@ public class Startup : FunctionsStartup
 {
     public override void Configure(IFunctionsHostBuilder builder)
     {
-        builder.Services.AddOptions<SecretOptions>()
-            .Configure<IConfiguration>((settings, configuration) =>
-            {
-                configuration.GetSection("Secret").Bind(settings);
-            });
+        var testingOptions = builder.GetContext().Configuration.GetSection("Testing").Get<TestingOptions>();
+
+        if (testingOptions.IsEnabled)
+        {
+            builder.Services.AddSingleton<ITelemetryChannel, TestingChannel>();
+        }
+
+        builder.Services
+            .AddMyOptions<TestingOptions>("Testing")
+            .AddMyOptions<SecretOptions>("Secret");
 
         builder.Services.AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>();
     }

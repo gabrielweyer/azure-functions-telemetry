@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.Execution;
@@ -39,6 +43,11 @@ class Build : NukeBuild
     static AbsolutePath TestResultsDirectory => ArtifactsDirectory / "test-results";
     static AbsolutePath CodeCoverageDirectory => ArtifactsDirectory / "coverage-report";
     static AbsolutePath PublishDirectory => ArtifactsDirectory / "out";
+    static int _startedFunctionCount;
+    static StringBuilder _defaultV4Output = new();
+    static IProcess _defaultV4Function;
+    static StringBuilder _customV4Output = new();
+    static IProcess _customV4Function;
 
 #pragma warning disable CA1822 // Can't make this static as it breaks NUKE
     Target Clean => _ => _
@@ -76,7 +85,7 @@ class Build : NukeBuild
             DotNet("format --verify-no-changes");
         });
 
-    Target Test => _ => _
+    Target UnitTest => _ => _
         .DependsOn(VerifyFormat)
         .Executes(() =>
         {
@@ -104,7 +113,7 @@ class Build : NukeBuild
         });
 
     Target GenerateCoverage => _ => _
-        .DependsOn(Test)
+        .DependsOn(UnitTest)
         .Executes(() =>
         {
             ReportGeneratorTasks.ReportGenerator(s => s
@@ -114,8 +123,109 @@ class Build : NukeBuild
                 .SetReportTypes(ReportTypes.Html));
         });
 
-    Target Publish => _ => _
+    Target StartAzureFunctions => _ => _
         .DependsOn(GenerateCoverage)
+        .Executes(() =>
+        {
+            var slim = new ManualResetEventSlim();
+            Serilog.Log.Information("Starting Azure Functions, this takes some time");
+
+            _defaultV4Output = new StringBuilder();
+            var defaultV4Logger = BuildLogger(_defaultV4Output, "DefaultV4InProcessFunction");
+
+            _customV4Output = new StringBuilder();
+            var customV4Logger = BuildLogger(_customV4Output, "CustomV4InProcessFunction");
+
+            var environmentVariables = new Dictionary<string, string>(EnvironmentInfo.Variables)
+            {
+                ["Testing__IsEnabled"] = "true",
+                ["Testing:IsEnabled"] = "true"
+            };
+
+            _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
+            _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
+
+            var functionsTimeoutStart = TimeSpan.FromSeconds(60);
+            var didFunctionsStart = slim.Wait(functionsTimeoutStart);
+
+            if (didFunctionsStart)
+            {
+                return;
+            }
+
+            throw new InvalidOperationException(
+                $"Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction within {functionsTimeoutStart}");
+
+            Action<OutputType, string> BuildLogger(StringBuilder sink, string functionName)
+            {
+                return (outputType, output) =>
+                {
+                    sink.AppendLine($"[{outputType}] - {output}");
+
+                    if (!output.Contains("Job host started"))
+                    {
+                        return;
+                    }
+
+                    Serilog.Log.Information($"Started {functionName}");
+                    var startedFunctionCount = Interlocked.Increment(ref _startedFunctionCount);
+
+                    if (startedFunctionCount > 1)
+                    {
+                        slim.Set();
+                    }
+                };
+            }
+
+            IProcess StartFunction(string functionName, Action<OutputType, string> logger)
+            {
+                return ProcessTasks
+                    .StartProcess("func", "start", SamplesDirectory / functionName, environmentVariables, null, null, null, logger);
+            }
+        });
+
+    Target IntegrationTest => _ => _
+        .DependsOn(StartAzureFunctions)
+        .Executes(() =>
+        {
+            const string projectName = "AzureFunctionsTelemetryIntegrationTests";
+
+            var dotnetTestSettings = new DotNetTestSettings()
+                .SetConfiguration(Configuration)
+                .EnableNoBuild()
+                .SetProjectFile(TestsDirectory / projectName)
+                .SetResultsDirectory(TestResultsDirectory / projectName)
+                .SetLoggers($"html;LogFileName={projectName}.html");
+            DotNetTest(dotnetTestSettings);
+        });
+
+    Target WriteAzureFunctionLogs => _ => _
+        .DependsOn(IntegrationTest)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => FailedTargets.Contains(IntegrationTest) || FailedTargets.Contains(StartAzureFunctions))
+        .Executes(() =>
+        {
+            var defaultV4OutputPath = TestResultsDirectory / "default-v4-output.log";
+            var customV4OutputPath = TestResultsDirectory / "custom-v4-output.log";
+            Serilog.Log.Error($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
+            Serilog.Log.Error($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
+            File.WriteAllText(defaultV4OutputPath, _defaultV4Output.ToString());
+            File.WriteAllText(customV4OutputPath, _customV4Output.ToString());
+        });
+
+    Target StopAzureFunctions => _ => _
+        .DependsOn(WriteAzureFunctionLogs)
+        .AssuredAfterFailure()
+        .Executes(() =>
+        {
+            Serilog.Log.Information("Stopping Azure Functions");
+
+            _defaultV4Function.Kill();
+            _customV4Function.Kill();
+        });
+
+    Target Publish => _ => _
+        .DependsOn(StopAzureFunctions)
         .OnlyWhenStatic(() => Package)
         .Executes(() =>
         {

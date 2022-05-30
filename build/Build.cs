@@ -82,7 +82,7 @@ class Build : NukeBuild
         {
             var testProjects =
                 from testProject in Solution.AllProjects
-                where testProject.Name.EndsWith("Tests")
+                where testProject.Name == "AzureFunctionsTelemetryTests"
                 from framework in testProject.GetTargetFrameworks()
                 select new { TestProject = testProject, Framework = framework };
 

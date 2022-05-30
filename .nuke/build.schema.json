@@ -79,10 +79,14 @@
               "Clean",
               "Compile",
               "GenerateCoverage",
+              "IntegrationTest",
               "Publish",
               "Restore",
-              "Test",
-              "VerifyFormat"
+              "StartAzureFunctions",
+              "StopAzureFunctions",
+              "UnitTest",
+              "VerifyFormat",
+              "WriteAzureFunctionLogs"
             ]
           }
         },
@@ -99,10 +103,14 @@
               "Clean",
               "Compile",
               "GenerateCoverage",
+              "IntegrationTest",
               "Publish",
               "Restore",
-              "Test",
-              "VerifyFormat"
+              "StartAzureFunctions",
+              "StopAzureFunctions",
+              "UnitTest",
+              "VerifyFormat",
+              "WriteAzureFunctionLogs"
             ]
           }
         },

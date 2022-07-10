@@ -200,12 +200,19 @@ class Build : NukeBuild
         {
             const string projectName = "AzureFunctionsTelemetryIntegrationTests";
 
+            var loggers = new List<string> { $"html;LogFileName={projectName}.html" };
+
+            if (IsServerBuild)
+            {
+                loggers.Add("GitHubActions");
+            }
+
             var dotnetTestSettings = new DotNetTestSettings()
                 .SetConfiguration(Configuration)
                 .EnableNoBuild()
                 .SetProjectFile(TestsDirectory / projectName)
                 .SetResultsDirectory(TestResultsDirectory / projectName)
-                .SetLoggers($"html;LogFileName={projectName}.html");
+                .SetLoggers(loggers);
             DotNetTest(dotnetTestSettings);
         });
 

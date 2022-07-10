@@ -75,7 +75,7 @@ resource queues 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = [f
     deadLetteringOnMessageExpiration: false
     enableBatchedOperations: true
     duplicateDetectionHistoryTimeWindow: 'PT10M'
-    maxDeliveryCount: 2
+    maxDeliveryCount: 1
     status: 'Active'
     enablePartitioning: false
     enableExpress: false

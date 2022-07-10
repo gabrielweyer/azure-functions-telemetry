@@ -80,6 +80,12 @@ internal abstract class TelemetryFunctionClient
         await EnsureSuccessAsync(response);
     }
 
+    public async Task TriggerServiceBusExceptionAsync()
+    {
+        var response = await _httpClient.GetAsync("service-bus-exception");
+        await EnsureSuccessAsync(response);
+    }
+
     private static async Task EnsureSuccessAsync(HttpResponseMessage response)
     {
         if (!response.IsSuccessStatusCode)

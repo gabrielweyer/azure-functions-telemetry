@@ -43,6 +43,31 @@ internal abstract class TelemetryFunctionClient
             .ToList();
     }
 
+    public async Task<(T item, List<TelemetryItem> allItems)>
+        PollForTelemetryAsync<T>(Func<T, bool> selector) where T : TelemetryItem
+    {
+        var attemptCount = 0;
+        const int maxAttemptCount = 5;
+
+        do
+        {
+            attemptCount++;
+            await Task.Delay(TimeSpan.FromMilliseconds(100));
+            var telemetries = await GetTelemetryAsync();
+            var request = telemetries
+                .Where(i => i is T)
+                .Cast<T>()
+                .SingleOrDefault(selector);
+
+            if (request != null)
+            {
+                return (request, telemetries);
+            }
+        } while (attemptCount < maxAttemptCount);
+
+        throw new InvalidOperationException();
+    }
+
     public async Task DeleteTelemetryAsync()
     {
         var response = await _httpClient.DeleteAsync("telemetry");

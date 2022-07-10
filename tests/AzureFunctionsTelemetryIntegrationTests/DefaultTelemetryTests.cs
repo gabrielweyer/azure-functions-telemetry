@@ -14,16 +14,16 @@ public class DefaultTelemetryTests
     public async Task GivenTelemetry_ThenBothCloudRoleNameAndApplicationVersionAreEmpty()
     {
         // Act
-        var telemetryItems = await _client.GetTelemetryAsync();
+        var telemetries = await _client.GetTelemetryAsync();
 
         // Assert
-        var telemetryItem = telemetryItems.First();
+        var actualTelemetry = telemetries.First();
         var expectedTags = new TelemetryItemTags
         {
             ApplicationVersion = null,
             CloudRoleName = null
         };
-        telemetryItem.Tags.Should().BeEquivalentTo(expectedTags, options => options
+        actualTelemetry.Tags.Should().BeEquivalentTo(expectedTags, options => options
             .Including(t => t.ApplicationVersion)
             .Including(t => t.CloudRoleName));
     }

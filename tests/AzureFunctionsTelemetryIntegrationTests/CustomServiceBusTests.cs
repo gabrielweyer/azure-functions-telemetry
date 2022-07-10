@@ -20,7 +20,7 @@ public class CustomServiceBusTests
         await _client.TriggerServiceBusAsync();
 
         // Assert
-        var request = await _client.GetTelemetryItemAsync<RequestItem>(i => i.Tags.OperationName == "ServiceBusFunction");
+        var (request, _) = await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "ServiceBusFunction");
         request.Data.BaseData.Url.Should().Be("/ServiceBusFunction");
         request.Data.BaseData.ResponseCode.Should().Be("200");
     }

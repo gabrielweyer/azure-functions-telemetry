@@ -20,12 +20,9 @@ public class DefaultHttpTests
         await _client.LogVerboseAsync();
 
         // Assert
-        var telemetryItems = await _client.GetTelemetryAsync();
-        var requestTelemetry = telemetryItems.Should()
-            .ContainSingle(i => i.Name == "AppRequests" && i.Tags.OperationName == "TraceLogFunction").Subject;
-        var executionTraces = telemetryItems
-            .Where(i => i.Name == "AppTraces" && i.Tags.OperationId == requestTelemetry.Tags.OperationId)
-            .ToList();
+        var (request, telemetries) =
+            await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "TraceLogFunction");
+        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
         executionTraces.Should().HaveCount(2);
     }
 
@@ -39,12 +36,10 @@ public class DefaultHttpTests
         await _client.ThrowOnHttpBindingAsync();
 
         // Assert
-        var telemetryItems = await _client.GetTelemetryAsync();
-        var requestTelemetry = telemetryItems.Should()
-            .ContainSingle(i => i.Name == "AppRequests" && i.Tags.OperationName == "HttpExceptionThrowingFunction").Subject;
-        var exceptions = telemetryItems
-            .Where(i => i.Name == "AppExceptions" && i.Tags.OperationId == requestTelemetry.Tags.OperationId)
-            .ToList();
+        var (request, telemetries) =
+            await _client.PollForTelemetryAsync<RequestItem>(i =>
+                i.OperationName == "HttpExceptionThrowingFunction");
+        var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationId);
         exceptions.Should().HaveCount(2);
     }
 
@@ -59,8 +54,9 @@ public class DefaultHttpTests
         await _client.LogVerboseAsync();
 
         // Assert
-        var telemetryItems = await _client.GetTelemetryAsync();
-        telemetryItems.Should().Contain(i => i.Name == "AppRequests" && i.Tags.OperationName == "HealthFunction");
-        telemetryItems.Should().Contain(i => i.Name == "AppRequests" && i.Tags.OperationName == "TraceLogFunction");
+        var telemetries = await _client.GetTelemetryAsync();
+        var requests = telemetries.Where(i => i is RequestItem).Cast<RequestItem>().ToList();
+        requests.Should().Contain(i => i.OperationName == "HealthFunction");
+        requests.Should().Contain(i => i.OperationName == "TraceLogFunction");
     }
 }

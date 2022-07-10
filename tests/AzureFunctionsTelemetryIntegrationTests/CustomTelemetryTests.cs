@@ -14,16 +14,16 @@ public class CustomTelemetryTests
     public async Task GivenTelemetry_ThenExpectedCloudRoleNameAndApplicationVersion()
     {
         // Act
-        var telemetryItems = await _client.GetTelemetryAsync();
+        var telemetries = await _client.GetTelemetryAsync();
 
         // Assert
-        var telemetryItem = telemetryItems.First();
+        var actualTelemetry = telemetries.First();
         var expectedTags = new TelemetryItemTags
         {
             ApplicationVersion = "3.0.0.0",
             CloudRoleName = "customv4inprocess"
         };
-        telemetryItem.Tags.Should().BeEquivalentTo(expectedTags, options => options
+        actualTelemetry.Tags.Should().BeEquivalentTo(expectedTags, options => options
             .Including(t => t.ApplicationVersion)
             .Including(t => t.CloudRoleName));
     }

@@ -42,6 +42,7 @@ jobs:
           dotnet user-secrets set ServiceBusConnection '${{ secrets.SERVICE_BUS_CONNECTION_STRING }}' --id 074ca336-270b-4832-9a1a-60baf152b727
           dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}' --id 074ca336-270b-4832-9a1a-60baf152b727
       - name: Build
+        id: build
         run: ./build.sh --package
       - name: Upload test results
         uses: actions/upload-artifact@v3
@@ -52,7 +53,7 @@ jobs:
           if-no-files-found: error
       - name: Upload Functions logs
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ failure() && steps.id.conclusion == 'failure' }}
         with:
           name: function-logs
           path: './artifacts/test-results/*.log'

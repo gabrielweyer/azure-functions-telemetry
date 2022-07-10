@@ -24,4 +24,20 @@ public class CustomServiceBusTests
         request.Data.BaseData.Url.Should().Be("/ServiceBusFunction");
         request.Data.BaseData.ResponseCode.Should().Be("200");
     }
+
+    [Fact]
+    public async Task GivenServiceBusRequest_ThenDiscardExecutionTraces()
+    {
+        // Arrange
+        await _client.DeleteTelemetryAsync();
+
+        // Act
+        await _client.TriggerServiceBusAsync();
+
+        // Assert
+        var (request, telemetries) =
+            await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "ServiceBusFunction");
+        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
+        executionTraces.Should().BeEmpty();
+    }
 }

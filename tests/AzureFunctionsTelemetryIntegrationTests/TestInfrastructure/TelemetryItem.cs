@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
-internal class TelemetryItem
+internal abstract class TelemetryItem
 {
     public string Name { get; set; } = default!;
     public TelemetryItemTags Tags { get; set; } = default!;

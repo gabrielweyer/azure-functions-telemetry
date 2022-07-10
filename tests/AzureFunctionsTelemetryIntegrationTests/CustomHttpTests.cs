@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
+[Collection("Custom")]
 public class CustomHttpTests
 {
     private static readonly CustomTelemetryFunctionClient _client;

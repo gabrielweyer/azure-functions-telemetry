@@ -40,12 +40,20 @@ internal abstract class TelemetryFunctionClient
             new[] { Environment.NewLine },
             StringSplitOptions.RemoveEmptyEntries);
 
-        return serialisedTelemetryItems.Select(JsonConvert.DeserializeObject<TelemetryItem>).ToList();
+        return serialisedTelemetryItems
+            .Select(i => JsonConvert.DeserializeObject<TelemetryItem>(i, new TelemetryItemConverter()))
+            .ToList();
     }
 
     public async Task DeleteTelemetryAsync()
     {
         var response = await _httpClient.DeleteAsync("telemetry");
+        await EnsureSuccessAsync(response);
+    }
+
+    public async Task TriggerServiceBusAsync()
+    {
+        var response = await _httpClient.GetAsync("service-bus");
         await EnsureSuccessAsync(response);
     }
 

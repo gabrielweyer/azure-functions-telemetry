@@ -1,7 +1,3 @@
-using FluentAssertions;
-using Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
-using Xunit;
-
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Custom")]

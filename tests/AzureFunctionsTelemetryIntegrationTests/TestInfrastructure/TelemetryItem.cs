@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
 internal abstract class TelemetryItem

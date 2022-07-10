@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;

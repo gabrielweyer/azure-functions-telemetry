@@ -32,6 +32,9 @@ class Build : NukeBuild
     [Parameter("Whether we publish the sample Functions to file system - Default is false")]
     readonly bool Package;
 
+    [Parameter]
+    readonly string ServiceBusConnection;
+
     [Solution] readonly Solution Solution;
 
     static AbsolutePath SourceDirectory => RootDirectory / "src";
@@ -104,7 +107,7 @@ class Build : NukeBuild
 
                     var loggers = new List<string> { $"html;LogFileName={testResultsName}.html" };
 
-                    if (!IsLocalBuild)
+                    if (IsServerBuild)
                     {
                         loggers.Add($"GitHubActions;annotations.titleFormat=$test ({p.Framework})");
                     }
@@ -130,6 +133,7 @@ class Build : NukeBuild
 
     Target StartAzureFunctions => _ => _
         .DependsOn(GenerateCoverage)
+        .OnlyWhenDynamic(() => ShouldWeRunIntegrationTests())
         .Executes(() =>
         {
             var slim = new ManualResetEventSlim();
@@ -191,6 +195,7 @@ class Build : NukeBuild
 
     Target IntegrationTest => _ => _
         .DependsOn(StartAzureFunctions)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAzureFunctions))
         .Executes(() =>
         {
             const string projectName = "AzureFunctionsTelemetryIntegrationTests";
@@ -221,6 +226,7 @@ class Build : NukeBuild
     Target StopAzureFunctions => _ => _
         .DependsOn(WriteAzureFunctionLogs)
         .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAzureFunctions))
         .Executes(() =>
         {
             Serilog.Log.Information("Stopping Azure Functions");
@@ -259,4 +265,16 @@ class Build : NukeBuild
                 CompressionTasks.CompressZip(outPath, PublishDirectory / $"{projectName}.zip");
             }
         });
+
+    bool ShouldWeRunIntegrationTests()
+    {
+        var shouldWe = IsServerBuild || !string.IsNullOrWhiteSpace(ServiceBusConnection);
+
+        if (!shouldWe)
+        {
+            Serilog.Log.Warning("Skipping integration tests because 'ServiceBusConnection' environment variable not set");
+        }
+
+        return shouldWe;
+    }
 }

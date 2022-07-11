@@ -48,11 +48,11 @@ internal abstract class TelemetryFunctionClient
     {
         var attemptCount = 0;
         const int maxAttemptCount = 5;
+        var delayBetweenAttempts = TimeSpan.FromMilliseconds(100);
 
         do
         {
             attemptCount++;
-            await Task.Delay(TimeSpan.FromMilliseconds(100));
             var telemetries = await GetTelemetryAsync();
             var request = telemetries
                 .Where(i => i is T)
@@ -63,9 +63,12 @@ internal abstract class TelemetryFunctionClient
             {
                 return (request, telemetries);
             }
-        } while (attemptCount < maxAttemptCount);
 
-        throw new InvalidOperationException();
+            await Task.Delay(delayBetweenAttempts);
+            delayBetweenAttempts *= 2;
+        } while (attemptCount <= maxAttemptCount);
+
+        throw new InvalidOperationException("Telemetry is still missing.");
     }
 
     public async Task DeleteTelemetryAsync()

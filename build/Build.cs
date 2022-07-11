@@ -11,6 +11,7 @@ using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.ReportGenerator;
+using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
@@ -33,10 +34,12 @@ class Build : NukeBuild
     readonly bool Package;
 
     [Parameter]
-    readonly string ServiceBusConnection;
+    readonly string IntegrationTestServiceBusConnectionString;
 
     [Solution] readonly Solution Solution;
 
+    const string UserSecretsId = "074ca336-270b-4832-9a1a-60baf152b727";
+    static string _serviceBusConnectionBackup;
     static AbsolutePath SourceDirectory => RootDirectory / "src";
     static AbsolutePath SamplesDirectory => RootDirectory / "samples";
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
@@ -131,9 +134,32 @@ class Build : NukeBuild
                 .SetReportTypes(ReportTypes.Html));
         });
 
-    Target StartAzureFunctions => _ => _
+    Target SetIntegrationTestUserSecrets => _ => _
         .DependsOn(GenerateCoverage)
         .OnlyWhenDynamic(() => ShouldWeRunIntegrationTests())
+        .Executes(() =>
+        {
+            const string serviceBusSecretPrefix = "ServiceBusConnection = ";
+
+            var userSecrets = DotNet($"user-secrets list --id {UserSecretsId}", logOutput: false);
+            var serviceBusSecret = userSecrets.SingleOrDefault(o =>
+                o.Type == OutputType.Std && o.Text.StartsWith(serviceBusSecretPrefix));
+
+            if (!serviceBusSecret.Text.IsNullOrEmpty())
+            {
+                Serilog.Log.Debug("'ServiceBusConnection' secret is present, keeping backup");
+                _serviceBusConnectionBackup = serviceBusSecret.Text.Replace(serviceBusSecretPrefix, string.Empty);
+            }
+
+            DotNet($"user-secrets set Testing:IsEnabled true --id {UserSecretsId}");
+            DotNet(
+                $"user-secrets set ServiceBusConnection {IntegrationTestServiceBusConnectionString} --id {UserSecretsId}",
+                outputFilter: o => o.Replace(IntegrationTestServiceBusConnectionString, "*****"));
+        });
+
+    Target StartAzureFunctions => _ => _
+        .DependsOn(SetIntegrationTestUserSecrets)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(() =>
         {
             var slim = new ManualResetEventSlim();
@@ -144,12 +170,6 @@ class Build : NukeBuild
 
             _customV4Output = new StringBuilder();
             var customV4Logger = BuildLogger(_customV4Output, "CustomV4InProcessFunction");
-
-            var environmentVariables = new Dictionary<string, string>(EnvironmentInfo.Variables)
-            {
-                ["Testing__IsEnabled"] = "true",
-                ["Testing:IsEnabled"] = "true"
-            };
 
             _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
             _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
@@ -189,7 +209,7 @@ class Build : NukeBuild
             IProcess StartFunction(string functionName, Action<OutputType, string> logger)
             {
                 return ProcessTasks
-                    .StartProcess("func", "start", SamplesDirectory / functionName, environmentVariables, null, null, null, logger);
+                    .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
             }
         });
 
@@ -224,8 +244,8 @@ class Build : NukeBuild
         {
             var defaultV4OutputPath = TestResultsDirectory / "default-v4-output.log";
             var customV4OutputPath = TestResultsDirectory / "custom-v4-output.log";
-            Serilog.Log.Error($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
-            Serilog.Log.Error($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
+            Serilog.Log.Warning($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
+            Serilog.Log.Warning($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
             File.WriteAllText(defaultV4OutputPath, _defaultV4Output.ToString());
             File.WriteAllText(customV4OutputPath, _customV4Output.ToString());
         });
@@ -242,8 +262,30 @@ class Build : NukeBuild
             _customV4Function.Kill();
         });
 
-    Target Publish => _ => _
+    Target RestoreUserSecrets => _ => _
         .DependsOn(StopAzureFunctions)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
+        .Executes(() =>
+        {
+            DotNet($"user-secrets remove Testing:IsEnabled --id {UserSecretsId}");
+
+            if (!string.IsNullOrEmpty(_serviceBusConnectionBackup))
+            {
+                Serilog.Log.Information("Restoring 'ServiceBusConnection' secret");
+                DotNet(
+                    $"user-secrets set ServiceBusConnection {_serviceBusConnectionBackup} --id {UserSecretsId}",
+                    outputFilter: o => o.Replace(_serviceBusConnectionBackup, "*****"));
+            }
+            else
+            {
+                Serilog.Log.Information("Removing integration test Service Bus Connecting String");
+                DotNet($"user-secrets remove ServiceBusConnection --id {UserSecretsId}");
+            }
+        });
+
+    Target Publish => _ => _
+        .DependsOn(RestoreUserSecrets)
         .OnlyWhenStatic(() => Package)
         .Executes(() =>
         {
@@ -275,13 +317,22 @@ class Build : NukeBuild
 
     bool ShouldWeRunIntegrationTests()
     {
-        var shouldWe = IsServerBuild || !string.IsNullOrWhiteSpace(ServiceBusConnection);
+        var shouldWe = !string.IsNullOrWhiteSpace(IntegrationTestServiceBusConnectionString);
 
-        if (!shouldWe)
+        if (shouldWe)
         {
-            Serilog.Log.Warning("Skipping integration tests because 'ServiceBusConnection' environment variable not set");
+            return true;
         }
 
-        return shouldWe;
+        if (IsLocalBuild)
+        {
+            Serilog.Log.Warning($"Skipping integration tests because '{nameof(IntegrationTestServiceBusConnectionString)}' environment variable not set");
+        }
+        else
+        {
+            Assert.Fail($"'{nameof(IntegrationTestServiceBusConnectionString)}' environment variable should be set to run integration tests");
+        }
+
+        return false;
     }
 }

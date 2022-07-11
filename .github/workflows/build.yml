@@ -37,13 +37,13 @@ jobs:
           sudo dpkg -i packages-microsoft-prod.deb
           sudo apt-get update
           sudo apt-get install azure-functions-core-tools-4
-      - name: Set integration tests secrets
-        run: |
-          dotnet user-secrets set ServiceBusConnection '${{ secrets.SERVICE_BUS_CONNECTION_STRING }}' --id 074ca336-270b-4832-9a1a-60baf152b727
-          dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}' --id 074ca336-270b-4832-9a1a-60baf152b727
       - name: Build
         id: build
-        run: ./build.sh --package
+        run: |
+          dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '${{ secrets.APPLICATION_INSIGHTS_CONNECTION_STRING }}' --id 074ca336-270b-4832-9a1a-60baf152b727
+          ./build.sh --package
+        env:
+          IntegrationTestServiceBusConnectionString: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
       - name: Upload test results
         uses: actions/upload-artifact@v3
         if: always()
@@ -53,7 +53,7 @@ jobs:
           if-no-files-found: error
       - name: Upload Functions logs
         uses: actions/upload-artifact@v3
-        if: ${{ failure() && steps.id.conclusion == 'failure' }}
+        if: ${{ failure() && steps.build.conclusion == 'failure' }}
         with:
           name: function-logs
           path: './artifacts/test-results/*.log'

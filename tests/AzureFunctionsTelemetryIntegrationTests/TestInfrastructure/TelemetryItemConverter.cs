@@ -12,7 +12,7 @@ internal class TelemetryItemConverter : JsonConverter
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
         var jsonObject = JObject.Load(reader);
-        var name = (string) jsonObject["name"];
+        var name = (string)jsonObject["name"];
 
         TelemetryItem item = name switch
         {

@@ -11,7 +11,7 @@ Once you have provisioned the infrastructure, write down the Service Bus connect
 You need to set the Service Bus connection string before running `NUKE`:
 
 ```powershell
-$Env:ServiceBusConnection='{connection-string}'
+$Env:IntegrationTestServiceBusConnectionString='{testing-connection-string}'
 .\build.ps1
 ```
 
@@ -19,12 +19,17 @@ $Env:ServiceBusConnection='{connection-string}'
 
 The integration tests rely on both Functions `CustomV4InProcessFunction` and `DefaultV4InProcessFunction` running locally.
 
+Replace the user secrets:
+
+```powershell
+dotnet user-secrets set Testing:IsEnabled true --id 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set ServiceBusConnection {testing-connection-string} --id 074ca336-270b-4832-9a1a-60baf152b727
+```
+
 Start the custom v4 in-process Function:
 
 ```powershell
 cd samples\CustomV4InProcessFunction
-$Env:Testing:IsEnabled='true'
-$Env:ServiceBusConnection='{connection-string}'
 func start
 ```
 
@@ -32,9 +37,14 @@ Start the default v4 in-process Function:
 
 ```powershell
 cd samples\DefaultV4InProcessFunction
-$Env:Testing:IsEnabled='true'
-$Env:ServiceBusConnection='{connection-string}'
 func start
 ```
 
 Run the [integration tests](tests\AzureFunctionsTelemetryIntegrationTests).
+
+Once you're done, restore the user secrets:
+
+```powershell
+dotnet user-secrets remove Testing:IsEnabled 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set ServiceBusConnection {connection-string} --id 074ca336-270b-4832-9a1a-60baf152b727
+```

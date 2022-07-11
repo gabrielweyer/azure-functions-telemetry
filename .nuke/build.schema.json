@@ -43,6 +43,9 @@
             "VSCode"
           ]
         },
+        "IntegrationTestServiceBusConnectionString": {
+          "type": "string"
+        },
         "NoLogo": {
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
@@ -70,9 +73,6 @@
           "type": "string",
           "description": "Root directory during build execution"
         },
-        "ServiceBusConnection": {
-          "type": "string"
-        },
         "Skip": {
           "type": "array",
           "description": "List of targets to be skipped. Empty list skips all dependencies",
@@ -85,6 +85,8 @@
               "IntegrationTest",
               "Publish",
               "Restore",
+              "RestoreUserSecrets",
+              "SetIntegrationTestUserSecrets",
               "StartAzureFunctions",
               "StopAzureFunctions",
               "UnitTest",
@@ -109,6 +111,8 @@
               "IntegrationTest",
               "Publish",
               "Restore",
+              "RestoreUserSecrets",
+              "SetIntegrationTestUserSecrets",
               "StartAzureFunctions",
               "StopAzureFunctions",
               "UnitTest",

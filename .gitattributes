@@ -10,3 +10,4 @@ docs/postman/*.json eol=lf
 # Vendored extensions
 *.sh linguist-vendored
 *.ps1 linguist-vendored
+*.bicep linguist-vendored

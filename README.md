@@ -54,7 +54,7 @@ This is implemented by [FunctionExecutionTracesFilter][function-execution-traces
 
 ### Discarding duplicate exceptions
 
-This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter].
+This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter] and always enabled.
 
 ### Discarding health requests
 
@@ -62,10 +62,10 @@ This is enabled by calling `WithHealthRequestFilter` and supplying the Function 
 
 ### Better Service Bus binding "request"
 
-The _request name_ and _status code_ are not being set on the service bus triggered "requests". The [ServiceBusRequestInitializer][service-bus-request-initializer] can do this for you.
+The _URL_ and _response code_ are not being set on the service bus triggered "requests". The [ServiceBusRequestInitializer][service-bus-request-initializer] will do this for you.
 
-- Request name: I use the Function name
-- Status code: `200` in case of success, `500` in case of failure
+- URL: I use the Function name
+- Response code: `200` in case of success, `500` in case of failure
 
 The `ServiceBusRequestInitializer` is always enabled.
 
@@ -114,7 +114,7 @@ The demo requires an Azure Service Bus namespace to run. Functions can run both 
 
 Before being able to deploy and run the Functions you will need to have the below software installed:
 
-- [Azurite][azurite] is used as the Azure blob emulator when running locally
+- [Azurite][azurite] is used as the Azure blob storage emulator when running locally
 - [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line (you will need the `v4` version if you want to be able to run the `v4` Functions locally)
 - [Powershell 7][powershell-7] to deploy to Azure
 - [Azure PowerShell][azure-powershell] to deploy to Azure
@@ -189,13 +189,6 @@ dotnet user-secrets remove APPLICATIONINSIGHTS_CONNECTION_STRING `
     --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
-Finally once done, you can add the secret again:
-
-```powershell
-dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '{YourConnectionString}' `
-    --id 074ca336-270b-4832-9a1a-60baf152b727
-```
-
 Navigate to `http://localhost:7073/event` (Default `v4`) in your favourite browser.
 
 Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
@@ -211,6 +204,13 @@ Navigate to `http://localhost:7074/event` (Custom `v4`) in your favourite browse
 Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
 
 ![Without the secret `APPLICATIONINSIGHTS_CONNECTION_STRING`, `TelemetryConfiguration` is registered and no exception is thrown](docs/img/telemetry-configuration-registered.png)
+
+Finally once done, you can add the secret again:
+
+```powershell
+dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '{YourConnectionString}' `
+    --id 074ca336-270b-4832-9a1a-60baf152b727
+```
 
 ### DependencyFunction
 
@@ -233,7 +233,9 @@ Only the request is recorded:
 
 ![Dependency Function custom telemetry](docs/img/dependency-function-custom.png)
 
-The `CustomHttpDependencyFilter` discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful dependencies.
+The `CustomHttpDependencyFilter` discards a specific telemetry type. This is useful when having a noisy telemetry. You can tweak the processor to only discard successful or fast dependencies.
+
+:rotating_light: Discarding telemetry skews the statistics. Consider using [sampling][adaptive-sampling] instead.
 
 ### HealthFunction
 
@@ -291,9 +293,9 @@ Note that the processor is also called for request telemetry items. When running
 
 You can send a message to the `defaultv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus` (Default `v4`) in your favourite browser.
 
-The Default Function does not have a _Request URL_ or a _Response code_:
+The Default Function does not have a _URL_ or a _Response code_:
 
-![Service Bus binding: no request URL and no response code for the Default App](docs/img/service-bus-binding-no-request-url-no-response-code-default.png)
+![Service Bus binding: no URL and no response code for the Default App](docs/img/service-bus-binding-no-request-url-no-response-code-default.png)
 
 Four telemetry items are recorded for the Default Function execution:
 
@@ -307,14 +309,12 @@ You can send a message to the `customv4inprocess-queue` queue using the Service 
 
 The Custom Function has both the _Request URL_ and _Response code_ set by `ServiceBusRequestInitializer`:
 
-![Service Bus binding: request URL and response code are set for the Custom App](docs/img/service-bus-binding-request-url-and-response-code-custom.png)
+![Service Bus binding: URL and response code are set for the Custom App](docs/img/service-bus-binding-request-url-and-response-code-custom.png)
 
 Only the request is recorded for the Custom Function execution:
 
 - The _Executing ..._ and _Executed ..._ traces have been discarded by the `FunctionExecutionTracesFilter`
 - The _Trigger Details ..._ trace has been discarded by the `ServiceBusTriggerFilter`
-
-![Service Bus binding: custom telemetry](docs/img/service-bus-binding-custom.png)
 
 ### ServiceBusExceptionThrowingFunction
 
@@ -350,8 +350,6 @@ By default, the _Application Version_ is not set, and the _Cloud Role Name_ will
 
 ![Default Cloud Role Name and Application Version](docs/img/cloud-role-name-application-version-default.png)
 
-You can add a telemetry initializer to set the Application Version and Cloud Role Name.
-
 For the custom Function, each telemetry will be stamped with the Assembly Informational Version and the configured application name:
 
 ![Custom Cloud Role Name and Application Version](docs/img/cloud-role-name-application-version-custom.png)
@@ -382,18 +380,18 @@ There is an [opened GitHub issue][telemetry-processor-support-github-issue] abou
 
 ### Software versions
 
-I used the Azure Functions Core Tools version `3.0.3160` to create the Function App (released on the 9th of December 2020). The latest version of the Azure Functions Core Tools I have been using is `4.0.3971`.
+I used the Azure Functions Core Tools version `3.0.3160` to create the Function App (released on the 9th of December 2020). The latest version of the Azure Functions Core Tools I have been using is `4.0.4590`.
 
 NuGet packages:
 
 - `Microsoft.NET.Sdk.Functions`:
-  - `v3`: `3.1.0` (added automatically when creating the Function, updated later)
+  - `v3`: `3.1.1` (added automatically when creating the Function, updated later)
   - `v4`: `4.1.0` (added automatically when creating the Function, updated later)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
 - `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection], updated later):
-  - `v3`: `3.1.24`
+  - `v3`: `3.1.26`
   - `v4`: `6.0.0`
-- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.30` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
+- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.33` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 
 ### Supporting telemetry processors
 
@@ -402,6 +400,8 @@ The code in `AddCustomApplicationInsights` retrieves the configured built-in tel
 The first built-in processor in the chain is `OperationFilteringTelemetryProcessor`, this processor discards all the dependencies considered internal to the Azure Functions runtime (such as access to blob storage for the distributed lock and the calls to Azure Service Bus for the Service Bus binding).
 
 One of the side-effects of the approach I am using is that the Azure Functions runtime will reference the initial instance of `OperationFilteringTelemetryProcessor` and will call it directly when tracking requests manually. Normally the `OperationFilteringTelemetryProcessor` instance points to the second processor in the chain (`QuickPulseTelemetryProcessor`). One way for our processors to be called is to point the existing `OperationFilteringTelemetryProcessor` instance to our first processor and point our last processor to `QuickPulseTelemetryProcessor`. This is done through some pretty dodgy untested code, but it works :tm:.
+
+As I did not manage to cover my customisation with unit tests, I wrote [integration tests][integration-tests] instead.
 
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
@@ -425,3 +425,5 @@ One of the side-effects of the approach I am using is that the Azure Functions r
 [telemetry-processor-support-github-issue]: https://github.com/Azure/azure-functions-host/issues/3741
 [postman-collection]: docs/postman/FunctionsTelemetry.postman_collection.json
 [bicep-cli]: https://docs.microsoft.com/en-au/azure/azure-resource-manager/bicep/install#install-manually
+[adaptive-sampling]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/sampling#adaptive-sampling
+[integration-tests]: CONTRIBUTING.md

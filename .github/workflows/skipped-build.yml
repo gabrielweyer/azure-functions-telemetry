@@ -9,6 +9,7 @@ on:
       - .github/workflows/skipped-build.yml
       - '.vscode/**'
       - 'docs/**'
+      - CONTRIBUTING.md
       - LICENSE
       - README.md
 

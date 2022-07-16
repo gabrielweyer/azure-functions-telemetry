@@ -12,6 +12,7 @@ on:
       - 'docs/**'
       - build.ps1
       - build.sh
+      - CONTRIBUTING.md
       - LICENSE
       - README.md
   schedule:

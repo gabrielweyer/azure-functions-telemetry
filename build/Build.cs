@@ -39,7 +39,11 @@ class Build : NukeBuild
     [Solution] readonly Solution Solution;
 
     const string UserSecretsId = "074ca336-270b-4832-9a1a-60baf152b727";
+    const string AppInsightsSecretName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+    const string ServiceBusConnectionSecretName = "ServiceBusConnection";
+    const string TestingIsEnabledSecretName = "Testing:IsEnabled";
     static string _serviceBusConnectionBackup;
+    static string _appInsightsConnectionBackup;
     static AbsolutePath SourceDirectory => RootDirectory / "src";
     static AbsolutePath SamplesDirectory => RootDirectory / "samples";
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
@@ -139,148 +143,127 @@ class Build : NukeBuild
         .OnlyWhenDynamic(() => ShouldWeRunIntegrationTests())
         .Executes(() =>
         {
-            const string serviceBusSecretPrefix = "ServiceBusConnection = ";
+            var serviceBusSecret = GetUserSecret(ServiceBusConnectionSecretName);
 
-            var userSecrets = DotNet($"user-secrets list --id {UserSecretsId}", logOutput: false);
-            var serviceBusSecret = userSecrets.SingleOrDefault(o =>
-                o.Type == OutputType.Std && o.Text.StartsWith(serviceBusSecretPrefix));
-
-            if (!serviceBusSecret.Text.IsNullOrEmpty())
+            if (serviceBusSecret != null)
             {
-                Serilog.Log.Debug("'ServiceBusConnection' secret is present, keeping backup");
-                _serviceBusConnectionBackup = serviceBusSecret.Text.Replace(serviceBusSecretPrefix, string.Empty);
+                Serilog.Log.Debug($"'{ServiceBusConnectionSecretName}' secret is present, keeping backup");
+                _serviceBusConnectionBackup = serviceBusSecret;
             }
 
-            DotNet($"user-secrets set Testing:IsEnabled true --id {UserSecretsId}");
-            DotNet(
-                $"user-secrets set ServiceBusConnection {IntegrationTestServiceBusConnectionString} --id {UserSecretsId}",
-                outputFilter: o => o.Replace(IntegrationTestServiceBusConnectionString, "*****"));
+            SetUserSecret(TestingIsEnabledSecretName, "true");
+            SetUserSecret(ServiceBusConnectionSecretName, IntegrationTestServiceBusConnectionString);
         });
 
-    Target StartAzureFunctions => _ => _
+    Target SetAppInsightsConnectionStringIntegrationTestUserSecrets => _ => _
         .DependsOn(SetIntegrationTestUserSecrets)
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(() =>
         {
-            var slim = new ManualResetEventSlim();
-            Serilog.Log.Information("Starting Azure Functions, this takes some time");
+            var appInsightsSecret = GetUserSecret(AppInsightsSecretName);
 
-            _defaultV4Output = new StringBuilder();
-            var defaultV4Logger = BuildLogger(_defaultV4Output, "DefaultV4InProcessFunction");
-
-            _customV4Output = new StringBuilder();
-            var customV4Logger = BuildLogger(_customV4Output, "CustomV4InProcessFunction");
-
-            _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
-            _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
-
-            var functionsTimeoutStart = TimeSpan.FromSeconds(60);
-            var didFunctionsStart = slim.Wait(functionsTimeoutStart);
-
-            if (didFunctionsStart)
+            if (appInsightsSecret == null)
             {
                 return;
             }
 
-            throw new InvalidOperationException(
-                $"Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction within {functionsTimeoutStart}");
-
-            Action<OutputType, string> BuildLogger(StringBuilder sink, string functionName)
-            {
-                return (outputType, output) =>
-                {
-                    sink.AppendLine($"[{outputType}] - {output}");
-
-                    if (!output.Contains("Job host started"))
-                    {
-                        return;
-                    }
-
-                    Serilog.Log.Information($"Started {functionName}");
-                    var startedFunctionCount = Interlocked.Increment(ref _startedFunctionCount);
-
-                    if (startedFunctionCount > 1)
-                    {
-                        slim.Set();
-                    }
-                };
-            }
-
-            IProcess StartFunction(string functionName, Action<OutputType, string> logger)
-            {
-                return ProcessTasks
-                    .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
-            }
+            Serilog.Log.Debug($"'{AppInsightsSecretName}' secret is present, keeping backup");
+            _appInsightsConnectionBackup = appInsightsSecret;
+            Serilog.Log.Debug($" Removing'{AppInsightsSecretName}' secret");
+            RemoveUserSecret(AppInsightsSecretName);
         });
+
+    Target StartAppInsightsConnectionStringIntegrationTestAzureFunctions => _ => _
+        .DependsOn(SetAppInsightsConnectionStringIntegrationTestUserSecrets)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(SetAppInsightsConnectionStringIntegrationTestUserSecrets))
+        .Executes(StartAzureFunctions);
+
+    Target AppInsightsConnectionStringIntegrationTest => _ => _
+        .DependsOn(StartAppInsightsConnectionStringIntegrationTestAzureFunctions)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAppInsightsConnectionStringIntegrationTestAzureFunctions))
+        .Executes(() =>
+        {
+            RunIntegrationTest("AppInsightsConnectionStringIntegrationTests");
+        });
+
+    Target WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs => _ => _
+        .DependsOn(AppInsightsConnectionStringIntegrationTest)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() =>
+            FailedTargets.Contains(AppInsightsConnectionStringIntegrationTest) ||
+            FailedTargets.Contains(StartAppInsightsConnectionStringIntegrationTestAzureFunctions))
+        .Executes(() =>
+        {
+            WriteAzureFunctionsLogs("default-v4-appinsights-output", "custom-v4-appinsights-output");
+        });
+
+    Target StopAppInsightsConnectionStringIntegrationTestAzureFunctions => _ => _
+        .DependsOn(WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAppInsightsConnectionStringIntegrationTestAzureFunctions))
+        .Executes(StopAzureFunctions);
+
+    Target RestoreAppInsightsConnectionStringUserSecrets => _ => _
+        .DependsOn(StopAppInsightsConnectionStringIntegrationTestAzureFunctions)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(SetAppInsightsConnectionStringIntegrationTestUserSecrets))
+        .Executes(() =>
+        {
+            if (_appInsightsConnectionBackup == null)
+            {
+                return;
+            }
+
+            Serilog.Log.Information($"Restoring '{AppInsightsSecretName}' secret");
+            SetUserSecret(AppInsightsSecretName, _appInsightsConnectionBackup);
+        });
+
+    Target StartIntegrationTestAzureFunctions => _ => _
+        .DependsOn(RestoreAppInsightsConnectionStringUserSecrets)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
+        .Executes(StartAzureFunctions);
 
     Target IntegrationTest => _ => _
-        .DependsOn(StartAzureFunctions)
-        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAzureFunctions))
+        .DependsOn(StartIntegrationTestAzureFunctions)
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartIntegrationTestAzureFunctions))
         .Executes(() =>
         {
-            const string projectName = "AzureFunctionsTelemetryIntegrationTests";
-
-            var loggers = new List<string> { $"html;LogFileName={projectName}.html" };
-
-            if (IsServerBuild)
-            {
-                loggers.Add("GitHubActions");
-            }
-
-            var dotnetTestSettings = new DotNetTestSettings()
-                .SetConfiguration(Configuration)
-                .EnableNoBuild()
-                .SetProjectFile(TestsDirectory / projectName)
-                .SetResultsDirectory(TestResultsDirectory / projectName)
-                .SetLoggers(loggers);
-            DotNetTest(dotnetTestSettings);
+            RunIntegrationTest("AzureFunctionsTelemetryIntegrationTests");
         });
 
-    Target WriteAzureFunctionLogs => _ => _
+    Target WriteIntegrationTestAzureFunctionLogs => _ => _
         .DependsOn(IntegrationTest)
         .AssuredAfterFailure()
-        .OnlyWhenDynamic(() => FailedTargets.Contains(IntegrationTest) || FailedTargets.Contains(StartAzureFunctions))
+        .OnlyWhenDynamic(() =>
+            FailedTargets.Contains(IntegrationTest) || FailedTargets.Contains(StartIntegrationTestAzureFunctions))
         .Executes(() =>
         {
-            var defaultV4OutputPath = TestResultsDirectory / "default-v4-output.log";
-            var customV4OutputPath = TestResultsDirectory / "custom-v4-output.log";
-            Serilog.Log.Warning($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
-            Serilog.Log.Warning($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
-            File.WriteAllText(defaultV4OutputPath, _defaultV4Output.ToString());
-            File.WriteAllText(customV4OutputPath, _customV4Output.ToString());
+            WriteAzureFunctionsLogs("default-v4-output", "custom-v4-output");
         });
 
-    Target StopAzureFunctions => _ => _
-        .DependsOn(WriteAzureFunctionLogs)
+    Target StopIntegrationTestAzureFunctions => _ => _
+        .DependsOn(WriteIntegrationTestAzureFunctionLogs)
         .AssuredAfterFailure()
-        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAzureFunctions))
-        .Executes(() =>
-        {
-            Serilog.Log.Information("Stopping Azure Functions");
-
-            _defaultV4Function.Kill();
-            _customV4Function.Kill();
-        });
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartIntegrationTestAzureFunctions))
+        .Executes(StopAzureFunctions);
 
     Target RestoreUserSecrets => _ => _
-        .DependsOn(StopAzureFunctions)
+        .DependsOn(StopIntegrationTestAzureFunctions)
         .AssuredAfterFailure()
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(() =>
         {
-            DotNet($"user-secrets remove Testing:IsEnabled --id {UserSecretsId}");
+            RemoveUserSecret(TestingIsEnabledSecretName);
 
-            if (!string.IsNullOrEmpty(_serviceBusConnectionBackup))
+            if (_serviceBusConnectionBackup != null)
             {
-                Serilog.Log.Information("Restoring 'ServiceBusConnection' secret");
-                DotNet(
-                    $"user-secrets set ServiceBusConnection {_serviceBusConnectionBackup} --id {UserSecretsId}",
-                    outputFilter: o => o.Replace(_serviceBusConnectionBackup, "*****"));
+                Serilog.Log.Information($"Restoring '{ServiceBusConnectionSecretName}' secret");
+                SetUserSecret(ServiceBusConnectionSecretName, _serviceBusConnectionBackup);
             }
             else
             {
                 Serilog.Log.Information("Removing integration test Service Bus Connecting String");
-                DotNet($"user-secrets remove ServiceBusConnection --id {UserSecretsId}");
+                RemoveUserSecret(ServiceBusConnectionSecretName);
             }
         });
 
@@ -334,5 +317,114 @@ class Build : NukeBuild
         }
 
         return false;
+    }
+
+    static string GetUserSecret(string secretName)
+    {
+        var secretPrefix = $"{secretName} = ";
+        var userSecrets = DotNet($"user-secrets list --id {UserSecretsId}", logOutput: false);
+        var secret = userSecrets.SingleOrDefault(o => o.Type == OutputType.Std && o.Text.StartsWith(secretPrefix));
+        return secret.Text.IsNullOrEmpty() ? null : secret.Text.Replace(secretPrefix, string.Empty);
+    }
+
+    static void SetUserSecret(string secretName, string secretValue)
+    {
+        DotNet(
+            $"user-secrets set {secretName} {secretValue} --id {UserSecretsId}",
+            outputFilter: o => o.Replace(secretValue, "*****"));
+    }
+
+    static void RemoveUserSecret(string secretName)
+    {
+        DotNet($"user-secrets remove {secretName} --id {UserSecretsId}");
+    }
+
+    static void StartAzureFunctions()
+    {
+        var slim = new ManualResetEventSlim();
+        Serilog.Log.Information("Starting Azure Functions, this takes some time");
+
+        _defaultV4Output = new StringBuilder();
+        var defaultV4Logger = BuildLogger(_defaultV4Output, "DefaultV4InProcessFunction");
+
+        _customV4Output = new StringBuilder();
+        var customV4Logger = BuildLogger(_customV4Output, "CustomV4InProcessFunction");
+
+        _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
+        _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
+
+        var functionsTimeoutStart = TimeSpan.FromSeconds(60);
+        var didFunctionsStart = slim.Wait(functionsTimeoutStart);
+
+        if (didFunctionsStart)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            $"Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction within {functionsTimeoutStart}");
+
+        Action<OutputType, string> BuildLogger(StringBuilder sink, string functionName)
+        {
+            return (outputType, output) =>
+            {
+                sink.AppendLine($"[{outputType}] - {output}");
+
+                if (!output.Contains("Job host started"))
+                {
+                    return;
+                }
+
+                Serilog.Log.Information($"Started {functionName}");
+                var startedFunctionCount = Interlocked.Increment(ref _startedFunctionCount);
+
+                if (startedFunctionCount > 1)
+                {
+                    slim.Set();
+                }
+            };
+        }
+
+        IProcess StartFunction(string functionName, Action<OutputType, string> logger)
+        {
+            return ProcessTasks
+                .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
+        }
+    }
+
+    void RunIntegrationTest(string projectName)
+    {
+        var loggers = new List<string> { $"html;LogFileName={projectName}.html" };
+
+        if (IsServerBuild)
+        {
+            loggers.Add("GitHubActions");
+        }
+
+        var dotnetTestSettings = new DotNetTestSettings()
+            .SetConfiguration(Configuration)
+            .EnableNoBuild()
+            .SetProjectFile(TestsDirectory / projectName)
+            .SetResultsDirectory(TestResultsDirectory / projectName)
+            .SetLoggers(loggers);
+        DotNetTest(dotnetTestSettings);
+    }
+
+    static void WriteAzureFunctionsLogs(string defaultLogName, string customLogName)
+    {
+        var defaultV4OutputPath = TestResultsDirectory / $"{defaultLogName}.log";
+        var customV4OutputPath = TestResultsDirectory / $"{customLogName}.log";
+        Serilog.Log.Warning($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
+        Serilog.Log.Warning($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
+        File.WriteAllText(defaultV4OutputPath, _defaultV4Output.ToString());
+        File.WriteAllText(customV4OutputPath, _customV4Output.ToString());
+    }
+
+    static void StopAzureFunctions()
+    {
+        Serilog.Log.Information("Stopping Azure Functions");
+
+        _defaultV4Function.Kill();
+        _customV4Function.Kill();
     }
 }

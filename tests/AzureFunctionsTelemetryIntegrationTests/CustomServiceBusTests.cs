@@ -11,7 +11,7 @@ public class CustomServiceBusTests
     }
 
     [Fact]
-    public async Task GivenServiceBusRequest_ThenUrlIsFunctionNameAnd200StatusCode()
+    public async Task GivenServiceBusRequest_ThenUrlIsFunctionNameAnd200ResponseCode()
     {
         // Arrange
         await _client.DeleteTelemetryAsync();
@@ -26,7 +26,7 @@ public class CustomServiceBusTests
     }
 
     [Fact]
-    public async Task GivenServiceBusRequest_ThenDiscardExecutionTraces()
+    public async Task GivenServiceBusRequest_ThenDiscardExecutionAndTriggerTraces()
     {
         // Arrange
         await _client.DeleteTelemetryAsync();

@@ -11,7 +11,7 @@ public class DefaultServiceBusTests
     }
 
     [Fact]
-    public async Task GivenServiceBusRequest_ThenNullUrlAndZeroStatusCode()
+    public async Task GivenServiceBusRequest_ThenNullUrlAndZeroResponseCode()
     {
         // Arrange
         await _client.DeleteTelemetryAsync();
@@ -26,7 +26,7 @@ public class DefaultServiceBusTests
     }
 
     [Fact]
-    public async Task GivenServiceBusRequest_ThenThreeExecutionTracesAreEmitted()
+    public async Task GivenServiceBusRequest_ThenExecutionAndTriggerTracesAreEmitted()
     {
         // Arrange
         await _client.DeleteTelemetryAsync();

@@ -79,19 +79,25 @@
           "items": {
             "type": "string",
             "enum": [
+              "AppInsightsConnectionStringIntegrationTest",
               "Clean",
               "Compile",
               "GenerateCoverage",
               "IntegrationTest",
               "Publish",
               "Restore",
+              "RestoreAppInsightsConnectionStringUserSecrets",
               "RestoreUserSecrets",
+              "SetAppInsightsConnectionStringIntegrationTestUserSecrets",
               "SetIntegrationTestUserSecrets",
-              "StartAzureFunctions",
-              "StopAzureFunctions",
+              "StartAppInsightsConnectionStringIntegrationTestAzureFunctions",
+              "StartIntegrationTestAzureFunctions",
+              "StopAppInsightsConnectionStringIntegrationTestAzureFunctions",
+              "StopIntegrationTestAzureFunctions",
               "UnitTest",
               "VerifyFormat",
-              "WriteAzureFunctionLogs"
+              "WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs",
+              "WriteIntegrationTestAzureFunctionLogs"
             ]
           }
         },
@@ -105,19 +111,25 @@
           "items": {
             "type": "string",
             "enum": [
+              "AppInsightsConnectionStringIntegrationTest",
               "Clean",
               "Compile",
               "GenerateCoverage",
               "IntegrationTest",
               "Publish",
               "Restore",
+              "RestoreAppInsightsConnectionStringUserSecrets",
               "RestoreUserSecrets",
+              "SetAppInsightsConnectionStringIntegrationTestUserSecrets",
               "SetIntegrationTestUserSecrets",
-              "StartAzureFunctions",
-              "StopAzureFunctions",
+              "StartAppInsightsConnectionStringIntegrationTestAzureFunctions",
+              "StartIntegrationTestAzureFunctions",
+              "StopAppInsightsConnectionStringIntegrationTestAzureFunctions",
+              "StopIntegrationTestAzureFunctions",
               "UnitTest",
               "VerifyFormat",
-              "WriteAzureFunctionLogs"
+              "WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs",
+              "WriteIntegrationTestAzureFunctionLogs"
             ]
           }
         },

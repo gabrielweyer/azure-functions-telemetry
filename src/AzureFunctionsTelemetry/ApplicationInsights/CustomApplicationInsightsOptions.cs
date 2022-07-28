@@ -5,16 +5,13 @@ public class CustomApplicationInsightsOptions
     public string ApplicationName { get; }
     public Type TypeFromEntryAssembly { get; }
     public bool HasServiceBusTriggerFilter { get; }
-    [Obsolete("The library now attempts to determine the Service Bus triggered Functions. This remains available as an escape hatch to allow you to override the list of Functions if you're not satisfied with the result. Ultimately this setting will be removed.")]
-    public List<string> ServiceBusTriggeredFunctionNames { get; }
     public string? HealthCheckFunctionName { get; }
 
     public CustomApplicationInsightsOptions(
         string applicationName,
         Type typeFromEntryAssembly,
         bool hasServiceBusTriggerFilter = false,
-        string? healthCheckFunctionName = null,
-        List<string>? serviceBusTriggeredFunctionNames = null)
+        string? healthCheckFunctionName = null)
     {
         if (healthCheckFunctionName != null && string.IsNullOrWhiteSpace(healthCheckFunctionName))
         {
@@ -28,8 +25,5 @@ public class CustomApplicationInsightsOptions
         TypeFromEntryAssembly = typeFromEntryAssembly;
         HasServiceBusTriggerFilter = hasServiceBusTriggerFilter;
         HealthCheckFunctionName = healthCheckFunctionName;
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-        ServiceBusTriggeredFunctionNames = serviceBusTriggeredFunctionNames ?? new List<string>();
-#pragma warning restore CS0618
     }
 }

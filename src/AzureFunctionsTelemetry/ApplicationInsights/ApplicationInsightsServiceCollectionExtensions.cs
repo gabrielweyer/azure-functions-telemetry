@@ -24,15 +24,8 @@ public static class ApplicationInsightsServiceCollectionExtensions
         services.AddSingleton(applicationDescriptor);
         services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
 
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-        var serviceBusTriggeredFunctionName = options.ServiceBusTriggeredFunctionNames;
-#pragma warning restore CS0618
-
-        if (!serviceBusTriggeredFunctionName.Any())
-        {
-            serviceBusTriggeredFunctionName = FunctionsFinder
+        var serviceBusTriggeredFunctionName = FunctionsFinder
                 .GetServiceBusTriggeredFunctionNames(options.TypeFromEntryAssembly);
-        }
 
         if (serviceBusTriggeredFunctionName.Any())
         {

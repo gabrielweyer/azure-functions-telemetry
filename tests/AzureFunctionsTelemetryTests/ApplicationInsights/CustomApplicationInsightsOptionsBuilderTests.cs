@@ -35,27 +35,6 @@ public class CustomApplicationInsightsOptionsBuilderTests
     }
 
     [Fact]
-    public void GivenServiceBusDuplicateExceptionsConfigured_ThenSetServiceBusFunctionName()
-    {
-        // Arrange
-        var serviceBusFunctionNames = new List<string> { "NameOne", "NameTwo" };
-#pragma warning disable CS0618 // Even though it's obsolete, we still need to support it!
-        var builder = new CustomApplicationInsightsOptionsBuilder("some-name", typeof(StringHelper))
-            .DiscardServiceBusDuplicateExceptions(serviceBusFunctionNames);
-#pragma warning restore CS0618
-
-        // Act
-        var actualOptions = builder.Build();
-
-        // Assert
-        var expectedOptions = new CustomApplicationInsightsOptions(
-            "some-name",
-            typeof(StringHelper),
-            serviceBusTriggeredFunctionNames: serviceBusFunctionNames);
-        actualOptions.Should().BeEquivalentTo(expectedOptions);
-    }
-
-    [Fact]
     public void GivenServiceBusRequestTriggerFilterConfigured_ThenEnableFilter()
     {
         // Arrange

@@ -5,7 +5,6 @@ public class CustomApplicationInsightsOptionsBuilder
     private readonly string _applicationName;
     private readonly Type _typeFromEntryAssembly;
     private bool _hasServiceBusTriggerFilter;
-    private List<string> _serviceBusTriggeredFunctionNames;
     private string? _healthCheckFunctionName;
 
     /// <summary>
@@ -19,7 +18,6 @@ public class CustomApplicationInsightsOptionsBuilder
         _applicationName = applicationName;
         _typeFromEntryAssembly = typeFromEntryAssembly;
         _hasServiceBusTriggerFilter = false;
-        _serviceBusTriggeredFunctionNames = new List<string>();
         _healthCheckFunctionName = null;
     }
 
@@ -30,25 +28,6 @@ public class CustomApplicationInsightsOptionsBuilder
     public CustomApplicationInsightsOptionsBuilder WithServiceBusTriggerFilter()
     {
         _hasServiceBusTriggerFilter = true;
-
-        return this;
-    }
-
-    /// <summary>
-    /// Exceptions are recorded twice for the HTTP binding and three times for the Service Bus binding. The second
-    /// duplicate exception can easily be eliminated for all bindings. If we want to discard the third duplicate
-    /// exception we have to do so using the Function name
-    /// (e.g. <code>[FunctionName("AppendActionConsumer")]</code>).
-    ///
-    /// If you do not call this function or forget to provide one of the Service Bus triggered Function name, you'll
-    /// end up with duplicate exceptions.
-    /// </summary>
-    /// <param name="functionNames"></param>
-    /// <returns></returns>
-    [Obsolete("The library now attempts to determine the Service Bus triggered Functions. This remains available as an escape hatch to allow you to override the list of Functions if you're not satisfied with the result. Ultimately this setting will be removed.")]
-    public CustomApplicationInsightsOptionsBuilder DiscardServiceBusDuplicateExceptions(List<string> functionNames)
-    {
-        _serviceBusTriggeredFunctionNames = functionNames;
 
         return this;
     }
@@ -78,6 +57,5 @@ public class CustomApplicationInsightsOptionsBuilder
         _applicationName,
         _typeFromEntryAssembly,
         _hasServiceBusTriggerFilter,
-        _healthCheckFunctionName,
-        _serviceBusTriggeredFunctionNames);
+        _healthCheckFunctionName);
 }

@@ -37,7 +37,7 @@ public class Startup : FunctionsStartup
              * your initializer will not be used.
              *
              * <code>
-             * // Dot not use:
+             * // Do not use:
              * .AddSingleton(new TelemetryCounterInstanceInitializer("NiceValue"))
              * </code>
              */

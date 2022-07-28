@@ -322,13 +322,13 @@ You can send a message to the `defaultv4inprocess-exception-queue` queue using t
 
 Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of nine telemetry items are emitted during the Function execution.
 
-![Service Bus binding: eight telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-nine-telemetry-items.png)
+![Service Bus binding: nine telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-nine-telemetry-items.png)
 
 You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus-exception` (Custom `v4`) in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of three telemetry items are emitted during the Function execution.
 
-![Service Bus binding: four telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-three-telemetry-items.png)
+![Service Bus binding: three telemetry items emitted by the Functions runtime](docs/img/service-bus-binding-execution-three-telemetry-items.png)
 
 ### TraceLogFunction
 

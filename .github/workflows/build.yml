@@ -94,14 +94,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           touch empty-release-notes.txt
-          gh release create v${{ env.PACKAGE_VERSION }} --title v${{ env.PACKAGE_VERSION }} ./artifacts/out/functions/*.zip ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt
+          gh release create ${{ env.PACKAGE_VERSION }} --title ${{ env.PACKAGE_VERSION }} ./artifacts/out/functions/*.zip ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt
       - name: Create GitHub prerelease on feature Pull Request
         if: ${{ env.CREATE_PRERELEASE == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           touch empty-release-notes.txt
-          gh release create v${{ env.PACKAGE_VERSION }} --title v${{ env.PACKAGE_VERSION }} ./artifacts/out/functions/*.zip ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt --prerelease
+          gh release create ${{ env.PACKAGE_VERSION }} --title ${{ env.PACKAGE_VERSION }} ./artifacts/out/functions/*.zip ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt --prerelease
       - name: Push NuGet package on main branch
         if: ${{ env.CREATE_RELEASE == 'true' }}
         run: dotnet nuget push ./artifacts/out/package/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}

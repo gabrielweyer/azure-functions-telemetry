@@ -1,5 +1,10 @@
+using Microsoft.Azure.WebJobs;
+
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
+/// <summary>
+/// Provided as a convenience to make it easier to create <see cref="CustomApplicationInsightsOptions"/>.
+/// </summary>
 public class CustomApplicationInsightsOptionsBuilder
 {
     private readonly string _applicationName;
@@ -22,9 +27,11 @@ public class CustomApplicationInsightsOptionsBuilder
     }
 
     /// <summary>
-    /// Recommended on high-traffic services. This will discard the trace telemetry with the details of the trigger.
+    /// Recommended on high-traffic services. This will discard the trace telemetry with the details of the Service Bus
+    /// trigger.
     /// </summary>
-    /// <returns></returns>
+    /// <returns><see cref="CustomApplicationInsightsOptionsBuilder"/> with Service Bus trigger filter
+    /// enabled.</returns>
     public CustomApplicationInsightsOptionsBuilder WithServiceBusTriggerFilter()
     {
         _hasServiceBusTriggerFilter = true;
@@ -33,11 +40,13 @@ public class CustomApplicationInsightsOptionsBuilder
     }
 
     /// <summary>
-    /// We will discard all requests for the specified Function. We only support a single health check function per
-    /// Function App. Calling this method multiple times will replace the previous value.
+    /// We will discard all '200' HTTP status code requests for the specified Function. We only support a single health
+    /// check function per Function App. Calling this method multiple times will replace the previous value.
     /// </summary>
-    /// <param name="healthCheckFunctionName"></param>
-    /// <returns></returns>
+    /// <param name="healthCheckFunctionName">Supply the Function name (the argument provided to the
+    /// <see cref="FunctionNameAttribute"/>)</param>
+    /// <returns><see cref="CustomApplicationInsightsOptionsBuilder"/> with the health check Function name
+    /// configured.</returns>
     public CustomApplicationInsightsOptionsBuilder WithHealthRequestFilter(string healthCheckFunctionName)
     {
         if (string.IsNullOrWhiteSpace(healthCheckFunctionName))
@@ -53,6 +62,11 @@ public class CustomApplicationInsightsOptionsBuilder
         return this;
     }
 
+    /// <summary>
+    /// Once you're done configuring the integration, call this method to build the
+    /// <see cref="CustomApplicationInsightsOptions"/>.
+    /// </summary>
+    /// <returns>The configured <see cref="CustomApplicationInsightsOptions"/>.</returns>
     public CustomApplicationInsightsOptions Build() => new(
         _applicationName,
         _typeFromEntryAssembly,

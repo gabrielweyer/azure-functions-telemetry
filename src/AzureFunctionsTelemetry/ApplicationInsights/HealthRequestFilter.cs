@@ -1,6 +1,6 @@
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
-public class HealthRequestFilter : ITelemetryProcessor
+internal class HealthRequestFilter : ITelemetryProcessor
 {
     private readonly ITelemetryProcessor _next;
     private readonly string _healthCheckFunctionName;

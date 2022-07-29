@@ -7,11 +7,12 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <UserSecretsId>074ca336-270b-4832-9a1a-60baf152b727</UserSecretsId>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <InformationalVersion>3.0.0.0</InformationalVersion>
     <NoWarn>7035</NoWarn>
-    <UserSecretsId>074ca336-270b-4832-9a1a-60baf152b727</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Diagnostics.CodeAnalysis" />

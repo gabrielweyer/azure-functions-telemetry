@@ -8,6 +8,7 @@
     <RootNamespace>Gabo.AzureFunctionsTelemetryTests</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionsTelemetryTests</AssemblyName>
     <IsPackable>false</IsPackable>
+    <NoWarn>7035</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

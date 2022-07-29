@@ -7,14 +7,20 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
+/// <summary>
+/// This won't actually be displayed
+/// </summary>
 public static class ApplicationInsightsServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers Telemetry Initializers and Processors.
+    /// Extension method taking over the Application Insights' configuration so that we can register our own Telemetry
+    /// Initializers and Processors. Stamps each telemetry item with the application name and version. Discards as much
+    /// redundant telemetry as is humanely possible.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="options"></param>
-    /// <returns></returns>
+    /// <param name="services">The <see cref="IServiceCollection"/> holding all your precious types.</param>
+    /// <param name="options">The <see cref="CustomApplicationInsightsOptions"/> configuring the Application Insights
+    /// integration.</param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance but with modified registrations.</returns>
     public static IServiceCollection AddCustomApplicationInsights(
         this IServiceCollection services,
         CustomApplicationInsightsOptions options)

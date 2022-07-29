@@ -5,8 +5,8 @@ using Microsoft.ApplicationInsights.Extensibility;
 namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Infrastructure.Telemetry;
 
 /// <summary>
-/// <para>Even though this telemetry initializer enriches the telemetry, the main goal is to demonstrate that you need to be
-/// careful when registering an instance of a telemetry initializer. Despite what the documentation states at:
+/// <para>Even though this telemetry initializer enriches the telemetry, the main goal is to demonstrate that you need
+/// to be careful when registering an instance of a telemetry initializer. Despite what the documentation states at:
 /// https://docs.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core#adding-telemetryinitializers
 /// </para>
 ///

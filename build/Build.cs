@@ -10,6 +10,7 @@ using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.MinVer;
 using Nuke.Common.Tools.ReportGenerator;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
@@ -25,7 +26,7 @@ class Build : NukeBuild
     ///   - Microsoft VisualStudio     https://nuke.build/visualstudio
     ///   - Microsoft VSCode           https://nuke.build/vscode
 
-    public static int Main() => Execute<Build>(x => x.Publish);
+    public static int Main() => Execute<Build>(x => x.PublishFunctions);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
@@ -37,6 +38,9 @@ class Build : NukeBuild
     readonly string IntegrationTestServiceBusConnectionString;
 
     [Solution] readonly Solution Solution;
+
+    [MinVer]
+    readonly MinVer MinVer;
 
     const string UserSecretsId = "074ca336-270b-4832-9a1a-60baf152b727";
     const string AppInsightsSecretName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
@@ -51,6 +55,8 @@ class Build : NukeBuild
     static AbsolutePath TestResultsDirectory => ArtifactsDirectory / "test-results";
     static AbsolutePath CodeCoverageDirectory => ArtifactsDirectory / "coverage-report";
     static AbsolutePath PublishDirectory => ArtifactsDirectory / "out";
+    static AbsolutePath FunctionsPublishDirectory => PublishDirectory / "functions";
+    static AbsolutePath PackagePublishDirectory => PublishDirectory / "package";
     static int _startedFunctionCount;
     static StringBuilder _defaultV4Output = new();
     static IProcess _defaultV4Function;
@@ -76,14 +82,32 @@ class Build : NukeBuild
                 .SetProjectFile(Solution));
         });
 
+    Target SetGitHubVersion => _ => _
+        .DependsOn(Restore)
+        .OnlyWhenStatic(() => IsServerBuild)
+        .Executes(() =>
+        {
+            var gitHubEnvironmentFile = Environment.GetEnvironmentVariable("GITHUB_ENV");
+            var packageVersionEnvironmentVariable = $"PACKAGE_VERSION={MinVer.PackageVersion}";
+            File.WriteAllText(gitHubEnvironmentFile, packageVersionEnvironmentVariable);
+        });
+
     Target Compile => _ => _
+        .DependsOn(SetGitHubVersion)
         .DependsOn(Restore)
         .Executes(() =>
         {
+            Serilog.Log.Information("AssemblyVersion: {AssemblyVersion}", MinVer.AssemblyVersion);
+            Serilog.Log.Information("NuGetVersion: {PackageVersion}", MinVer.PackageVersion);
+
             DotNetBuild(s => s
                 .SetProjectFile(Solution)
                 .SetConfiguration(Configuration)
-                .EnableNoRestore());
+                .SetAssemblyVersion(MinVer.AssemblyVersion)
+                .SetFileVersion(MinVer.PackageVersion)
+                .SetInformationalVersion(MinVer.PackageVersion)
+                .EnableNoRestore()
+                .EnableNoIncremental());
         });
 
     Target VerifyFormat => _ => _
@@ -267,9 +291,23 @@ class Build : NukeBuild
             }
         });
 
-    Target Publish => _ => _
+    Target Pack => _ => _
         .DependsOn(RestoreUserSecrets)
-        .OnlyWhenStatic(() => Package)
+        .OnlyWhenDynamic(() => Package)
+        .Executes(() =>
+        {
+            DotNetPack(s => s
+                .SetConfiguration(Configuration)
+                .EnableNoBuild()
+                .SetProject(SourceDirectory / "AzureFunctionsTelemetry")
+                .EnableIncludeSymbols()
+                .SetOutputDirectory(PackagePublishDirectory)
+                .SetVersion(MinVer.PackageVersion));
+        });
+
+    Target PublishFunctions => _ => _
+        .DependsOn(Pack)
+        .OnlyWhenDynamic(() => Package)
         .Executes(() =>
         {
             var functionProjects =
@@ -284,7 +322,7 @@ class Build : NukeBuild
                 .EnableNoBuild()
                 .CombineWith(functionProjects, (ss, p) =>
                 {
-                    var output = PublishDirectory / p.Name;
+                    var output = FunctionsPublishDirectory / p.Name;
                     outDirectories.Add((p.Name, output));
 
                     return ss
@@ -294,7 +332,7 @@ class Build : NukeBuild
 
             foreach (var (projectName, outPath) in outDirectories)
             {
-                CompressionTasks.CompressZip(outPath, PublishDirectory / $"{projectName}.zip");
+                CompressionTasks.CompressZip(outPath, FunctionsPublishDirectory / $"{projectName}.zip");
             }
         });
 

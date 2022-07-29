@@ -49,7 +49,7 @@ param (
 
 $ErrorActionPreference = 'Stop'
 
-$outputPath = Join-Path $PSScriptRoot '..' 'artifacts' 'out'
+$outputPath = Join-Path $PSScriptRoot '..' 'artifacts' 'out' 'functions'
 
 $resourceGroupName = "$ResourceNamePrefix-rg"
 $secretValue = 'TopSecret'

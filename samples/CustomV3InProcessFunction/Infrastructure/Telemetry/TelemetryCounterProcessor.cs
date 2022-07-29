@@ -5,8 +5,10 @@ using Microsoft.ApplicationInsights.Extensibility;
 namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastructure.Telemetry;
 
 /// <summary>
-/// This is not really a telemetry processor as it doesn't discard any telemetry. The goal is to demonstrate that
-/// every telemetry item type is going through the processor and could be potentially be discarded.
+/// <para>This is not really a telemetry processor as it doesn't discard any telemetry. The goal is to demonstrate that
+/// every telemetry item type is going through the processor and could potentially be discarded.</para>
+/// <para>When running in Azure you might get different results on each request as you might be hitting different
+/// instances and the state is kept in-memory.</para>
 /// </summary>
 public class TelemetryCounterProcessor : ITelemetryProcessor
 {

@@ -7,10 +7,32 @@
     <Nullable>enable</Nullable>
     <RootNamespace>Gabo.AzureFunctionsTelemetry</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionsTelemetry</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'True'">true</ContinuousIntegrationBuild>
+    <PackageId>AzureFunctions.Better.ApplicationInsights</PackageId>
+    <Title>Better Azure Functions Application Insights integration</Title>
+    <Authors>Gabriel Weyer</Authors>
+    <PackageDescription>Improve Application Insights integration for Azure Function v3 and v4. Automatically discard cruft telemetry emitted by Functions runtime. Add your own telemetry processors.</PackageDescription>
+    <PackageTags>Azure-Functions Application-Insights Telemetry Save-Money</PackageTags>
+    <PackageProjectUrl>https://github.com/gabrielweyer/azure-functions-telemetry</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>Copyright (c) Better Azure Function Application Insights contributors 2022</Copyright>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageIcon>icon.png</PackageIcon>
+    <NoWarn>CS7035</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Gabo.AzureFunctionsTelemetryTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +45,10 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.33" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.27" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

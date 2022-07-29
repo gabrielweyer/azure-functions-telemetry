@@ -24,9 +24,11 @@ In this repository I have tried to address all the quirks listed above.
 
 The customisation supports both `v3` and `v4` runtime.
 
-Copy the `src/AzureFunctionsTelemetry` project into your solution and reference it from your Function App(s). You can get the latest version by copying the updated files over yours.
+[![Build Status][github-actions-shield]][github-actions] [![NuGet][nuget-tool-badge]][nuget-tool-command]
 
-:memo: I have not packaged the library into a `NuGet` package yet as the customisation is only used in a few Functions so far. Create an issue if you would like to consume a `NuGet` package.
+```powershell
+dotnet add package AzureFunctions.Better.ApplicationInsights
+```
 
 For the most basic integration, you need to provide:
 
@@ -427,3 +429,7 @@ As I did not manage to cover my customisation with unit tests, I wrote [integrat
 [bicep-cli]: https://docs.microsoft.com/en-au/azure/azure-resource-manager/bicep/install#install-manually
 [adaptive-sampling]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/sampling#adaptive-sampling
 [integration-tests]: CONTRIBUTING.md
+[github-actions]: https://github.com/gabrielweyer/azure-functions-telemetry/actions/workflows/build.yml
+[github-actions-shield]: https://github.com/gabrielweyer/azure-functions-telemetry/actions/workflows/build.yml/badge.svg
+[nuget-tool-badge]: https://img.shields.io/nuget/v/AzureFunctions.Better.ApplicationInsights.svg?label=NuGet
+[nuget-tool-command]: https://www.nuget.org/packages/AzureFunctions.Better.ApplicationInsights

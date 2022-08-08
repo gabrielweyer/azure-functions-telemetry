@@ -13,8 +13,8 @@
     <PackageId>AzureFunctions.Better.ApplicationInsights</PackageId>
     <Title>Better Azure Functions Application Insights integration</Title>
     <Authors>Gabriel Weyer</Authors>
-    <PackageDescription>Improve Application Insights integration for Azure Function v3 and v4. Automatically discard cruft telemetry emitted by Functions runtime. Add your own telemetry processors.</PackageDescription>
-    <PackageTags>Azure-Functions Application-Insights Telemetry Save-Money</PackageTags>
+    <PackageDescription>Improve Application Insights (App Insights) integration for Azure Function v3 and v4. Automatically discard cruft telemetry emitted by Functions runtime. Add your own telemetry processors.</PackageDescription>
+    <PackageTags>Azure-Functions Application-Insights App-Insights Telemetry Instrumentation Observability Save-Money</PackageTags>
     <PackageProjectUrl>https://github.com/gabrielweyer/azure-functions-telemetry</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

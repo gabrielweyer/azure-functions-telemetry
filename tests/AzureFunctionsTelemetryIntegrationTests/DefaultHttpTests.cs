@@ -20,8 +20,7 @@ public class DefaultHttpTests
         await _client.LogVerboseAsync();
 
         // Assert
-        var (request, telemetries) =
-            await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "TraceLogFunction");
+        var (request, telemetries) = await _client.PollForTelemetryAsync("TraceLogFunction");
         var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
         executionTraces.Should().HaveCount(2);
     }
@@ -37,8 +36,7 @@ public class DefaultHttpTests
 
         // Assert
         var (request, telemetries) =
-            await _client.PollForTelemetryAsync<RequestItem>(i =>
-                i.OperationName == "HttpExceptionThrowingFunction");
+            await _client.PollForTelemetryAsync("HttpExceptionThrowingFunction");
         var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationId);
         exceptions.Should().HaveCount(2);
     }

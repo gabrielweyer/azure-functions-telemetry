@@ -20,7 +20,7 @@ public class DefaultServiceBusTests
         await _client.TriggerServiceBusAsync();
 
         // Assert
-        var (request, _) = await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "ServiceBusFunction");
+        var (request, _) = await _client.PollForTelemetryAsync("ServiceBusFunction");
         Assert.Null(request.Data.BaseData.Url);
         request.Data.BaseData.ResponseCode.Should().Be("0");
     }
@@ -35,8 +35,7 @@ public class DefaultServiceBusTests
         await _client.TriggerServiceBusAsync();
 
         // Assert
-        var (request, telemetries) =
-            await _client.PollForTelemetryAsync<RequestItem>(i => i.OperationName == "ServiceBusFunction");
+        var (request, telemetries) = await _client.PollForTelemetryAsync("ServiceBusFunction");
         var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
         executionTraces.Should().HaveCount(3);
     }
@@ -52,8 +51,7 @@ public class DefaultServiceBusTests
 
         // Assert
         var (request, telemetries) =
-            await _client.PollForTelemetryAsync<RequestItem>(i =>
-                i.OperationName == "ServiceBusExceptionThrowingFunction");
+            await _client.PollForTelemetryAsync("ServiceBusExceptionThrowingFunction");
         var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationId);
         exceptions.Should().HaveCount(3);
     }

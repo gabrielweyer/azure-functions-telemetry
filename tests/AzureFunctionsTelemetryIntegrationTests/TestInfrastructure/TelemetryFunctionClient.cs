@@ -43,8 +43,7 @@ internal abstract class TelemetryFunctionClient
             .ToList();
     }
 
-    public async Task<(T item, List<TelemetryItem> allItems)>
-        PollForTelemetryAsync<T>(Func<T, bool> selector) where T : TelemetryItem
+    public async Task<(RequestItem item, List<TelemetryItem> allItems)> PollForTelemetryAsync(string operationName)
     {
         var attemptCount = 0;
         const int maxAttemptCount = 5;
@@ -55,9 +54,9 @@ internal abstract class TelemetryFunctionClient
             attemptCount++;
             var telemetries = await GetTelemetryAsync();
             var request = telemetries
-                .Where(i => i is T)
-                .Cast<T>()
-                .SingleOrDefault(selector);
+                .Where(i => i is RequestItem)
+                .Cast<RequestItem>()
+                .SingleOrDefault(r => r.OperationName == operationName);
 
             if (request != null)
             {

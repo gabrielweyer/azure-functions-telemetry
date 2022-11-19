@@ -22,7 +22,7 @@ public class CustomHttpTests
         // Assert
         var (request, telemetries) =
             await _client.PollForTelemetryAsync("TraceLogFunction");
-        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
+        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationName, request.OperationId);
         executionTraces.Should().BeEmpty();
     }
 
@@ -38,7 +38,7 @@ public class CustomHttpTests
         // Assert
         var (request, telemetries) =
             await _client.PollForTelemetryAsync("HttpExceptionThrowingFunction");
-        var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationId);
+        var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationName, request.OperationId);
         exceptions.Should().HaveCount(1);
     }
 

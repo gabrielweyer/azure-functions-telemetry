@@ -124,17 +124,17 @@ There is an [opened GitHub issue][telemetry-processor-support-github-issue] abou
 
 ### Software versions
 
-The latest version of the Azure Functions Core Tools I have been using is `4.0.4590`.
+The latest version of the Azure Functions Core Tools I have been using is `4.0.4895`.
 
 NuGet packages:
 
 - `Microsoft.NET.Sdk.Functions`:
-  - `v3`: `3.1.1` (added automatically when creating the Function, updated later)
-  - `v4`: `4.1.0` (added automatically when creating the Function, updated later)
+  - `v3`: `3.1.2` (added automatically when creating the Function, updated later)
+  - `v4`: `4.1.3` (added automatically when creating the Function, updated later)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
 - `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection], updated later):
-  - `v3`: `3.1.29`
-  - `v4`: `6.0.0`
+  - `v3`: `3.1.31`
+  - `v4`: `6.0.1`
 - `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.33` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 
 ### Supporting telemetry processors

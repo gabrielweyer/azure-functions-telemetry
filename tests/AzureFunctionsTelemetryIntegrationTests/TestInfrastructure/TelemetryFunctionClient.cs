@@ -39,7 +39,7 @@ internal abstract class TelemetryFunctionClient
             StringSplitOptions.RemoveEmptyEntries);
 
         return serialisedTelemetryItems
-            .Select(i => JsonConvert.DeserializeObject<TelemetryItem>(i, new TelemetryItemConverter()))
+            .Select(i => JsonConvert.DeserializeObject<TelemetryItem>(i, new TelemetryItemConverter())!)
             .ToList();
     }
 

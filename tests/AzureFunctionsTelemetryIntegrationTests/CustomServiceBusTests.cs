@@ -37,7 +37,7 @@ public class CustomServiceBusTests
         // Assert
         var (request, telemetries) =
             await _client.PollForTelemetryAsync("ServiceBusFunction");
-        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationId);
+        var executionTraces = telemetries.GetOperationItems<TraceItem>(request.OperationName, request.OperationId);
         executionTraces.Should().BeEmpty();
     }
 
@@ -53,7 +53,7 @@ public class CustomServiceBusTests
         // Assert
         var (request, telemetries) =
             await _client.PollForTelemetryAsync("ServiceBusExceptionThrowingFunction");
-        var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationId);
+        var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationName, request.OperationId);
         exceptions.Should().HaveCount(1);
     }
 }

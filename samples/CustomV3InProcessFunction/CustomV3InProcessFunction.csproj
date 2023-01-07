@@ -18,10 +18,10 @@
     <Using Include="System.Diagnostics.CodeAnalysis" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.8.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.32" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

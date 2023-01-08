@@ -8,9 +8,9 @@ namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
 public class FunctionsFinderTests
 {
-    private static readonly List<string> _foundFunctions;
+    private readonly List<string> _foundFunctions;
 
-    static FunctionsFinderTests()
+    public FunctionsFinderTests()
     {
         _foundFunctions = FunctionsFinder.GetServiceBusTriggeredFunctionNames(typeof(FunctionsFinderTests));
     }

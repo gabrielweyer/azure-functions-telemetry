@@ -10,7 +10,7 @@ namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastr
 /// <para>When running in Azure you might get different results on each request as you might be hitting different
 /// instances and the state is kept in-memory.</para>
 /// </summary>
-public class TelemetryCounterProcessor : ITelemetryProcessor
+internal sealed class TelemetryCounterProcessor : ITelemetryProcessor
 {
     private readonly ITelemetryProcessor _next;
 

@@ -8,7 +8,7 @@
     <RootNamespace>Gabo.AzureFunctionsTelemetryAppInsightsConnectionStringIntegrationTests</RootNamespace>
     <AssemblyName>Gabo.AzureFunctionsTelemetryAppInsightsConnectionStringIntegrationTests</AssemblyName>
     <IsPackable>false</IsPackable>
-    <NoWarn>7035</NoWarn>
+    <NoWarn>7035;CA1707;CA2007</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

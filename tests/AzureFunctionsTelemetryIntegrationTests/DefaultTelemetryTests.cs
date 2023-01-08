@@ -1,11 +1,11 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Default")]
-public class DefaultTelemetryTests
+public sealed class DefaultTelemetryTests : IDisposable
 {
-    private static readonly DefaultTelemetryFunctionClient _client;
+    private readonly DefaultTelemetryFunctionClient _client;
 
-    static DefaultTelemetryTests()
+    public DefaultTelemetryTests()
     {
         _client = new DefaultTelemetryFunctionClient();
     }
@@ -26,5 +26,10 @@ public class DefaultTelemetryTests
         actualTelemetry.Tags.Should().BeEquivalentTo(expectedTags, options => options
             .Including(t => t.ApplicationVersion)
             .Including(t => t.CloudRoleName));
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

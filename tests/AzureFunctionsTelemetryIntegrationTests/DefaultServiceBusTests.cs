@@ -1,11 +1,11 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Default")]
-public class DefaultServiceBusTests
+public sealed class DefaultServiceBusTests : IDisposable
 {
-    private static readonly DefaultTelemetryFunctionClient _client;
+    private readonly DefaultTelemetryFunctionClient _client;
 
-    static DefaultServiceBusTests()
+    public DefaultServiceBusTests()
     {
         _client = new DefaultTelemetryFunctionClient();
     }
@@ -54,5 +54,10 @@ public class DefaultServiceBusTests
             await _client.PollForTelemetryAsync("ServiceBusExceptionThrowingFunction");
         var exceptions = telemetries.GetOperationItems<ExceptionItem>(request.OperationName, request.OperationId);
         exceptions.Should().HaveCount(3);
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

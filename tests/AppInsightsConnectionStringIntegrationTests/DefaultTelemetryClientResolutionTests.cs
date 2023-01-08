@@ -1,11 +1,11 @@
 namespace Gabo.AzureFunctionsTelemetryAppInsightsConnectionStringIntegrationTests;
 
 [Collection("Default")]
-public class DefaultTelemetryClientResolutionTests
+public sealed class DefaultTelemetryClientResolutionTests : IDisposable
 {
-    private static readonly DefaultTelemetryFunctionClient _client;
+    private readonly DefaultTelemetryFunctionClient _client;
 
-    static DefaultTelemetryClientResolutionTests()
+    public DefaultTelemetryClientResolutionTests()
     {
         _client = new DefaultTelemetryFunctionClient();
     }
@@ -18,5 +18,10 @@ public class DefaultTelemetryClientResolutionTests
 
         // Assert
         Assert.False(response.IsSuccessStatusCode);
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

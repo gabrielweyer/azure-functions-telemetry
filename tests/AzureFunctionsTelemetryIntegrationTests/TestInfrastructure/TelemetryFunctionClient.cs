@@ -1,6 +1,6 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
-internal abstract class TelemetryFunctionClient
+internal abstract class TelemetryFunctionClient : IDisposable
 {
     private readonly HttpClient _httpClient;
 
@@ -13,25 +13,25 @@ internal abstract class TelemetryFunctionClient
 
     public async Task ThrowOnHttpBindingAsync()
     {
-        var response = await _httpClient.GetAsync("http-exception");
+        var response = await _httpClient.GetAsync(new Uri("http-exception", UriKind.Relative));
         await EnsureFailureAsync(response);
     }
 
     public async Task LogVerboseAsync()
     {
-        var response = await _httpClient.GetAsync("trace-log");
+        var response = await _httpClient.GetAsync(new Uri("trace-log", UriKind.Relative));
         await EnsureSuccessAsync(response);
     }
 
     public async Task CheckHealthAsync()
     {
-        var response = await _httpClient.GetAsync("health");
+        var response = await _httpClient.GetAsync(new Uri("health", UriKind.Relative));
         await EnsureSuccessAsync(response);
     }
 
     public async Task<List<TelemetryItem>> GetTelemetryAsync()
     {
-        var response = await _httpClient.GetAsync("telemetry");
+        var response = await _httpClient.GetAsync(new Uri("telemetry", UriKind.Relative));
         await EnsureSuccessAsync(response);
         var responseBody = await response.Content.ReadAsStringAsync();
         var serialisedTelemetryItems = responseBody.Split(
@@ -72,19 +72,19 @@ internal abstract class TelemetryFunctionClient
 
     public async Task DeleteTelemetryAsync()
     {
-        var response = await _httpClient.DeleteAsync("telemetry");
+        var response = await _httpClient.DeleteAsync(new Uri("telemetry", UriKind.Relative));
         await EnsureSuccessAsync(response);
     }
 
     public async Task TriggerServiceBusAsync()
     {
-        var response = await _httpClient.GetAsync("service-bus");
+        var response = await _httpClient.GetAsync(new Uri("service-bus", UriKind.Relative));
         await EnsureSuccessAsync(response);
     }
 
     public async Task TriggerServiceBusExceptionAsync()
     {
-        var response = await _httpClient.GetAsync("service-bus-exception");
+        var response = await _httpClient.GetAsync(new Uri("service-bus-exception", UriKind.Relative));
         await EnsureSuccessAsync(response);
     }
 
@@ -112,16 +112,21 @@ internal abstract class TelemetryFunctionClient
 
         throw new HttpRequestException(exceptionMessage, null, response.StatusCode);
     }
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
+    }
 }
 
-internal class CustomTelemetryFunctionClient : TelemetryFunctionClient
+internal sealed class CustomTelemetryFunctionClient : TelemetryFunctionClient
 {
     public CustomTelemetryFunctionClient() : base(7074)
     {
     }
 }
 
-internal class DefaultTelemetryFunctionClient : TelemetryFunctionClient
+internal sealed class DefaultTelemetryFunctionClient : TelemetryFunctionClient
 {
     public DefaultTelemetryFunctionClient() : base(7073)
     {

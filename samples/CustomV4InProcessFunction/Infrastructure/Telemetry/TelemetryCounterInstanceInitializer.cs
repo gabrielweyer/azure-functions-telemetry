@@ -23,7 +23,7 @@ namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Infrastr
 /// .AddSingleton&lt;ITelemetryInitializer&gt;(new TelemetryCounterInstanceInitializer("NiceValue"))
 /// </code>
 /// </summary>
-public class TelemetryCounterInstanceInitializer : ITelemetryInitializer
+internal sealed class TelemetryCounterInstanceInitializer : ITelemetryInitializer
 {
     private readonly string _customPropertyValue;
     public long AvailabilityTelemetryCount;

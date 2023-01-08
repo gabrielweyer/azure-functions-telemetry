@@ -1,6 +1,6 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
-internal class MetricItem : TelemetryItem
+internal sealed class MetricItem : TelemetryItem
 {
 
 }

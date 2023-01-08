@@ -2,7 +2,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
-internal class TelemetryItemConverter : JsonConverter
+internal sealed class TelemetryItemConverter : JsonConverter
 {
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {

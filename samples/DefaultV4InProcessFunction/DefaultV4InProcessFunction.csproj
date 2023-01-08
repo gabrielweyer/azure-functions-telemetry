@@ -12,7 +12,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <InformationalVersion>3.0.0.0</InformationalVersion>
-    <NoWarn>7035</NoWarn>
+    <NoWarn>7035;CA1062</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Diagnostics.CodeAnalysis" />

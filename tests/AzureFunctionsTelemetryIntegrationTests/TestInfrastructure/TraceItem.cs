@@ -1,16 +1,16 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests.TestInfrastructure;
 
-internal class TraceItem : TelemetryItem
+internal sealed class TraceItem : TelemetryItem
 {
     public TraceData Data { get; set; } = new();
 }
 
-internal class TraceData
+internal sealed class TraceData
 {
     public TraceBaseData BaseData { get; set; } = new();
 }
 
-internal class TraceBaseData
+internal sealed class TraceBaseData
 {
     public string Message { get; set; } = default!;
 }

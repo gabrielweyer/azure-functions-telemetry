@@ -24,7 +24,7 @@ internal class DuplicateExceptionsFilter : ITelemetryProcessor
                 }
 
                 if (_serviceBusFunctionCategories.Count > 0 &&
-                    _serviceBusFunctionCategories.Contains(category) &&
+                    _serviceBusFunctionCategories.Contains(category, StringComparer.Ordinal) &&
                     TelemetryHelper.IsFunctionCompletedTelemetry(exceptionTelemetry))
                 {
                     return;

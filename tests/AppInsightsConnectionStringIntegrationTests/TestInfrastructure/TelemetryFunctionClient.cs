@@ -21,17 +21,3 @@ internal abstract class TelemetryFunctionClient : IDisposable
         _httpClient.Dispose();
     }
 }
-
-internal sealed class CustomTelemetryFunctionClient : TelemetryFunctionClient
-{
-    public CustomTelemetryFunctionClient() : base(7074)
-    {
-    }
-}
-
-internal sealed class DefaultTelemetryFunctionClient : TelemetryFunctionClient
-{
-    public DefaultTelemetryFunctionClient() : base(7073)
-    {
-    }
-}

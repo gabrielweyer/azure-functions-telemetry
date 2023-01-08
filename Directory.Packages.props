@@ -35,5 +35,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.4" />
   </ItemGroup>
 </Project>

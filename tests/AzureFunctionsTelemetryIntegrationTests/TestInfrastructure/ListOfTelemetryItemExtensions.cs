@@ -7,7 +7,8 @@ internal static class ListOfTelemetryItemExtensions
         return items
             .Where(i => i is T)
             .Cast<T>()
-            .Where(i => i.OperationId == operationId && (i.OperationName == operationName || string.IsNullOrEmpty(i.OperationName)))
+            .Where(i => operationId.Equals(i.OperationId, StringComparison.Ordinal) &&
+                        (operationName.Equals(i.OperationName, StringComparison.Ordinal) || string.IsNullOrEmpty(i.OperationName)))
             .ToList();
     }
 }

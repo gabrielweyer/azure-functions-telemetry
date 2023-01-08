@@ -23,7 +23,7 @@ public sealed class TestingChannel : ITelemetryChannel
 
     public void Flush()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("We keep the telemetry in memory, so flushing is meaningless.");
     }
 
     public void Dispose()

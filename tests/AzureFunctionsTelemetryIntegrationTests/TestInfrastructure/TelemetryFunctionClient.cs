@@ -56,7 +56,7 @@ internal abstract class TelemetryFunctionClient : IDisposable
             var request = telemetries
                 .Where(i => i is RequestItem)
                 .Cast<RequestItem>()
-                .SingleOrDefault(r => r.OperationName == operationName);
+                .SingleOrDefault(r => operationName.Equals(r.OperationName, StringComparison.Ordinal));
 
             if (request != null)
             {
@@ -116,19 +116,5 @@ internal abstract class TelemetryFunctionClient : IDisposable
     public void Dispose()
     {
         _httpClient.Dispose();
-    }
-}
-
-internal sealed class CustomTelemetryFunctionClient : TelemetryFunctionClient
-{
-    public CustomTelemetryFunctionClient() : base(7074)
-    {
-    }
-}
-
-internal sealed class DefaultTelemetryFunctionClient : TelemetryFunctionClient
-{
-    public DefaultTelemetryFunctionClient() : base(7073)
-    {
     }
 }

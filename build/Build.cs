@@ -126,7 +126,7 @@ sealed class Build : NukeBuild
         {
             var testProjects =
                 from testProject in Solution.AllProjects
-                where testProject.Name == "AzureFunctionsTelemetryTests"
+                where "AzureFunctionsTelemetryTests".Equals(testProject.Name, StringComparison.Ordinal)
                 from framework in testProject.GetTargetFrameworks()
                 select new { TestProject = testProject, Framework = framework };
 

@@ -21,10 +21,12 @@ public static class ApplicationInsightsServiceCollectionExtensions
     /// <param name="options">The <see cref="CustomApplicationInsightsOptions"/> configuring the Application Insights
     /// integration.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance but with modified registrations.</returns>
+#pragma warning disable MA0051 // Yes this method is too long, hopefully I'll manage to make it shorter
     public static IServiceCollection AddCustomApplicationInsights(
         this IServiceCollection services,
         CustomApplicationInsightsOptions options)
     {
+#pragma warning restore
         if (options == null)
         {
             throw new ArgumentNullException(nameof(options));

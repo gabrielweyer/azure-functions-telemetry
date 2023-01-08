@@ -10,10 +10,7 @@
     <PackageVersion Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.33" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="3.1.32" Condition="'$(TargetFramework)' == 'netstandard2.1'" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageVersion>
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.8.1" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.32" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
@@ -21,20 +18,11 @@
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.1.2" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" Condition="'$(TargetFramework)' == 'net6.0'" />
     <PackageVersion Include="FluentAssertions" Version="6.8.0" />
-    <PackageVersion Include="GitHubActionsTestLogger" Version="2.0.1">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageVersion>
+    <PackageVersion Include="GitHubActionsTestLogger" Version="2.0.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
     <PackageVersion Include="xunit" Version="2.4.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageVersion>
-    <PackageVersion Include="coverlet.collector" Version="3.2.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageVersion>
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.4" />
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.4.33" />
     <GlobalPackageReference Include="AsyncFixer" Version="1.6.0" />

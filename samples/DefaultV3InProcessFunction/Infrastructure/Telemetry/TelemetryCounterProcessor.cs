@@ -6,7 +6,8 @@ namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV3InProcessFunction.Infrast
 public class TelemetryCounterProcessor : ITelemetryProcessor
 {
     private readonly ITelemetryProcessor _next;
-    public static int InvocationCount;
+    private static int _invocationCount;
+    public static int InvocationCount => Interlocked.CompareExchange(ref _invocationCount, 0, 0);
 
     public TelemetryCounterProcessor(ITelemetryProcessor next)
     {
@@ -15,7 +16,7 @@ public class TelemetryCounterProcessor : ITelemetryProcessor
 
     public void Process(ITelemetry item)
     {
-        Interlocked.Increment(ref InvocationCount);
+        Interlocked.Increment(ref _invocationCount);
         _next.Process(item);
     }
 }

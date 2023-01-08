@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,8 +18,10 @@ using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+namespace Gabo;
+
 [ShutdownDotNetAfterServerBuild]
-class Build : NukeBuild
+sealed class Build : NukeBuild
 {
     /// Support plugins are available for:
     ///   - JetBrains ReSharper        https://nuke.build/resharper
@@ -312,7 +315,7 @@ class Build : NukeBuild
         {
             var functionProjects =
                 from functionProject in Solution.AllProjects
-                where functionProject.Name.EndsWith("Function")
+                where functionProject.Name.EndsWith("Function", StringComparison.Ordinal)
                 select functionProject;
 
             var outDirectories = new List<(string ProjectName, string OutPath)>();
@@ -361,15 +364,15 @@ class Build : NukeBuild
     {
         var secretPrefix = $"{secretName} = ";
         var userSecrets = DotNet($"user-secrets list --id {UserSecretsId}", logOutput: false);
-        var secret = userSecrets.SingleOrDefault(o => o.Type == OutputType.Std && o.Text.StartsWith(secretPrefix));
-        return secret.Text.IsNullOrEmpty() ? null : secret.Text.Replace(secretPrefix, string.Empty);
+        var secret = userSecrets.SingleOrDefault(o => o.Type == OutputType.Std && o.Text.StartsWith(secretPrefix, StringComparison.Ordinal));
+        return secret.Text.IsNullOrEmpty() ? null : secret.Text.Replace(secretPrefix, string.Empty, StringComparison.Ordinal);
     }
 
     static void SetUserSecret(string secretName, string secretValue)
     {
         DotNet(
             $"user-secrets set {secretName} {secretValue} --id {UserSecretsId}",
-            outputFilter: o => o.Replace(secretValue, "*****"));
+            outputFilter: o => o.Replace(secretValue, "*****", StringComparison.Ordinal));
     }
 
     static void RemoveUserSecret(string secretName)
@@ -379,7 +382,7 @@ class Build : NukeBuild
 
     static void StartAzureFunctions()
     {
-        var slim = new ManualResetEventSlim();
+        using var slim = new ManualResetEventSlim();
         Serilog.Log.Information("Starting Azure Functions, this takes some time");
 
         _defaultV4Output = new StringBuilder();
@@ -406,9 +409,9 @@ class Build : NukeBuild
         {
             return (outputType, output) =>
             {
-                sink.AppendLine($"[{outputType}] - {output}");
+                sink.AppendLine(CultureInfo.InvariantCulture, $"[{outputType}] - {output}");
 
-                if (!output.Contains("Job host started"))
+                if (!output.Contains("Job host started", StringComparison.Ordinal))
                 {
                     return;
                 }

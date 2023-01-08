@@ -1,11 +1,11 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Custom")]
-public class CustomHttpTests
+public sealed class CustomHttpTests : IDisposable
 {
-    private static readonly CustomTelemetryFunctionClient _client;
+    private readonly CustomTelemetryFunctionClient _client;
 
-    static CustomHttpTests()
+    public CustomHttpTests()
     {
         _client = new CustomTelemetryFunctionClient();
     }
@@ -57,5 +57,10 @@ public class CustomHttpTests
         var requests = telemetries.Where(i => i is RequestItem).Cast<RequestItem>().ToList();
         requests.Should().NotContain(r => r.OperationName == "HealthFunction");
         requests.Should().Contain(r => r.OperationName == "TraceLogFunction");
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

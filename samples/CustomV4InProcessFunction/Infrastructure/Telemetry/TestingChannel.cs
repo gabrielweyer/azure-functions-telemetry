@@ -3,13 +3,13 @@ using Microsoft.ApplicationInsights.Channel;
 
 namespace Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction.Infrastructure.Telemetry;
 
-public class TestingChannel : ITelemetryChannel
+public sealed class TestingChannel : ITelemetryChannel
 {
     public bool? DeveloperMode { get; set; }
     public string? EndpointAddress { get; set; }
 
     private readonly ConcurrentQueue<ITelemetry> _telemetryItems = new();
-    public ITelemetry[] TelemetryItems => _telemetryItems.ToArray();
+    public ICollection<ITelemetry> TelemetryItems => _telemetryItems.ToArray();
 
     public void Send(ITelemetry item)
     {
@@ -28,6 +28,6 @@ public class TestingChannel : ITelemetryChannel
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _telemetryItems.Clear();
     }
 }

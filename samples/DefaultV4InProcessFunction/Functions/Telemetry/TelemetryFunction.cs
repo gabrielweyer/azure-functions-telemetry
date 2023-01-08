@@ -11,7 +11,9 @@ using ExecutionContext = Microsoft.Azure.WebJobs.ExecutionContext;
 
 namespace Gabo.AzureFunctionTelemetry.Samples.DefaultV4InProcessFunction.Functions.Telemetry;
 
+#pragma warning disable CA1001 // The container is responsible for disposing the injected instances
 public class TelemetryFunction
+#pragma warning restore CA1001
 {
     private readonly TestingChannel _testingChannel;
     private readonly TestingOptions _testingOptions;

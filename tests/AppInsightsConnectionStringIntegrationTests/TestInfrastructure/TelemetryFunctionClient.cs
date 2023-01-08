@@ -1,6 +1,6 @@
 namespace Gabo.AzureFunctionsTelemetryAppInsightsConnectionStringIntegrationTests.TestInfrastructure;
 
-internal abstract class TelemetryFunctionClient
+internal abstract class TelemetryFunctionClient : IDisposable
 {
     private readonly HttpClient _httpClient;
 
@@ -13,18 +13,23 @@ internal abstract class TelemetryFunctionClient
 
     public Task<HttpResponseMessage> EmitCustomEventAsync()
     {
-        return _httpClient.GetAsync("event");
+        return _httpClient.GetAsync(new Uri("event", UriKind.Relative));
+    }
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
     }
 }
 
-internal class CustomTelemetryFunctionClient : TelemetryFunctionClient
+internal sealed class CustomTelemetryFunctionClient : TelemetryFunctionClient
 {
     public CustomTelemetryFunctionClient() : base(7074)
     {
     }
 }
 
-internal class DefaultTelemetryFunctionClient : TelemetryFunctionClient
+internal sealed class DefaultTelemetryFunctionClient : TelemetryFunctionClient
 {
     public DefaultTelemetryFunctionClient() : base(7073)
     {

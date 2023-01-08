@@ -8,7 +8,7 @@ internal abstract class TelemetryItem
     public string OperationName => Tags.OperationName;
 }
 
-internal class TelemetryItemTags
+internal sealed class TelemetryItemTags
 {
     [JsonProperty("ai.application.ver")]
     public string? ApplicationVersion { get; set; }

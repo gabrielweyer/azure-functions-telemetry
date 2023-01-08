@@ -1,11 +1,11 @@
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Default")]
-public class DefaultHttpTests
+public sealed class DefaultHttpTests : IDisposable
 {
-    private static readonly DefaultTelemetryFunctionClient _client;
+    private readonly DefaultTelemetryFunctionClient _client;
 
-    static DefaultHttpTests()
+    public DefaultHttpTests()
     {
         _client = new DefaultTelemetryFunctionClient();
     }
@@ -56,5 +56,10 @@ public class DefaultHttpTests
         var requests = telemetries.Where(i => i is RequestItem).Cast<RequestItem>().ToList();
         requests.Should().Contain(i => i.OperationName == "HealthFunction");
         requests.Should().Contain(i => i.OperationName == "TraceLogFunction");
+    }
+
+    public void Dispose()
+    {
+        _client.Dispose();
     }
 }

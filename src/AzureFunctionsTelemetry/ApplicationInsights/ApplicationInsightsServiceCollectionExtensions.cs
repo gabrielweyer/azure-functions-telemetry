@@ -25,6 +25,16 @@ public static class ApplicationInsightsServiceCollectionExtensions
         this IServiceCollection services,
         CustomApplicationInsightsOptions options)
     {
+        if (options == null)
+        {
+            throw new ArgumentNullException(nameof(options));
+        }
+
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
         var applicationVersion = GetAssemblyInformationalVersion(options.TypeFromEntryAssembly);
         var applicationDescriptor = new ApplicationDescriptor(options.ApplicationName, applicationVersion);
         services.AddSingleton(applicationDescriptor);
@@ -110,7 +120,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
                 var processorType = processor.GetType();
                 var processorTypeName = processorType.FullName;
 
-                if (passThroughProcessorTypeFullName.Equals(processorTypeName))
+                if (passThroughProcessorTypeFullName.Equals(processorTypeName, StringComparison.Ordinal))
                 {
                     /*
                      * The current TelemetryProcessorChainBuilder and the new one we're building both have a
@@ -122,7 +132,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
                     continue;
                 }
 
-                if (operationFilteringTelemetryProcessorTypeFullName.Equals(processorTypeName))
+                if (operationFilteringTelemetryProcessorTypeFullName.Equals(processorTypeName, StringComparison.Ordinal))
                 {
                     var operationFilteringProcessorNextField = processorType
                         .GetField("_next", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -244,7 +254,13 @@ public static class ApplicationInsightsServiceCollectionExtensions
     /// <param name="services"></param>
     private static void AddNoOpTelemetryConfigurationIfOneIsNotPresent(this IServiceCollection services)
     {
+#pragma warning disable CA2000
+        /* This instance will not be disposed on shutdown. That's not great but this instance is only registered when
+         * an instrumentation key / connection string is not present. As far as I know Azure Functions don't support
+         * IApplicationLifetime or hosted services.
+         */
         services.TryAddSingleton(new TelemetryConfiguration());
+#pragma warning restore
     }
 
     private static string GetAssemblyInformationalVersion(Type type)

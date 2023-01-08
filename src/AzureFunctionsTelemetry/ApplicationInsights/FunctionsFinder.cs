@@ -19,15 +19,17 @@ internal static class FunctionsFinder
                     let parameterCustomAttributes = parameter.CustomAttributes
                     from parameterCustomAttribute in parameterCustomAttributes
                     where "Microsoft.Azure.WebJobs.ServiceBusTriggerAttribute"
-                        .Equals(parameterCustomAttribute.AttributeType.FullName)
+                        .Equals(parameterCustomAttribute.AttributeType.FullName, StringComparison.Ordinal)
                     from methodCustomAttribute in method.CustomAttributes
                     where "Microsoft.Azure.WebJobs.FunctionNameAttribute"
-                        .Equals(methodCustomAttribute.AttributeType.FullName)
+                        .Equals(methodCustomAttribute.AttributeType.FullName, StringComparison.Ordinal)
                     select (string?)methodCustomAttribute.ConstructorArguments.First().Value)
                 .WhereNotNull()
                 .ToList();
         }
+#pragma warning disable CA1031 // Catch-all and swallow. Better to emit additional telemetry rather than breaking Application Insights
         catch
+#pragma warning restore CA1031
         {
             return new List<string>();
         }

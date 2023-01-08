@@ -36,5 +36,6 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.4" />
+    <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.4.33" />
   </ItemGroup>
 </Project>

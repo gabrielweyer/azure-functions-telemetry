@@ -24,8 +24,3 @@ public class UserSecretFunction
         return new OkObjectResult(_options);
     }
 }
-
-public class SecretOptions
-{
-    public string ReallySecretValue { get; set; } = default!;
-}

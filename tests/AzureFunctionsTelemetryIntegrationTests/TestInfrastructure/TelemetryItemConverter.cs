@@ -6,7 +6,7 @@ internal sealed class TelemetryItemConverter : JsonConverter
 {
     public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException("We only use this converter to read.");
     }
 
     public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
@@ -21,7 +21,7 @@ internal sealed class TelemetryItemConverter : JsonConverter
             "AppRequests" => new RequestItem(),
             "AppExceptions" => new ExceptionItem(),
             "AppDependencies" => new DependencyItem(),
-            _ => throw new ArgumentOutOfRangeException(nameof(name), name, "This telemetry type is not supported")
+            _ => throw new NotSupportedException($"The telemetry type {name} is not supported.")
         };
 
         serializer.Populate(jsonObject.CreateReader(), item);

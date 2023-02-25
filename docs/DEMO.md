@@ -263,7 +263,7 @@ Anthony Chu has [documented how to suppress some logs][anthony-chu-suppress-logs
 [azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
 [powershell-7]: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2
-[azure-powershell]: https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-8.2.0
+[azure-powershell]: https://learn.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-9.4.0
 [dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
 [secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
 [default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/81a44091df4263442bb0e205a3942cfa5bfedb70/src/AzureFunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L231-L235

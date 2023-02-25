@@ -27,7 +27,7 @@ Used to create unique names. For example, with a 'hello' prefix and an Applicati
 You need:
 
 - PowerShell 7 (https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2)
-- Azure PowerShell (https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-7.1.0)
+- Azure PowerShell (https://learn.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-9.4.0)
 - Bicep CLI (https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#install-manually)
 
 Select the subscription you want to deploy to before running this script.

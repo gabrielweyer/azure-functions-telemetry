@@ -61,6 +61,7 @@ sealed class Build : NukeBuild
     static AbsolutePath FunctionsPublishDirectory => PublishDirectory / "functions";
     static AbsolutePath PackagePublishDirectory => PublishDirectory / "package";
     static int _startedFunctionCount;
+    static int _failedStartFunctionCount;
     static StringBuilder _defaultV4Output = new();
     static IProcess _defaultV4Function;
     static StringBuilder _customV4Output = new();
@@ -386,51 +387,70 @@ sealed class Build : NukeBuild
         Serilog.Log.Information("Starting Azure Functions, this takes some time");
 
         _defaultV4Output = new StringBuilder();
-        var defaultV4Logger = BuildLogger(_defaultV4Output, "DefaultV4InProcessFunction");
+        var defaultV4Logger = BuildLogger(slim, _defaultV4Output, "DefaultV4InProcessFunction");
 
         _customV4Output = new StringBuilder();
-        var customV4Logger = BuildLogger(_customV4Output, "CustomV4InProcessFunction");
+        var customV4Logger = BuildLogger(slim, _customV4Output, "CustomV4InProcessFunction");
 
         _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
         _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
 
         var functionsTimeoutStart = TimeSpan.FromSeconds(60);
-        var didFunctionsStart = slim.Wait(functionsTimeoutStart);
+        var wasSlimSet = slim.Wait(functionsTimeoutStart);
 
-        if (didFunctionsStart)
+        if (wasSlimSet)
         {
+            if (_failedStartFunctionCount > 0)
+            {
+                throw new InvalidOperationException(
+                    "Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction due to an error");
+            }
+
             return;
         }
 
         throw new InvalidOperationException(
             $"Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction within {functionsTimeoutStart}");
+    }
 
-        Action<OutputType, string> BuildLogger(StringBuilder sink, string functionName)
+    static Action<OutputType, string> BuildLogger(ManualResetEventSlim slim, StringBuilder sink, string functionName)
+    {
+        return (outputType, output) =>
         {
-            return (outputType, output) =>
+            sink.AppendLine(CultureInfo.InvariantCulture, $"[{outputType}] - {output}");
+
+            if (output.Contains("A host error has occurred during startup operation", StringComparison.Ordinal))
             {
-                sink.AppendLine(CultureInfo.InvariantCulture, $"[{outputType}] - {output}");
+                var failedStartFunctionCount = Interlocked.Increment(ref _failedStartFunctionCount);
+                Serilog.Log.Error($"Failed to start {functionName}");
 
-                if (!output.Contains("Job host started", StringComparison.Ordinal))
-                {
-                    return;
-                }
-
-                Serilog.Log.Information($"Started {functionName}");
-                var startedFunctionCount = Interlocked.Increment(ref _startedFunctionCount);
-
-                if (startedFunctionCount > 1)
+                if (_startedFunctionCount + failedStartFunctionCount > 1)
                 {
                     slim.Set();
                 }
-            };
-        }
 
-        IProcess StartFunction(string functionName, Action<OutputType, string> logger)
-        {
-            return ProcessTasks
-                .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
-        }
+                return;
+            }
+
+            if (!output.Contains("Job host started", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            Serilog.Log.Information($"Started {functionName}");
+            var startedFunctionCount = Interlocked.Increment(ref _startedFunctionCount);
+
+            if (startedFunctionCount + _failedStartFunctionCount > 1)
+            {
+                slim.Set();
+            }
+        };
+    }
+
+    static IProcess StartFunction(string functionName, Action<OutputType, string> logger)
+    {
+        return ProcessTasks
+            .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
     }
 
     void RunIntegrationTest(string projectName)

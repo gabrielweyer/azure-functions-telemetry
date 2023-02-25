@@ -16,6 +16,8 @@ Run `Deploy.ps1` to deploy the project to Azure. This will deploy:
 - A Service Bus namespace
 - Four Function Apps and their supporting storage accounts
 
+You'll first need to run `build.ps1 --package` to publish the Functions to file system.
+
 ```powershell
 .\Deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
 ```

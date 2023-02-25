@@ -13,6 +13,8 @@ Provisions the below resources in Azure:
 - A Service Bus namespace
 - Four Function Apps and their supporting storage accounts
 
+Please run `build.ps1 --package` beforehand to publish the Functions to file system.
+
 The selected subscription is used to deploy.
 
 .PARAMETER Location

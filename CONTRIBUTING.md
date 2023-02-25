@@ -2,7 +2,7 @@
 
 ## Integration tests
 
-Before being able to run the integration tests, you'll need to deploy an Application Insights instance and a Service Bus namespace. This can be done using [scripts\testing\deploy-testing.ps1](scripts\testing\deploy-testing.ps1).
+Before being able to run the integration tests, you'll need to deploy an Application Insights instance and a Service Bus namespace. This can be done using [scripts\testing\Deploy-Testing.ps1](scripts\testing\Deploy-Testing.ps1).
 
 Once you have provisioned the infrastructure, write down the Service Bus connection string.
 

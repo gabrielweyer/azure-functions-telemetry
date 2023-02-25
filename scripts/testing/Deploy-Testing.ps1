@@ -21,7 +21,7 @@ An Azure region you can deploy to.
 Used to create unique names. For example, with a 'hello' prefix and an Application Insights resource, the resource name will be 'hello-appi'.
 
 .EXAMPLE
-.\deploy-testing.ps1 -Location australiaeast -ResourceNamePrefix gabowtesting
+.\Deploy-Testing.ps1 -Location australiaeast -ResourceNamePrefix gabowtesting
 
 .NOTES
 You need:

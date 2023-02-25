@@ -127,7 +127,7 @@ jobs:
         uses: azure/powershell@v1
         with:
           inlineScript: |
-            deploy/deploy.ps1 -Location ${{ env.AZURE_LOCATION }} -ResourceNamePrefix ${{ env.RESOURCE_NAME_PREFIX }}
+            deploy/Deploy.ps1 -Location ${{ env.AZURE_LOCATION }} -ResourceNamePrefix ${{ env.RESOURCE_NAME_PREFIX }}
           azPSVersion: 'latest'
         env:
           AZURE_LOCATION: australiaeast

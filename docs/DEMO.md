@@ -10,14 +10,14 @@ Before being able to deploy and run the Functions you will need to have the belo
 - [Azure PowerShell][azure-powershell] to deploy to Azure
 - [Bicep CLI][bicep-cli] to deploy to Azure
 
-Run `deploy.ps1` to deploy the project to Azure. This will deploy:
+Run `Deploy.ps1` to deploy the project to Azure. This will deploy:
 
 - A Workspace based Application Insights instance
 - A Service Bus namespace
 - Four Function Apps and their supporting storage accounts
 
 ```powershell
-.\deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
+.\Deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
 ```
 
 The project contains four Functions Apps:

@@ -16,3 +16,6 @@ __blobstorage__/
 # NUKE
 .nuke/temp
 artifacts/
+
+# Git
+*.orig

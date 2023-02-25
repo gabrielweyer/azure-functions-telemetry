@@ -76,12 +76,22 @@ public static class ApplicationInsightsServiceCollectionExtensions
                     "The service descriptor implementation factory did not return a 'TelemetryConfiguration' instance.");
             }
 
-            var replacementConfig = new TelemetryConfiguration(
-                registeredConfig.InstrumentationKey,
-                registeredConfig.TelemetryChannel)
+            var replacementConfig = new TelemetryConfiguration
             {
-                ApplicationIdProvider = registeredConfig.ApplicationIdProvider
+                ApplicationIdProvider = registeredConfig.ApplicationIdProvider,
+                TelemetryChannel = registeredConfig.TelemetryChannel
             };
+
+            if (registeredConfig.ConnectionString != null)
+            {
+                replacementConfig.ConnectionString = registeredConfig.ConnectionString;
+            }
+            else
+            {
+#pragma warning disable CS0618 // I still want to support instrumentation key as long as I can
+                replacementConfig.InstrumentationKey = registeredConfig.InstrumentationKey;
+#pragma warning restore CS0618
+            }
 
             registeredConfig.TelemetryInitializers.ToList()
                 .ForEach(initializer => replacementConfig.TelemetryInitializers.Add(initializer));

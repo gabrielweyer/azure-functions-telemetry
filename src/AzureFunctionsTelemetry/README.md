@@ -57,6 +57,11 @@ public override void Configure(IFunctionsHostBuilder builder)
 
 Release notes can be found on [GitHub][release-notes].
 
+## Feedback
+
+Leave feedback by [opening an issue][open-issue] on GitHub.
+
 [assembly-informational-version]: https://docs.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
 [release-notes]: https://github.com/gabrielweyer/azure-functions-telemetry/releases
 [documentation]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/README.md
+[open-issue]: https://github.com/gabrielweyer/azure-functions-telemetry/issues/new

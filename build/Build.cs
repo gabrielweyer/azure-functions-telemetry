@@ -351,20 +351,41 @@ sealed class Build : NukeBuild
 
     bool ShouldWeRunIntegrationTests()
     {
-        var shouldWe = !string.IsNullOrWhiteSpace(IntegrationTestServiceBusConnectionString);
+        var isAppInsightsConnectionStringSecretSet = GetUserSecret(AppInsightsConnectionStringSecretName) != null;
+        var isServiceBusConnectionStringSet = !string.IsNullOrWhiteSpace(IntegrationTestServiceBusConnectionString);
 
-        if (shouldWe)
+        if (isAppInsightsConnectionStringSecretSet && isServiceBusConnectionStringSet)
         {
             return true;
         }
 
         if (IsLocalBuild)
         {
-            Serilog.Log.Warning($"Skipping integration tests because '{nameof(IntegrationTestServiceBusConnectionString)}' environment variable not set");
+            if (!isServiceBusConnectionStringSet)
+            {
+                Serilog.Log.Warning($"Skipping integration tests because '{nameof(IntegrationTestServiceBusConnectionString)}' environment variable not set");
+            }
+
+            if (!isAppInsightsConnectionStringSecretSet)
+            {
+                Serilog.Log.Warning($"Skipping integration tests because '{AppInsightsConnectionStringSecretName}' user secret not set");
+            }
         }
         else
         {
-            Assert.Fail($"'{nameof(IntegrationTestServiceBusConnectionString)}' environment variable should be set to run integration tests");
+            var errorMessages = new List<string>();
+
+            if (!isServiceBusConnectionStringSet)
+            {
+                errorMessages.Add($"'{nameof(IntegrationTestServiceBusConnectionString)}' environment variable should be set to run integration tests");
+            }
+
+            if (!isAppInsightsConnectionStringSecretSet)
+            {
+                errorMessages.Add($"'{AppInsightsConnectionStringSecretName}' user secret should be set to run integration tests");
+            }
+
+            Assert.Fail(string.Join(", ", errorMessages));
         }
 
         return false;

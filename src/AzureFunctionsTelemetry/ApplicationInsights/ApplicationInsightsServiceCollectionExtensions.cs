@@ -243,7 +243,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
     }
 
     /// <summary>
-    /// When the configuration APPINSIGHTS_INSTRUMENTATIONKEY / APPLICATIONINSIGHTS_CONNECTION_STRING key is not present, the Functions runtime does not
+    /// When the configuration APPLICATIONINSIGHTS_CONNECTION_STRING / APPINSIGHTS_INSTRUMENTATIONKEY key is not present, the Functions runtime does not
     /// register Application Insights with the Inversion of Control container:
     ///
     /// https://github.com/Azure/azure-functions-host/blob/7d9cd7fc69b282b2f6ce2c2ee1574a236bc69202/src/WebJobs.Script/ScriptHostBuilderExtensions.cs#L368-L372

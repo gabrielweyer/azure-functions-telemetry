@@ -496,5 +496,8 @@ sealed class Build : NukeBuild
 
         _defaultV4Function.Kill();
         _customV4Function.Kill();
+
+        Serilog.Log.Debug("Has DefaultV4InProcessFunction exited {HasFunctionExited}", _defaultV4Function.HasExited);
+        Serilog.Log.Debug("Has CustomV4InProcessFunction exited {HasFunctionExited}", _customV4Function.HasExited);
     }
 }

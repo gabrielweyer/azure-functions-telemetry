@@ -70,15 +70,16 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
   }
 }
 
+var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
 resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
   parent: functionApp
   name: 'appsettings'
   properties: {
-    AzureWebJobsStorage: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+    AzureWebJobsStorage: storageAccountConnectionString
     APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     FUNCTIONS_EXTENSION_VERSION: functionsExtensionsVersion
     FUNCTIONS_WORKER_RUNTIME: 'dotnet'
-    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+    WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'
     'Secret:ReallySecretValue': reallySecretValue

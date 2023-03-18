@@ -46,11 +46,12 @@ sealed class Build : NukeBuild
     readonly MinVer MinVer;
 
     const string UserSecretsId = "074ca336-270b-4832-9a1a-60baf152b727";
-    const string AppInsightsSecretName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+    const string AppInsightsConnectionStringSecretName = "APPLICATIONINSIGHTS_CONNECTION_STRING";
+    const string AppInsightsInstrumentationKeySecretName = "APPINSIGHTS_INSTRUMENTATIONKEY";
     const string ServiceBusConnectionSecretName = "ServiceBusConnection";
     const string TestingIsEnabledSecretName = "Testing:IsEnabled";
-    static string _serviceBusConnectionBackup;
-    static string _appInsightsConnectionBackup;
+    static string _serviceBusConnectionStringBackup;
+    static string _appInsightsConnectionStringBackup;
     static AbsolutePath SourceDirectory => RootDirectory / "src";
     static AbsolutePath SamplesDirectory => RootDirectory / "samples";
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
@@ -176,7 +177,7 @@ sealed class Build : NukeBuild
             if (serviceBusSecret != null)
             {
                 Serilog.Log.Debug($"'{ServiceBusConnectionSecretName}' secret is present, keeping backup");
-                _serviceBusConnectionBackup = serviceBusSecret;
+                _serviceBusConnectionStringBackup = serviceBusSecret;
             }
 
             SetUserSecret(TestingIsEnabledSecretName, "true");
@@ -188,17 +189,25 @@ sealed class Build : NukeBuild
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(() =>
         {
-            var appInsightsSecret = GetUserSecret(AppInsightsSecretName);
+            var appInsightsInstrumentationKeySSecret = GetUserSecret(AppInsightsInstrumentationKeySecretName);
 
-            if (appInsightsSecret == null)
+            if (appInsightsInstrumentationKeySSecret != null)
+            {
+                Serilog.Log.Warning($" Removing'{AppInsightsInstrumentationKeySecretName}' secret (should not be present)");
+                RemoveUserSecret(AppInsightsInstrumentationKeySecretName);
+            }
+
+            var appInsightsConnectionStringSecret = GetUserSecret(AppInsightsConnectionStringSecretName);
+
+            if (appInsightsConnectionStringSecret == null)
             {
                 return;
             }
 
-            Serilog.Log.Debug($"'{AppInsightsSecretName}' secret is present, keeping backup");
-            _appInsightsConnectionBackup = appInsightsSecret;
-            Serilog.Log.Debug($" Removing'{AppInsightsSecretName}' secret");
-            RemoveUserSecret(AppInsightsSecretName);
+            Serilog.Log.Debug($"'{AppInsightsConnectionStringSecretName}' secret is present, keeping backup");
+            _appInsightsConnectionStringBackup = appInsightsConnectionStringSecret;
+            Serilog.Log.Debug($" Removing'{AppInsightsConnectionStringSecretName}' secret");
+            RemoveUserSecret(AppInsightsConnectionStringSecretName);
         });
 
     Target StartAppInsightsConnectionStringIntegrationTestAzureFunctions => _ => _
@@ -237,13 +246,13 @@ sealed class Build : NukeBuild
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetAppInsightsConnectionStringIntegrationTestUserSecrets))
         .Executes(() =>
         {
-            if (_appInsightsConnectionBackup == null)
+            if (_appInsightsConnectionStringBackup == null)
             {
                 return;
             }
 
-            Serilog.Log.Information($"Restoring '{AppInsightsSecretName}' secret");
-            SetUserSecret(AppInsightsSecretName, _appInsightsConnectionBackup);
+            Serilog.Log.Information($"Restoring '{AppInsightsConnectionStringSecretName}' secret");
+            SetUserSecret(AppInsightsConnectionStringSecretName, _appInsightsConnectionStringBackup);
         });
 
     Target StartIntegrationTestAzureFunctions => _ => _
@@ -283,10 +292,10 @@ sealed class Build : NukeBuild
         {
             RemoveUserSecret(TestingIsEnabledSecretName);
 
-            if (_serviceBusConnectionBackup != null)
+            if (_serviceBusConnectionStringBackup != null)
             {
                 Serilog.Log.Information($"Restoring '{ServiceBusConnectionSecretName}' secret");
-                SetUserSecret(ServiceBusConnectionSecretName, _serviceBusConnectionBackup);
+                SetUserSecret(ServiceBusConnectionSecretName, _serviceBusConnectionStringBackup);
             }
             else
             {

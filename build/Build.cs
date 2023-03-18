@@ -430,7 +430,7 @@ sealed class Build : NukeBuild
 
         if (wasSlimSet)
         {
-            if (_failedStartFunctionCount > 0)
+            if (_startedFunctionCount < 2)
             {
                 throw new InvalidOperationException(
                     "Failed to start DefaultV4InProcessFunction or CustomV4InProcessFunction due to an error");
@@ -449,13 +449,15 @@ sealed class Build : NukeBuild
         {
             sink.AppendLine(CultureInfo.InvariantCulture, $"[{outputType}] - {output}");
 
-            if (output.Contains("A host error has occurred during startup operation", StringComparison.Ordinal))
+            if (output.Contains("A host error has occurred during startup operation", StringComparison.Ordinal) ||
+                output.Contains("Close the process using that port, or specify another port", StringComparison.Ordinal))
             {
                 var failedStartFunctionCount = Interlocked.Increment(ref _failedStartFunctionCount);
                 Serilog.Log.Error($"Failed to start {functionName}");
 
                 if (_startedFunctionCount + failedStartFunctionCount > 1)
                 {
+                    Serilog.Log.Debug("{StartedFunctionCount} started Functions, {FailedStartFunctionCount} failed starts", _startedFunctionCount, failedStartFunctionCount);
                     slim.Set();
                 }
 
@@ -472,6 +474,7 @@ sealed class Build : NukeBuild
 
             if (startedFunctionCount + _failedStartFunctionCount > 1)
             {
+                Serilog.Log.Debug("{StartedFunctionCount} started Functions, {FailedStartFunctionCount} failed starts", startedFunctionCount, _failedStartFunctionCount);
                 slim.Set();
             }
         };

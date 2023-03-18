@@ -67,7 +67,7 @@ var serviceBusSettings = {
   ]
 }
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
   name: applicationInsightsSettings.workspaceName
   location: location
   properties: {
@@ -101,7 +101,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
   properties: {}
 }
 
-resource queues 'Microsoft.ServiceBus/namespaces/queues@2021-06-01-preview' = [for queue in serviceBusSettings.queueNames: {
+resource queues 'Microsoft.ServiceBus/namespaces/queues@2021-11-01' = [for queue in serviceBusSettings.queueNames: {
   parent: serviceBusNamespace
   name: queue
   properties: {
@@ -129,7 +129,7 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
     functionAppName: function.functionAppName
     functionRuntimeVersion: function.functionRuntimeVersion
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
-    serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', '2021-06-01-preview').primaryConnectionString
+    serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
     reallySecretValue: reallySecretValue
   }
 }]

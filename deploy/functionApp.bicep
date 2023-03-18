@@ -31,7 +31,7 @@ param reallySecretValue string
 
 var functionsExtensionsVersion = '~${functionRuntimeVersion}'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageName
   location: location
   kind: 'StorageV2'
@@ -43,7 +43,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   }
 }
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+resource hostingPlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: hostingPlanName
   location: location
   kind: ''
@@ -57,7 +57,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   properties: {}
 }
 
-resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
+resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
   name: functionAppName
   location: location
   identity: {
@@ -71,7 +71,7 @@ resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
 }
 
 var storageAccountConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
-resource appSettings 'Microsoft.Web/sites/config@2021-03-01' = {
+resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: functionApp
   name: 'appsettings'
   properties: {

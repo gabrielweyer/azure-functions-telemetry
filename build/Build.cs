@@ -413,6 +413,9 @@ sealed class Build : NukeBuild
 
     static void StartAzureFunctions()
     {
+        _startedFunctionCount = 0;
+        _failedStartFunctionCount = 0;
+
         using var slim = new ManualResetEventSlim();
         Serilog.Log.Information("Starting Azure Functions, this takes some time");
 
@@ -457,7 +460,7 @@ sealed class Build : NukeBuild
 
                 if (_startedFunctionCount + failedStartFunctionCount > 1)
                 {
-                    Serilog.Log.Debug("{StartedFunctionCount} started Functions, {FailedStartFunctionCount} failed starts", _startedFunctionCount, failedStartFunctionCount);
+                    Serilog.Log.Debug("{StartedFunctionCount} successful starts, {FailedStartFunctionCount} failed starts", _startedFunctionCount, failedStartFunctionCount);
                     slim.Set();
                 }
 
@@ -474,7 +477,7 @@ sealed class Build : NukeBuild
 
             if (startedFunctionCount + _failedStartFunctionCount > 1)
             {
-                Serilog.Log.Debug("{StartedFunctionCount} started Functions, {FailedStartFunctionCount} failed starts", startedFunctionCount, _failedStartFunctionCount);
+                Serilog.Log.Debug("{StartedFunctionCount} successful starts, {FailedStartFunctionCount} failed starts", startedFunctionCount, _failedStartFunctionCount);
                 slim.Set();
             }
         };

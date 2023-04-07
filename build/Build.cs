@@ -411,7 +411,7 @@ sealed class Build : NukeBuild
         DotNet($"user-secrets remove {secretName} --id {UserSecretsId}");
     }
 
-    static void StartAzureFunctions()
+    void StartAzureFunctions()
     {
         _startedFunctionCount = 0;
         _failedStartFunctionCount = 0;
@@ -483,10 +483,10 @@ sealed class Build : NukeBuild
         };
     }
 
-    static IProcess StartFunction(string functionName, Action<OutputType, string> logger)
+    IProcess StartFunction(string functionName, Action<OutputType, string> logger)
     {
         return ProcessTasks
-            .StartProcess("func", "start", SamplesDirectory / functionName, null, null, null, null, logger);
+            .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net6.0", null, null, null, null, logger);
     }
 
     void RunIntegrationTest(string projectName)

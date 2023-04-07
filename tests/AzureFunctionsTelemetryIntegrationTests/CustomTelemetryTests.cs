@@ -1,3 +1,6 @@
+using System.Diagnostics;
+using Gabo.AzureFunctionTelemetry.Samples.CustomV4InProcessFunction;
+
 namespace Gabo.AzureFunctionsTelemetryIntegrationTests;
 
 [Collection("Custom")]
@@ -18,9 +21,10 @@ public sealed class CustomTelemetryTests : IDisposable
 
         // Assert
         var actualTelemetry = telemetries.First();
+        var expectedVersion = FileVersionInfo.GetVersionInfo(typeof(Startup).Assembly.Location).ProductVersion;
         var expectedTags = new TelemetryItemTags
         {
-            ApplicationVersion = "3.0.0.0",
+            ApplicationVersion = expectedVersion,
             CloudRoleName = "customv4inprocess"
         };
         actualTelemetry.Tags.Should().BeEquivalentTo(expectedTags, options => options

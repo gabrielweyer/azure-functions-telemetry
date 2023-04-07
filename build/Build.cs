@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -64,13 +65,19 @@ sealed class Build : NukeBuild
     static int _startedFunctionCount;
     static int _failedStartFunctionCount;
     static StringBuilder _defaultV4Output = new();
-    static IProcess _defaultV4Function;
     static StringBuilder _customV4Output = new();
-    static IProcess _customV4Function;
+    bool _shouldWeRunIntegrationTests;
 
 #pragma warning disable CA1822 // Can't make this static as it breaks NUKE
-    Target Clean => _ => _
+    Target SetShouldWeRunIntegrationTests => _ => _
 #pragma warning restore CA1822
+        .Executes(() =>
+        {
+            _shouldWeRunIntegrationTests = ShouldWeRunIntegrationTests();
+        });
+
+    Target Clean => _ => _
+        .DependsOn(SetShouldWeRunIntegrationTests)
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
@@ -119,7 +126,7 @@ sealed class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNet("format --verify-no-changes");
+            DotNet("format --verify-no-changes", RootDirectory);
         });
 
     Target UnitTest => _ => _
@@ -169,7 +176,7 @@ sealed class Build : NukeBuild
 
     Target SetIntegrationTestUserSecrets => _ => _
         .DependsOn(GenerateCoverage)
-        .OnlyWhenDynamic(() => ShouldWeRunIntegrationTests())
+        .OnlyWhenDynamic(() => _shouldWeRunIntegrationTests)
         .Executes(() =>
         {
             var serviceBusSecret = GetUserSecret(ServiceBusConnectionSecretName);
@@ -223,19 +230,8 @@ sealed class Build : NukeBuild
             RunIntegrationTest("AppInsightsConnectionStringIntegrationTests");
         });
 
-    Target WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs => _ => _
-        .DependsOn(AppInsightsConnectionStringIntegrationTest)
-        .AssuredAfterFailure()
-        .OnlyWhenDynamic(() =>
-            FailedTargets.Contains(AppInsightsConnectionStringIntegrationTest) ||
-            FailedTargets.Contains(StartAppInsightsConnectionStringIntegrationTestAzureFunctions))
-        .Executes(() =>
-        {
-            WriteAzureFunctionsLogs("default-v4-appinsights-output", "custom-v4-appinsights-output");
-        });
-
     Target StopAppInsightsConnectionStringIntegrationTestAzureFunctions => _ => _
-        .DependsOn(WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs)
+        .DependsOn(AppInsightsConnectionStringIntegrationTest)
         .AssuredAfterFailure()
         .OnlyWhenDynamic(() => SucceededTargets.Contains(StartAppInsightsConnectionStringIntegrationTestAzureFunctions))
         .Executes(StopAzureFunctions);
@@ -255,8 +251,17 @@ sealed class Build : NukeBuild
             SetUserSecret(AppInsightsConnectionStringSecretName, _appInsightsConnectionStringBackup);
         });
 
-    Target StartIntegrationTestAzureFunctions => _ => _
+    Target WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs => _ => _
         .DependsOn(RestoreAppInsightsConnectionStringUserSecrets)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => _shouldWeRunIntegrationTests)
+        .Executes(() =>
+        {
+            WriteAzureFunctionsLogs("default-v4-appinsights-output", "custom-v4-appinsights-output");
+        });
+
+    Target StartIntegrationTestAzureFunctions => _ => _
+        .DependsOn(WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs)
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(StartAzureFunctions);
 
@@ -268,24 +273,23 @@ sealed class Build : NukeBuild
             RunIntegrationTest("AzureFunctionsTelemetryIntegrationTests");
         });
 
-    Target WriteIntegrationTestAzureFunctionLogs => _ => _
+    Target StopIntegrationTestAzureFunctions => _ => _
         .DependsOn(IntegrationTest)
         .AssuredAfterFailure()
-        .OnlyWhenDynamic(() =>
-            FailedTargets.Contains(IntegrationTest) || FailedTargets.Contains(StartIntegrationTestAzureFunctions))
+        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartIntegrationTestAzureFunctions))
+        .Executes(StopAzureFunctions);
+
+    Target WriteIntegrationTestAzureFunctionLogs => _ => _
+        .DependsOn(StopIntegrationTestAzureFunctions)
+        .AssuredAfterFailure()
+        .OnlyWhenDynamic(() => _shouldWeRunIntegrationTests)
         .Executes(() =>
         {
             WriteAzureFunctionsLogs("default-v4-output", "custom-v4-output");
         });
 
-    Target StopIntegrationTestAzureFunctions => _ => _
-        .DependsOn(WriteIntegrationTestAzureFunctionLogs)
-        .AssuredAfterFailure()
-        .OnlyWhenDynamic(() => SucceededTargets.Contains(StartIntegrationTestAzureFunctions))
-        .Executes(StopAzureFunctions);
-
     Target RestoreUserSecrets => _ => _
-        .DependsOn(StopIntegrationTestAzureFunctions)
+        .DependsOn(WriteIntegrationTestAzureFunctionLogs)
         .AssuredAfterFailure()
         .OnlyWhenDynamic(() => SucceededTargets.Contains(SetIntegrationTestUserSecrets))
         .Executes(() =>
@@ -417,7 +421,7 @@ sealed class Build : NukeBuild
         _failedStartFunctionCount = 0;
 
         using var slim = new ManualResetEventSlim();
-        Serilog.Log.Information("Starting Azure Functions, this takes some time");
+        Serilog.Log.Information("Starting Azure Functions");
 
         _defaultV4Output = new StringBuilder();
         var defaultV4Logger = BuildLogger(slim, _defaultV4Output, "DefaultV4InProcessFunction");
@@ -425,8 +429,8 @@ sealed class Build : NukeBuild
         _customV4Output = new StringBuilder();
         var customV4Logger = BuildLogger(slim, _customV4Output, "CustomV4InProcessFunction");
 
-        _defaultV4Function = StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
-        _customV4Function = StartFunction("CustomV4InProcessFunction", customV4Logger);
+        StartFunction("DefaultV4InProcessFunction", defaultV4Logger);
+        StartFunction("CustomV4InProcessFunction", customV4Logger);
 
         var functionsTimeoutStart = TimeSpan.FromSeconds(60);
         var wasSlimSet = slim.Wait(functionsTimeoutStart);
@@ -483,9 +487,9 @@ sealed class Build : NukeBuild
         };
     }
 
-    IProcess StartFunction(string functionName, Action<OutputType, string> logger)
+    void StartFunction(string functionName, Action<OutputType, string> logger)
     {
-        return ProcessTasks
+        ProcessTasks
             .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net6.0", null, null, null, null, logger);
     }
 
@@ -511,20 +515,24 @@ sealed class Build : NukeBuild
     {
         var defaultV4OutputPath = TestResultsDirectory / $"{defaultLogName}.log";
         var customV4OutputPath = TestResultsDirectory / $"{customLogName}.log";
-        Serilog.Log.Warning($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
-        Serilog.Log.Warning($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
+        Serilog.Log.Debug($"Wrote DefaultV4InProcessFunction logs to: {defaultV4OutputPath}");
+        Serilog.Log.Debug($"Wrote CustomV4InProcessFunction logs to: {customV4OutputPath}");
         File.WriteAllText(defaultV4OutputPath, _defaultV4Output.ToString());
         File.WriteAllText(customV4OutputPath, _customV4Output.ToString());
+        _defaultV4Output = new StringBuilder();
+        _customV4Output = new StringBuilder();
     }
 
     static void StopAzureFunctions()
     {
         Serilog.Log.Information("Stopping Azure Functions");
 
-        _defaultV4Function.Kill();
-        _customV4Function.Kill();
+        var funcProcesses = Process.GetProcessesByName("func");
 
-        Serilog.Log.Debug("Has DefaultV4InProcessFunction exited {HasFunctionExited}", _defaultV4Function.HasExited);
-        Serilog.Log.Debug("Has CustomV4InProcessFunction exited {HasFunctionExited}", _customV4Function.HasExited);
+        foreach (var funcProcess in funcProcesses)
+        {
+            Serilog.Log.Debug("Killing 'func' process Id {ProcessId}", funcProcess.Id);
+            funcProcess.Kill();
+        }
     }
 }

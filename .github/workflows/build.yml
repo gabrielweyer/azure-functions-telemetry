@@ -130,7 +130,7 @@ jobs:
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID_1 }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_1 }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Deploy
         uses: azure/powershell@v1

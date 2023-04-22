@@ -24,6 +24,9 @@ on:
       - LICENSE
       - README.md
 
+permissions:
+  id-token: write
+
 jobs:
   build:
     name: Build
@@ -113,7 +116,8 @@ jobs:
   deploy:
     name: Deploy
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    environment: PROD
     needs: Build
     concurrency: deploy
     steps:
@@ -124,7 +128,9 @@ jobs:
       - name: Sign-in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID_1 }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID_1 }}
           enable-AzPSSession: true
       - name: Deploy
         uses: azure/powershell@v1

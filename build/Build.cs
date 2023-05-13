@@ -16,7 +16,7 @@ using Nuke.Common.Tools.MinVer;
 using Nuke.Common.Tools.ReportGenerator;
 using Nuke.Common.Utilities;
 using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
+using Serilog.Events;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 namespace Gabo;
@@ -80,10 +80,10 @@ sealed class Build : NukeBuild
         .DependsOn(SetShouldWeRunIntegrationTests)
         .Executes(() =>
         {
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            SamplesDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(s => s.DeleteDirectory());
+            SamplesDirectory.GlobDirectories("**/bin", "**/obj").ForEach(s => s.DeleteDirectory());
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(t => t.DeleteDirectory());
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -126,7 +126,7 @@ sealed class Build : NukeBuild
         .DependsOn(Compile)
         .Executes(() =>
         {
-            DotNet("format --verify-no-changes", RootDirectory);
+            DotNet($"format --verify-no-changes", RootDirectory);
         });
 
     Target UnitTest => _ => _
@@ -332,7 +332,7 @@ sealed class Build : NukeBuild
                 where functionProject.Name.EndsWith("Function", StringComparison.Ordinal)
                 select functionProject;
 
-            var outDirectories = new List<(string ProjectName, string OutPath)>();
+            var outDirectories = new List<(string ProjectName, AbsolutePath OutPath)>();
 
             DotNetPublish(s => s
                 .SetConfiguration(Configuration)
@@ -349,7 +349,7 @@ sealed class Build : NukeBuild
 
             foreach (var (projectName, outPath) in outDirectories)
             {
-                CompressionTasks.CompressZip(outPath, FunctionsPublishDirectory / $"{projectName}.zip");
+                outPath.ZipTo(FunctionsPublishDirectory / $"{projectName}.zip");
             }
         });
 
@@ -405,9 +405,13 @@ sealed class Build : NukeBuild
 
     static void SetUserSecret(string secretName, string secretValue)
     {
-        DotNet(
-            $"user-secrets set {secretName} {secretValue} --id {UserSecretsId}",
-            outputFilter: o => o.Replace(secretValue, "*****", StringComparison.Ordinal));
+        DotNet($"user-secrets set {secretName} {secretValue} --id {UserSecretsId}", logger: RedactLog, logInvocation: false);
+
+        void RedactLog(OutputType type, string s)
+        {
+            var redactedLog = s.Replace(secretValue, "*****", StringComparison.Ordinal);
+            Serilog.Log.Write(type == OutputType.Err ? LogEventLevel.Error : LogEventLevel.Information, redactedLog);
+        }
     }
 
     static void RemoveUserSecret(string secretName)

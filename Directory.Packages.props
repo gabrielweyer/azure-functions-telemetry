@@ -25,7 +25,7 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40" />
     <GlobalPackageReference Include="AsyncFixer" Version="1.6.0" />
-    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.54" />
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.56" />
     <PackageVersion Include="xunit.analyzers" Version="1.1.0" />
   </ItemGroup>
 </Project>

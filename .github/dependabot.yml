@@ -12,3 +12,8 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "Microsoft.Extensions.Logging.Console"
         update-types: ["version-update:semver-major"]
+    groups:
+      xunit:
+        patterns:
+          - xunit
+          - xunit.analyzers

@@ -18,7 +18,16 @@ If you are not familiar with some of the more advanced features of Application I
 
 In this repository I have tried to address all the quirks listed above.
 
-:rotating_light: The customisation is experimental. There may be undesired side effects around performance and missing telemetry. If you are experiencing issues such as missing telemetry, no exception being recorded when something does not work as expected I recommend disabling the custom integration and reproducing the problem without it.
+:rotating_light: The customisation is experimental. There may be undesired side effects around performance and missing telemetry. If you are experiencing issues such as missing telemetry, no exception being recorded when something does not work as expected I recommend disabling the custom integration and reproducing the problem without it. This can be done by creating an application setting named `DisableApplicationInsightsCustomisation` with a value of `true`.
+
+## Table of contents
+
+- [Using the Application Insights customisation](#using-the-application-insights-customisation)
+- [What do I get?](#what-do-i-get)
+- [Configuration](#configuration)
+- [Migration guides](#migration-guides)
+- [Demo](#demo)
+- [Q&A](#qa)
 
 ## Using the Application Insights customisation
 
@@ -52,7 +61,9 @@ builder.Services
 
 ### Discarding Function execution traces
 
-This is implemented by [FunctionExecutionTracesFilter][function-execution-traces-filter] and always enabled.
+This is implemented by [FunctionExecutionTracesFilter][function-execution-traces-filter] and enabled by default.
+
+This can be disabled by setting the application setting `ApplicationInsights:DiscardFunctionExecutionTraces` to `true`.
 
 ### Discarding duplicate exceptions
 
@@ -60,7 +71,7 @@ This is implemented by [DuplicateExceptionsFilter][duplicate-exceptions-filter] 
 
 ### Discarding health requests
 
-This is enabled by calling `WithHealthRequestFilter` and supplying the Function name (the argument provided to the `FunctionNameAttribute`). The telemetry processor used is [HealthRequestFilter][health-request-filter].
+This is enabled by setting the application setting `ApplicationInsights:HealthCheckFunctionName` and supplying the Function name (the argument provided to the `FunctionNameAttribute`). The telemetry processor used is [HealthRequestFilter][health-request-filter].
 
 ### Better Service Bus binding "request"
 
@@ -73,7 +84,9 @@ The `ServiceBusRequestInitializer` is always enabled.
 
 ### Discarding Service Bus trigger traces
 
-This is recommended on high-volume services. This is done by calling `WithServiceBusTriggerFilter`. The telemetry processor used is [ServiceBusTriggerFilter][service-bus-trigger-filter].
+This is recommended on high-volume services. This is disabled by default.
+
+This is done by setting the application setting `ApplicationInsights:DiscardServiceBusTrigger` to `true`. The telemetry processor used is [ServiceBusTriggerFilter][service-bus-trigger-filter].
 
 ### Replacing the Console logging provider
 
@@ -110,6 +123,37 @@ builder.Services.AddApplicationInsightsTelemetryProcessor<YourTelemetryProcessor
 
 You can add as many telemetry processors as you want.
 
+## Configuration
+
+The customisation is configured using application settings:
+
+```json
+{
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "DisableApplicationInsightsCustomisation": true, // Allows you to disable the customisation if you think something is wrong with it
+    "ApplicationInsights:DiscardServiceBusTrigger": true,
+    "ApplicationInsights:HealthCheckFunctionName": "HealthFunction", // The name of the Function, not the route
+    "ApplicationInsights:DiscardFunctionExecutionTraces": false // Allows you to stop discarding Function execution traces
+  }
+}
+```
+
+If you don't want to use the `ApplicationInsights` key, you can provide another value when configuraing the customisation:
+
+```csharp
+var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
+        "{ApplicationName}",
+        {TypeFromEntryAssembly})
+    .WithConfigurationSectionName("SomeOtherSectionName")
+    .Build();
+```
+
+## Migration guides
+
+- [Migrating from v1 to v2][migrating-from-v1-v2]
+
 ## Demo
 
 A [demo](/docs/DEMO.md) demonstrates all the customisation's features.
@@ -124,7 +168,7 @@ There is an [opened GitHub issue][telemetry-processor-support-github-issue] abou
 
 ### Software versions
 
-The latest version of the Azure Functions Core Tools I have been using is `4.0.5030`.
+The latest version of the Azure Functions Core Tools I have been using is `4.0.5198`.
 
 NuGet packages:
 
@@ -135,7 +179,7 @@ NuGet packages:
 - `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection], updated later):
   - `v3`: `3.1.32`
   - `v4`: `6.0.1`
-- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.34` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
+- `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.35` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 
 ### Supporting telemetry processors
 
@@ -163,3 +207,4 @@ As I did not manage to cover my customisation with unit tests, I wrote [integrat
 [github-actions-shield]: https://github.com/gabrielweyer/azure-functions-telemetry/actions/workflows/build.yml/badge.svg
 [nuget-tool-badge]: https://img.shields.io/nuget/v/AzureFunctions.Better.ApplicationInsights.svg?label=NuGet
 [nuget-tool-command]: https://www.nuget.org/packages/AzureFunctions.Better.ApplicationInsights
+[migrating-from-v1-v2]: docs/Migrate-from-v1-to-v2.md

@@ -2,8 +2,10 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.ApplicationInsights.AspNetCore;
 using Microsoft.ApplicationInsights.Extensibility.PerfCounterCollector.QuickPulse;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 
@@ -18,18 +20,24 @@ public static class ApplicationInsightsServiceCollectionExtensions
     /// redundant telemetry as is humanely possible.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> holding all your precious types.</param>
-    /// <param name="options">The <see cref="CustomApplicationInsightsOptions"/> configuring the Application Insights
+    /// <param name="config">The <see cref="CustomApplicationInsightsConfig"/> configuring the Application Insights
     /// integration.</param>
     /// <returns>The same <see cref="IServiceCollection"/> instance but with modified registrations.</returns>
 #pragma warning disable MA0051 // Yes this method is too long, hopefully I'll manage to make it shorter
     public static IServiceCollection AddCustomApplicationInsights(
         this IServiceCollection services,
-        CustomApplicationInsightsOptions options)
+        CustomApplicationInsightsConfig config)
     {
 #pragma warning restore
-        if (options == null)
+        if ("true".Equals(Environment.GetEnvironmentVariable("DisableApplicationInsightsCustomisation"),
+                StringComparison.OrdinalIgnoreCase))
         {
-            throw new ArgumentNullException(nameof(options));
+            return services;
+        }
+
+        if (config == null)
+        {
+            throw new ArgumentNullException(nameof(config));
         }
 
         if (services == null)
@@ -37,13 +45,19 @@ public static class ApplicationInsightsServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
-        var applicationVersion = GetAssemblyInformationalVersion(options.TypeFromEntryAssembly);
-        var applicationDescriptor = new ApplicationDescriptor(options.ApplicationName, applicationVersion);
+        var applicationVersion = GetAssemblyInformationalVersion(config.TypeFromEntryAssembly);
+        var applicationDescriptor = new ApplicationDescriptor(config.ApplicationName, applicationVersion);
         services.AddSingleton(applicationDescriptor);
         services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
 
+        services.AddOptions<CustomApplicationInsightsOptions>()
+            .Configure<IConfiguration>((settings, configuration) =>
+            {
+                configuration.GetSection(config.ConfigurationSectionName).Bind(settings);
+            });
+
         var serviceBusTriggeredFunctionName = FunctionsFinder
-                .GetServiceBusTriggeredFunctionNames(options.TypeFromEntryAssembly);
+                .GetServiceBusTriggeredFunctionNames(config.TypeFromEntryAssembly);
 
         if (serviceBusTriggeredFunctionName.Any())
         {
@@ -75,6 +89,9 @@ public static class ApplicationInsightsServiceCollectionExtensions
                 throw new InvalidOperationException(
                     "The service descriptor implementation factory did not return a 'TelemetryConfiguration' instance.");
             }
+
+            var lightOptions = serviceProvider.GetRequiredService<IOptions<CustomApplicationInsightsOptions>>()
+                .Value;
 
             var replacementConfig = new TelemetryConfiguration
             {
@@ -173,20 +190,24 @@ public static class ApplicationInsightsServiceCollectionExtensions
                         quickPulseTelemetryProcessor,
                         serviceBusTriggeredFunctionName);
                     customProcessors.Insert(0, duplicateExceptionFilter);
-                    var functionExecutionTracesFilter = new FunctionExecutionTracesFilter(customProcessors.First());
-                    customProcessors.Insert(0, functionExecutionTracesFilter);
 
-                    if (options.HasServiceBusTriggerFilter)
+                    if (lightOptions.DiscardFunctionExecutionTraces)
+                    {
+                        var functionExecutionTracesFilter = new FunctionExecutionTracesFilter(customProcessors.First());
+                        customProcessors.Insert(0, functionExecutionTracesFilter);
+                    }
+
+                    if (lightOptions.DiscardServiceBusTrigger)
                     {
                         var serviceBusTriggerFilter = new ServiceBusTriggerFilter(customProcessors.First());
                         customProcessors.Insert(0, serviceBusTriggerFilter);
                     }
 
-                    if (options.HealthCheckFunctionName != null)
+                    if (!string.IsNullOrWhiteSpace(lightOptions.HealthCheckFunctionName))
                     {
                         var healthRequestFilter = new HealthRequestFilter(
                             customProcessors.First(),
-                            options.HealthCheckFunctionName);
+                            lightOptions.HealthCheckFunctionName);
                         customProcessors.Insert(0, healthRequestFilter);
                     }
 
@@ -268,7 +289,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
     {
 #pragma warning disable CA2000
         /* This instance will not be disposed on shutdown. That's not great but this instance is only registered when
-         * an instrumentation key / connection string is not present. As far as I know Azure Functions don't support
+         * a connection string / instrumentation key is not present. As far as I know Azure Functions don't support
          * IApplicationLifetime or hosted services.
          */
         services.TryAddSingleton(new TelemetryConfiguration());

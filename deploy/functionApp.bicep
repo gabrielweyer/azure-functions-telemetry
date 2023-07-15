@@ -85,5 +85,7 @@ resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
     'Secret:ReallySecretValue': reallySecretValue
     ServiceBusConnection: serviceBusConnectionString
     'Testing:IsEnabled': 'false'
+    'ApplicationInsights:DiscardServiceBusTrigger': 'true'
+    'ApplicationInsights:HealthCheckFunctionName': 'HealthFunction'
   }
 }

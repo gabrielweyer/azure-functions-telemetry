@@ -262,15 +262,15 @@ These can be suppressed by adding the below `Value` to `local.settings.json` (no
 
 Anthony Chu has [documented how to suppress some logs][anthony-chu-suppress-logs].
 
-[azurite]: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azurite
+[azurite]: https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite
 [azure-functions-core-tools]: https://github.com/Azure/azure-functions-core-tools
-[powershell-7]: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2
+[powershell-7]: https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell
 [azure-powershell]: https://learn.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-9.4.0
-[dont-call-add-app-insights-telemetry]: https://docs.microsoft.com/en-US/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
-[secret-manager]: https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
+[dont-call-add-app-insights-telemetry]: https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection#logging-services
+[secret-manager]: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-6.0&tabs=windows#secret-manager
 [default-telemetry-configuration-registration]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/81a44091df4263442bb0e205a3942cfa5bfedb70/src/AzureFunctionsTelemetry/ApplicationInsights/ApplicationInsightsServiceCollectionExtensions.cs#L231-L235
-[url-ping-test]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/availability-overview
+[url-ping-test]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability-overview
 [anthony-chu-suppress-logs]: https://github.com/anthonychu/functions-log-suppression#readme
 [postman-collection]: postman/FunctionsTelemetry.postman_collection.json
-[bicep-cli]: https://docs.microsoft.com/en-au/azure/azure-resource-manager/bicep/install#install-manually
-[adaptive-sampling]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/sampling#adaptive-sampling
+[bicep-cli]: https://learn.microsoft.com/en-au/azure/azure-resource-manager/bicep/install#install-manually
+[adaptive-sampling]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/sampling#adaptive-sampling

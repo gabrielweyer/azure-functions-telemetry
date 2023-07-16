@@ -191,11 +191,11 @@ One of the side-effects of the approach I am using is that the Azure Functions r
 
 As I did not manage to cover my customisation with unit tests, I wrote [integration tests][integration-tests] instead.
 
-[dependency-injection]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
-[custom-telemetry]: https://docs.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v2%2Ccmd#log-custom-telemetry-in-c-functions
-[telemetry-processors]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#filtering
-[telemetry-initializers]: https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#addmodify-properties-itelemetryinitializer
-[assembly-informational-version]: https://docs.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
+[dependency-injection]: https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-dependency-injection
+[custom-telemetry]: https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v4%2Ccmd#log-custom-telemetry-in-c-functions
+[telemetry-processors]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#filtering
+[telemetry-initializers]: https://learn.microsoft.com/en-us/azure/azure-monitor/app/api-filtering-sampling#addmodify-properties-itelemetryinitializer
+[assembly-informational-version]: https://learn.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
 [function-execution-traces-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/FunctionExecutionTracesFilter.cs
 [duplicate-exceptions-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/DuplicateExceptionsFilter.cs
 [health-request-filter]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/src/AzureFunctionsTelemetry/ApplicationInsights/HealthRequestFilter.cs

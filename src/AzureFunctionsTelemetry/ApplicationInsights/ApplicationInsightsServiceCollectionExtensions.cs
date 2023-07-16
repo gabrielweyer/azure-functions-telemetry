@@ -271,7 +271,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
     ///
     /// On the other hand Azure Functions documentation recommends to inject TelemetryConfiguration:
     ///
-    /// https://docs.microsoft.com/en-us/azure/azure-functions/functions-monitoring?tabs=cmd#log-custom-telemetry-in-c-functions
+    /// https://learn.microsoft.com/en-us/azure/azure-functions/functions-dotnet-class-library?tabs=v4%2Ccmd#log-custom-telemetry-in-c-functions
     ///
     /// So if we don't configure the instrumentation key / connection string we end up with a runtime exception when serving the
     /// Function:

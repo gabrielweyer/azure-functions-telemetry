@@ -10,13 +10,13 @@ Before being able to deploy and run the Functions you will need to have the belo
 - [Azure PowerShell][azure-powershell] to deploy to Azure
 - [Bicep CLI][bicep-cli] to deploy to Azure
 
+You'll first need to run `build.ps1 --package` to publish the Functions to file system.
+
 Run `Deploy.ps1` to deploy the project to Azure. This will deploy:
 
 - A Workspace based Application Insights instance
-- A Service Bus namespace
+- A basic Service Bus namespace
 - Four Function Apps and their supporting storage accounts
-
-You'll first need to run `build.ps1 --package` to publish the Functions to file system.
 
 ```powershell
 .\Deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
@@ -62,7 +62,7 @@ You can call the different endpoints using this [Postman collection][postman-col
 
 ## AvailabilityFunction
 
-Navigate to `http://localhost:7074/availability` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/availability> (Custom `v4`) in your favourite browser.
 
 Emits an availability telemetry item. This is normally emitted by tooling such as Application Insights [URL ping test][url-ping-test]. The reason I'm emitting it manually is to demonstrate that the telemetry processors are called for availability telemetry items.
 
@@ -81,7 +81,7 @@ dotnet user-secrets remove APPLICATIONINSIGHTS_CONNECTION_STRING `
     --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
-Navigate to `http://localhost:7073/event` (Default `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/event> (Default `v4`) in your favourite browser.
 
 Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container results in an exception:
 
@@ -91,7 +91,7 @@ Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not 
 
 > Don't add `AddApplicationInsightsTelemetry()` to the services collection, which registers services that conflict with services provided by the environment.
 
-Navigate to `http://localhost:7074/event` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/event> (Custom `v4`) in your favourite browser.
 
 Demonstrate that when the secret `APPLICATIONINSIGHTS_CONNECTION_STRING` is not set, attempting to retrieve `TelemetryConfiguration` from the container does not result in an exception because I [register a no-op TelemetryConfiguration][default-telemetry-configuration-registration] if one was not registered already:
 
@@ -106,7 +106,7 @@ dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '{YourConnectionSt
 
 ## DependencyFunction
 
-Navigate to `http://localhost:7073/dependency` (Default `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/dependency> (Default `v4`) in your favourite browser.
 
 Four telemetry items are recorded:
 
@@ -116,7 +116,7 @@ Four telemetry items are recorded:
 
 ![Dependency Function default telemetry](img/dependency-function-default.png)
 
-Navigate to `http://localhost:7074/dependency` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/dependency> (Custom `v4`) in your favourite browser.
 
 Only the request is recorded:
 
@@ -135,17 +135,17 @@ To keep Function Apps on a consumption plan alive and limit the number of cold s
 
 :memo: `HEAD` is more commonly used than `GET` for ping tests but it is easier to issue a `GET` with a web browser.
 
-Navigate to `http://localhost:7073/health` (Default `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/health> (Default `v4`) in your favourite browser.
 
 The Health request is recorded in Application Insights.
 
-Navigate to `http://localhost:7074/health` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/health> (Custom `v4`) in your favourite browser.
 
-The Health request is discarded by the `HealthRequestFilter` which is configured by `WithHealthRequestFilter`.
+The Health request is discarded by the `HealthRequestFilter` which is configured by the application setting `ApplicationInsights:HealthCheckFunctionName`.
 
 ## HttpExceptionThrowingFunction
 
-Navigate to `http://localhost:7073/http-exception` (Default `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/http-exception> (Default `v4`) in your favourite browser.
 
 Demonstrates that the stack trace is not present in the console logs when an exception is thrown.
 
@@ -155,7 +155,7 @@ This also proves that the same exception appears twice in Application Insights:
 
 ![The same exception is logged twice for the HTTP binding](img/http-binding-exception-logged-twice.png)
 
-Navigate to `http://localhost:7074/http-exception` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/http-exception> (Custom `v4`) in your favourite browser.
 
 Demonstrates that the stack trace is present in the console logs when an exception is thrown.
 
@@ -167,13 +167,13 @@ This also proves that the same exception appears only once in Application Insigh
 
 ## ProcessorFunction
 
-Navigate to `http://localhost:7073/processor` (Default `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/processor> (Default `v4`) in your favourite browser.
 
 Demonstrates that our `TelemetryCounterProcessor` telemetry processor is not being called even though I added it using `AddApplicationInsightsTelemetryProcessor`.
 
 ![Our telemetry processor is not being called for requests](img/telemetry-processor-is-not-being-called.png)
 
-Navigate to `http://localhost:7074/processor` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7074/processor> (Custom `v4`) in your favourite browser.
 
 Demonstrates that our `TelemetryCounterProcessor` telemetry processor is being called:
 
@@ -183,7 +183,7 @@ Note that the processor is also called for request telemetry items. When running
 
 ## ServiceBusFunction
 
-You can send a message to the `defaultv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus` (Default `v4`) in your favourite browser.
+You can send a message to the `defaultv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to <http://localhost:7073/service-bus> (Default `v4`) in your favourite browser.
 
 The Default Function does not have a _URL_ or a _Response code_:
 
@@ -197,7 +197,7 @@ Four telemetry items are recorded for the Default Function execution:
 
 ![Service Bus binding: default telemetry](img/service-bus-binding-default.png)
 
-You can send a message to the `customv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus` (Custom `v4`) in your favourite browser.
+You can send a message to the `customv4inprocess-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to <http://localhost:7074/service-bus> (Custom `v4`) in your favourite browser.
 
 The Custom Function has both the _Request URL_ and _Response code_ set by `ServiceBusRequestInitializer`:
 
@@ -206,17 +206,17 @@ The Custom Function has both the _Request URL_ and _Response code_ set by `Servi
 Only the request is recorded for the Custom Function execution:
 
 - The _Executing ..._ and _Executed ..._ traces have been discarded by the `FunctionExecutionTracesFilter`
-- The _Trigger Details ..._ trace has been discarded by the `ServiceBusTriggerFilter`
+- The _Trigger Details ..._ trace has been discarded by the `ServiceBusTriggerFilter` (configured by setting the application setting `ApplicationInsights:DiscardServiceBusTrigger`)
 
 ## ServiceBusExceptionThrowingFunction
 
-You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7073/service-bus-exception` (Default `v4`) in your favourite browser.
+You can send a message to the `defaultv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to <http://localhost:7073/service-bus-exception> (Default `v4`) in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded three times in Application Insights and that a total of nine telemetry items are emitted during the Function execution.
 
 ![Service Bus binding: nine telemetry items emitted by the Functions runtime](img/service-bus-binding-execution-nine-telemetry-items.png)
 
-You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to `http://localhost:7074/service-bus-exception` (Custom `v4`) in your favourite browser.
+You can send a message to the `customv4inprocess-exception-queue` queue using the Service Bus Explorer in the Azure Portal or you can navigate to <http://localhost:7074/service-bus-exception> (Custom `v4`) in your favourite browser.
 
 Demonstrate that a single exception thrown by the Function is recorded only once in Application Insights and that a total of three telemetry items are emitted during the Function execution.
 
@@ -224,7 +224,7 @@ Demonstrate that a single exception thrown by the Function is recorded only once
 
 ## TraceLogFunction
 
-Navigate to `http://localhost:7073/trace-log` (Default `v4`) / `http://localhost:7074/trace-log` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/trace-log> (Default `v4`) / <http://localhost:7074/trace-log> (Custom `v4`) in your favourite browser.
 
 Demonstrate that log events are not filtered before being sent to Live Metrics. This is not a limitation of Azure Functions, that's how Application Insights works and something you need to be aware of.
 
@@ -232,7 +232,7 @@ Demonstrate that log events are not filtered before being sent to Live Metrics. 
 
 ## UserSecretFunction
 
-Navigate to `http://localhost:7073/secret` (Default `v4`) / `http://localhost:7074/secret` (Custom `v4`) in your favourite browser.
+Navigate to <http://localhost:7073/secret> (Default `v4`) / <http://localhost:7074/secret> (Custom `v4`) in your favourite browser.
 
 Demonstrates that Azure Functions can use the [Secret Manager][secret-manager] when running locally.
 

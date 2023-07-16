@@ -5,13 +5,13 @@ public class CustomApplicationInsightsOptionsTests
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    public void GivenEmptyOrWhiteSpaceHealthCheckFunctionName_ThenThrows(string functionName)
+    public void GivenEmptyOrWhiteSpaceConfigurationSectionName_ThenThrows(string functionName)
     {
         // Act & Assert
         Assert.ThrowsAny<Exception>(() =>
-            new CustomApplicationInsightsOptions(
+            new CustomApplicationInsightsConfig(
                 "some-name",
                 typeof(StringHelper),
-                healthCheckFunctionName: functionName));
+                configurationSectionName: functionName));
     }
 }

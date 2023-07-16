@@ -21,11 +21,9 @@ public class Startup : FunctionsStartup
                 configuration.GetSection("Secret").Bind(settings);
             });
 
-        var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
+        var appInsightsOptions = new CustomApplicationInsightsConfigBuilder(
                 "customv3inprocess",
                 typeof(Startup))
-            .WithHealthRequestFilter("HealthFunction")
-            .WithServiceBusTriggerFilter()
             .Build();
 
         builder.Services

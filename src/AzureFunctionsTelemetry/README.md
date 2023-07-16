@@ -23,7 +23,20 @@ Where
 - `{ApplicationName}` is used to set Application Insights' _Cloud role name_
 - `{TypeFromEntryAssembly}` typically would be `typeof(Startup)`. I read the [Assembly Informational Version][assembly-informational-version] of the entry assembly to set Application Insights' _Application version_ (I use _unknown_ as a fallback)
 
-Additionaly you can discard health requests and Service Bus trigger traces:
+Additionaly you can discard health requests and Service Bus trigger traces using application settings:
+
+```json
+{
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "ApplicationInsights:DiscardServiceBusTrigger": true,
+    "ApplicationInsights:HealthCheckFunctionName": "HealthFunction" // The name of the Function, not the route
+  }
+}
+```
+
+You can also add telemetry initializers and telelemetry processors:
 
 ```csharp
 public override void Configure(IFunctionsHostBuilder builder)
@@ -31,8 +44,6 @@ public override void Configure(IFunctionsHostBuilder builder)
     var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
             "customv4inprocess", // Will be used as Cloud role name
             typeof(Startup)) // Assembly Informational Version will be used as Application version
-        .WithHealthRequestFilter("HealthFunction") // The name of the Function, not the route
-        .WithServiceBusTriggerFilter()
         .Build();
 
     builder.Services
@@ -53,6 +64,10 @@ public override void Configure(IFunctionsHostBuilder builder)
 }
 ```
 
+## Migration guides
+
+- [Migrating from v1 to v2][migrating-from-v1-v2]
+
 ## Release notes
 
 Release notes can be found on [GitHub][release-notes].
@@ -61,7 +76,8 @@ Release notes can be found on [GitHub][release-notes].
 
 Leave feedback by [opening an issue][open-issue] on GitHub.
 
-[assembly-informational-version]: https://docs.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
+[assembly-informational-version]: https://learn.microsoft.com/en-us/dotnet/standard/assembly/versioning#assembly-informational-version
 [release-notes]: https://github.com/gabrielweyer/azure-functions-telemetry/releases
 [documentation]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/README.md
 [open-issue]: https://github.com/gabrielweyer/azure-functions-telemetry/issues/new
+[migrating-from-v1-v2]: https://github.com/gabrielweyer/azure-functions-telemetry/blob/main/docs/Migrate-from-v1-to-v2.md

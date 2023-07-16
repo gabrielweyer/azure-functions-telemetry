@@ -28,11 +28,9 @@ public class Startup : FunctionsStartup
             .AddMyOptions<TestingOptions>("Testing")
             .AddMyOptions<SecretOptions>("Secret");
 
-        var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
+        var appInsightsOptions = new CustomApplicationInsightsConfigBuilder(
                 "customv4inprocess",
                 typeof(Startup))
-            .WithHealthRequestFilter("HealthFunction")
-            .WithServiceBusTriggerFilter()
             .Build();
 
         builder.Services

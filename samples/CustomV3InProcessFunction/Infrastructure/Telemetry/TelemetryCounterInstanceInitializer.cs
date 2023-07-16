@@ -7,7 +7,7 @@ namespace Gabo.AzureFunctionTelemetry.Samples.CustomV3InProcessFunction.Infrastr
 /// <summary>
 /// <para>Even though this telemetry initializer enriches the telemetry, the main goal is to demonstrate that you need
 /// to be careful when registering an instance of a telemetry initializer. Despite what the documentation states at:
-/// https://docs.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core#adding-telemetryinitializers
+/// https://learn.microsoft.com/en-us/azure/azure-monitor/app/asp-net-core#add-telemetryinitializers
 /// </para>
 ///
 /// You should not use:

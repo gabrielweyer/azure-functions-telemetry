@@ -5,7 +5,9 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "ServiceBusConnection": "",
     "logging:logLevel:Microsoft.Azure.WebJobs.Script.WebHost.Middleware.SystemTraceMiddleware": "None",
-    "Testing:IsEnabled": false
+    "Testing:IsEnabled": false,
+    "ApplicationInsights:DiscardServiceBusTrigger": true,
+    "ApplicationInsights:HealthCheckFunctionName": "HealthFunction"
   },
   "Host": {
     "LocalHttpPort": 7074

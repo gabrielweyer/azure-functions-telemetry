@@ -120,7 +120,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-22.04
     environment: PROD
-    needs: Build
+    needs: build
     concurrency: deploy
     steps:
       - name: Download artifacts

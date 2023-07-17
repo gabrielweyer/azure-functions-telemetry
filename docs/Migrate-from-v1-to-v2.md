@@ -5,6 +5,10 @@ The goal for v2 is to make the customisation configurable using application sett
 - WithServiceBusTriggerFilter
 - WithHealthRequestFilter
 
+## Type rename
+
+`CustomApplicationInsightsOptionsBuilder` has been renamed to `CustomApplicationInsightsConfigBuilder`.
+
 ## Service Bus trigger filter
 
 `WithServiceBusTriggerFilter()` has been deprecated. It has been replaced by the application setting `ApplicationInsights:DiscardServiceBusTrigger`.

@@ -113,7 +113,7 @@ jobs:
           touch empty-release-notes.txt
           gh release create ${{ env.PACKAGE_VERSION }} --title ${{ env.PACKAGE_VERSION }} ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt --prerelease
       - name: Push NuGet package
-        if: ${{ env.CREATE_RELEASE == 'true' || env.CREATE_PRERELEASE }}
+        if: ${{ env.CREATE_RELEASE == 'true' || env.CREATE_PRERELEASE == 'true' }}
         run: dotnet nuget push ./artifacts/out/package/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
   deploy:
     name: Deploy

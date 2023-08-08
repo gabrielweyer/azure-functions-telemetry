@@ -19,6 +19,7 @@ var applicationInsightsSettings = {
 
 var defaultV3InProcessFunctionDisplayName = 'defaultV3InProcess'
 var defaultV4InProcessFunctionDisplayName = 'defaultV4InProcess'
+var defaultV4IsolatedFunctionDisplayName = 'defaultV4Isolated'
 var customV3InProcessFunctionDisplayName = 'customV3InProcess'
 var customV4InProcessFunctionDisplayName = 'customV4InProcess'
 
@@ -28,6 +29,7 @@ var functions = [
     hostingPlanName: '${resourceNamePrefix}-${toLower(defaultV3InProcessFunctionDisplayName)}-plan'
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
+    functionWorkerRuntime: 'dotnet'
     storageName: '${resourceNamePrefix}7${toLower(defaultV3InProcessFunctionDisplayName)}'
   }
   {
@@ -35,13 +37,23 @@ var functions = [
     hostingPlanName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-plan'
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
+    functionWorkerRuntime: 'dotnet'
     storageName: '${resourceNamePrefix}7${toLower(defaultV4InProcessFunctionDisplayName)}'
+  }
+  {
+    displayName: defaultV4IsolatedFunctionDisplayName
+    hostingPlanName: '${resourceNamePrefix}-${toLower(defaultV4IsolatedFunctionDisplayName)}-plan'
+    functionAppName: '${resourceNamePrefix}-${toLower(defaultV4IsolatedFunctionDisplayName)}-func'
+    functionRuntimeVersion: 4
+    functionWorkerRuntime: 'dotnet-isolated'
+    storageName: '${resourceNamePrefix}7${toLower(defaultV4IsolatedFunctionDisplayName)}'
   }
   {
     displayName: customV3InProcessFunctionDisplayName
     hostingPlanName: '${resourceNamePrefix}-${toLower(customV3InProcessFunctionDisplayName)}-plan'
     functionAppName: '${resourceNamePrefix}-${toLower(customV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
+    functionWorkerRuntime: 'dotnet'
     storageName: '${resourceNamePrefix}7${toLower(customV3InProcessFunctionDisplayName)}'
   }
   {
@@ -49,6 +61,7 @@ var functions = [
     hostingPlanName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-plan'
     functionAppName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
+    functionWorkerRuntime: 'dotnet'
     storageName: '${resourceNamePrefix}7${toLower(customV4InProcessFunctionDisplayName)}'
   }
 ]
@@ -60,6 +73,8 @@ var serviceBusSettings = {
     '${toLower(defaultV3InProcessFunctionDisplayName)}-exception-queue'
     '${toLower(defaultV4InProcessFunctionDisplayName)}-queue'
     '${toLower(defaultV4InProcessFunctionDisplayName)}-exception-queue'
+    '${toLower(defaultV4IsolatedFunctionDisplayName)}-queue'
+    '${toLower(defaultV4IsolatedFunctionDisplayName)}-exception-queue'
     '${toLower(customV3InProcessFunctionDisplayName)}-queue'
     '${toLower(customV3InProcessFunctionDisplayName)}-exception-queue'
     '${toLower(customV4InProcessFunctionDisplayName)}-queue'
@@ -128,6 +143,7 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
     hostingPlanName: function.hostingPlanName
     functionAppName: function.functionAppName
     functionRuntimeVersion: function.functionRuntimeVersion
+    functionWorkerRuntime: function.functionWorkerRuntime
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
     reallySecretValue: reallySecretValue
@@ -136,7 +152,8 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
 
 output defaultV3InProcessFunctionAppName string = functions[0].functionAppName
 output defaultV4InProcessFunctionAppName string = functions[1].functionAppName
-output customV3InProcessFunctionAppName string = functions[2].functionAppName
-output customV4InProcessFunctionAppName string = functions[3].functionAppName
+output defaultV4IsolatedFunctionAppName string = functions[2].functionAppName
+output customV3InProcessFunctionAppName string = functions[3].functionAppName
+output customV4InProcessFunctionAppName string = functions[4].functionAppName
 output serviceBusNamespace string = serviceBusSettings.name
 output applicationInsightsName string = applicationInsightsSettings.name

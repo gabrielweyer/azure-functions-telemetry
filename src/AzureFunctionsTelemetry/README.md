@@ -1,5 +1,7 @@
 # Better Azure Functions Application Insights integration
 
+:rotating_light: The customisation supports **in-process** Functions only. **Isolated Functions are not supported**.
+
 Automatically discards redundant telemetry items such as Functions execution traces and duplicate exceptions. Allows you to register your own telemetry processor(s) that will be invoked on every telemetry item type.
 
 More detailed documentation is available on [GitHub][documentation].
@@ -63,6 +65,10 @@ public override void Configure(IFunctionsHostBuilder builder)
         .AddCustomApplicationInsights(appInsightsOptions);
 }
 ```
+
+## Limitations
+
+Setting the cloud role name breaks the Function's Monitor blade.
 
 ## Migration guides
 

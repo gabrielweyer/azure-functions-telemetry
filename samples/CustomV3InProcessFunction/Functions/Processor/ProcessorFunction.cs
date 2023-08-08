@@ -30,11 +30,8 @@ public class ProcessorFunction
             _telemetryCounterProcessor.EventTelemetryCount,
             _telemetryCounterProcessor.ExceptionTelemetryCount,
             _telemetryCounterProcessor.MetricTelemetryCount,
-            _telemetryCounterProcessor.PageViewPerformanceTelemetryCount,
-            _telemetryCounterProcessor.PageViewTelemetryCount,
             _telemetryCounterProcessor.RequestTelemetryCount,
-            _telemetryCounterProcessor.TraceTelemetryCount,
-            _telemetryCounterProcessor.OtherTelemetryCount
+            _telemetryCounterProcessor.TraceTelemetryCount
         });
     }
 }

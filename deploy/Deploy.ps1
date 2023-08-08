@@ -1,5 +1,5 @@
 #Requires -Version 7.0
-#Requires -Modules Az
+#Requires -Modules Az.Accounts, Az.Resources, Az.Websites
 
 <#
 
@@ -11,7 +11,7 @@ Provisions the below resources in Azure:
 
 - A Workspace based Application Insights instance
 - A Service Bus namespace
-- Four Function Apps and their supporting storage accounts
+- Five Function Apps and their supporting storage accounts
 
 Please run `build.ps1 --package` beforehand to publish the Functions to file system.
 
@@ -104,6 +104,7 @@ $deploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentPa
 
 $defaultV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
 $defaultV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
+$defaultV4IsolatedFunctionAppName = $deploymentResult.Outputs.Item('defaultV4IsolatedFunctionAppName').Value
 $customV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
 $customV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
 $serviceBusNamespace = $deploymentResult.Outputs.Item('serviceBusNamespace').Value
@@ -111,6 +112,7 @@ $applicationInsightsName = $deploymentResult.Outputs.Item('applicationInsightsNa
 
 Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
 Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"
+Write-Verbose "Default V4 Isolated Function App name is '$defaultV4IsolatedFunctionAppName'"
 Write-Verbose "Custom V3 In-Process Function App name is '$customV3InProcessFunctionAppName'"
 Write-Verbose "Custom V4 In-Process Function App name is '$customV4InProcessFunctionAppName'"
 Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
@@ -141,6 +143,19 @@ $publishDefaultV4InProcessParameters = @{
 }
 
 Publish-AzWebapp @publishDefaultV4InProcessParameters | Out-Null
+
+Write-Host 'Deploying Default V4 Isolated Function App to Azure'
+
+$defaultV4IsolatedFunctionArchivePath = Join-Path $outputPath 'DefaultV4IsolatedFunction.zip'
+
+$publishDefaultV4IsolatedParameters = @{
+    ResourceGroupName = $resourceGroupName
+    Name = $defaultV4IsolatedFunctionAppName
+    ArchivePath = $defaultV4IsolatedFunctionArchivePath
+    Force = $true
+}
+
+Publish-AzWebapp @publishDefaultV4IsolatedParameters | Out-Null
 
 Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
 

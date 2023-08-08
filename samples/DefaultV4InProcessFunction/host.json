@@ -1,22 +1,22 @@
 {
-    "version": "2.0",
-    "logging": {
-        "logLevel": {
-            "default": "Information",
-            "Azure.Messaging.ServiceBus": "Warning",
-            "Azure.Core": "Error",
-            "Microsoft.AspNetCore": "Warning"
-        },
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "excludedTypes": "Request"
-            }
-        }
+  "version": "2.0",
+  "logging": {
+    "logLevel": {
+      "default": "Information",
+      "Azure.Messaging.ServiceBus": "Warning",
+      "Azure.Core": "Error",
+      "Microsoft.AspNetCore": "Warning"
     },
-    "extensions": {
-        "http": {
-            "routePrefix": ""
-        }
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
     }
+  },
+  "extensions": {
+    "http": {
+      "routePrefix": ""
+    }
+  }
 }

@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctionsTelemetryInte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppInsightsConnectionStringIntegrationTests", "tests\AppInsightsConnectionStringIntegrationTests\AppInsightsConnectionStringIntegrationTests.csproj", "{51A203BF-D17C-40A2-8E9F-7222E4301B64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultV4IsolatedFunction", "samples\DefaultV4IsolatedFunction\DefaultV4IsolatedFunction.csproj", "{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +140,18 @@ Global
 		{51A203BF-D17C-40A2-8E9F-7222E4301B64}.Release|x64.Build.0 = Release|Any CPU
 		{51A203BF-D17C-40A2-8E9F-7222E4301B64}.Release|x86.ActiveCfg = Release|Any CPU
 		{51A203BF-D17C-40A2-8E9F-7222E4301B64}.Release|x86.Build.0 = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|x64.Build.0 = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Debug|x86.Build.0 = Debug|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|x64.ActiveCfg = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|x64.Build.0 = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|x86.ActiveCfg = Release|Any CPU
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{751DDE37-DE25-4417-93C1-4FE86233983C} = {C346CF22-FBA4-488C-A4FE-063370AD521E}
@@ -148,5 +162,6 @@ Global
 		{6C9B49AB-ED25-4265-BE54-D5975058859D} = {C346CF22-FBA4-488C-A4FE-063370AD521E}
 		{264D1CE8-0AC7-4CB3-B714-DB3808417258} = {307699FB-B6E0-4326-8D53-2872E0CE737D}
 		{51A203BF-D17C-40A2-8E9F-7222E4301B64} = {307699FB-B6E0-4326-8D53-2872E0CE737D}
+		{2EA3DA47-52DA-4E8D-BD26-1E823856BFC3} = {C346CF22-FBA4-488C-A4FE-063370AD521E}
 	EndGlobalSection
 EndGlobal

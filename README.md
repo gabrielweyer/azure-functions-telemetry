@@ -1,5 +1,7 @@
 # Azure Functions Telemetry
 
+:rotating_light: The customisation supports **in-process** Functions only. **Isolated Functions are not supported**.
+
 The Application Insights integration for Azure Functions `v3` and `v4` suffers from a few quirks that can lead to a huge Application Insights bill:
 
 - Telemetry processors are not supported, preventing developers from discarding telemetry items
@@ -25,6 +27,7 @@ In this repository I have tried to address all the quirks listed above.
 - [Using the Application Insights customisation](#using-the-application-insights-customisation)
 - [What do I get?](#what-do-i-get)
 - [Configuration](#configuration)
+- [Limitations](#limitations)
 - [Migration guides](#migration-guides)
 - [Demo](#demo)
 - [Q&A](#qa)
@@ -150,6 +153,14 @@ var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(
     .Build();
 ```
 
+## Limitations
+
+Setting the cloud role name breaks the Function's Monitor blade.
+
+![Broken Function's Monitor blade](docs/img/broken-function-monitor-blade.png)
+
+The Azure web jobs SDK supports [overriding the cloud role name][override-cloud-role-name] by setting an environment variable named `WEBSITE_CLOUD_ROLENAME`. When this environment variable is set and the value is not the Function App's name, the Function's Monitor blade is broken as well.
+
 ## Migration guides
 
 - [Migrating from v1 to v2][migrating-from-v1-v2]
@@ -208,3 +219,4 @@ As I did not manage to cover my customisation with unit tests, I wrote [integrat
 [nuget-tool-badge]: https://img.shields.io/nuget/v/AzureFunctions.Better.ApplicationInsights.svg?label=NuGet
 [nuget-tool-command]: https://www.nuget.org/packages/AzureFunctions.Better.ApplicationInsights
 [migrating-from-v1-v2]: docs/Migrate-from-v1-to-v2.md
+[override-cloud-role-name]: https://github.com/Azure/azure-webjobs-sdk/blob/4d053ab5b4316d768166dbd10c9b531b2bfeb174/src/Microsoft.Azure.WebJobs.Logging.ApplicationInsights/Initializers/WebJobsRoleEnvironmentTelmetryInitializer.cs#L22

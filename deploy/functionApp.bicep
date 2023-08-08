@@ -17,6 +17,14 @@ param functionAppName string
 ])
 param functionRuntimeVersion int
 
+@description('Function worker runtime version.')
+@allowed([
+  'dotnet'
+  'dotnet-isolated'
+])
+@minLength(1)
+param functionWorkerRuntime string
+
 @description('Application Insights connection string.')
 @secure()
 param applicationInsightsConnectionString string
@@ -78,7 +86,7 @@ resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
     AzureWebJobsStorage: storageAccountConnectionString
     APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     FUNCTIONS_EXTENSION_VERSION: functionsExtensionsVersion
-    FUNCTIONS_WORKER_RUNTIME: 'dotnet'
+    FUNCTIONS_WORKER_RUNTIME: functionWorkerRuntime
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'

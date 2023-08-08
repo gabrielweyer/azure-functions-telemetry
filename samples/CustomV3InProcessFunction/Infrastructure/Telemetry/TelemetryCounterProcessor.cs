@@ -19,11 +19,8 @@ internal sealed class TelemetryCounterProcessor : ITelemetryProcessor
     public long EventTelemetryCount;
     public long ExceptionTelemetryCount;
     public long MetricTelemetryCount;
-    public long PageViewPerformanceTelemetryCount;
-    public long PageViewTelemetryCount;
     public long RequestTelemetryCount;
     public long TraceTelemetryCount;
-    public long OtherTelemetryCount;
 
     public TelemetryCounterProcessor(ITelemetryProcessor next)
     {
@@ -49,20 +46,11 @@ internal sealed class TelemetryCounterProcessor : ITelemetryProcessor
             case MetricTelemetry:
                 Interlocked.Increment(ref MetricTelemetryCount);
                 break;
-            case PageViewPerformanceTelemetry:
-                Interlocked.Increment(ref PageViewPerformanceTelemetryCount);
-                break;
-            case PageViewTelemetry:
-                Interlocked.Increment(ref PageViewTelemetryCount);
-                break;
             case RequestTelemetry:
                 Interlocked.Increment(ref RequestTelemetryCount);
                 break;
             case TraceTelemetry:
                 Interlocked.Increment(ref TraceTelemetryCount);
-                break;
-            default:
-                Interlocked.Increment(ref OtherTelemetryCount);
                 break;
         }
 

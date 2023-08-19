@@ -16,8 +16,8 @@ public static class ApplicationInsightsServiceCollectionExtensions
 {
     /// <summary>
     /// Extension method taking over the Application Insights' configuration so that we can register our own Telemetry
-    /// Initializers and Processors. Stamps each telemetry item with the application name and version. Discards as much
-    /// redundant telemetry as is humanely possible.
+    /// Initializers and Processors. Stamps each telemetry item with the application name and version (when provided).
+    /// Discards as much redundant telemetry as is humanely possible.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> holding all your precious types.</param>
     /// <param name="config">The <see cref="CustomApplicationInsightsConfig"/> configuring the Application Insights
@@ -45,10 +45,13 @@ public static class ApplicationInsightsServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
-        var applicationVersion = GetAssemblyInformationalVersion(config.TypeFromEntryAssembly);
-        var applicationDescriptor = new ApplicationDescriptor(config.ApplicationName, applicationVersion);
-        services.AddSingleton(applicationDescriptor);
-        services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
+        if (!string.IsNullOrWhiteSpace(config.ApplicationName))
+        {
+            var applicationVersion = GetAssemblyInformationalVersion(config.TypeFromEntryAssembly);
+            var applicationDescriptor = new ApplicationDescriptor(config.ApplicationName, applicationVersion);
+            services.AddSingleton(applicationDescriptor);
+            services.AddSingleton<ITelemetryInitializer, ApplicationInitializer>();
+        }
 
         services.AddOptions<CustomApplicationInsightsOptions>()
             .Configure<IConfiguration>((settings, configuration) =>

@@ -7,7 +7,7 @@ namespace Gabo.AzureFunctionsTelemetry.ApplicationInsights;
 /// </summary>
 public class CustomApplicationInsightsConfigBuilder
 {
-    private readonly string _applicationName;
+    private readonly string? _applicationName;
     private readonly Type _typeFromEntryAssembly;
     private string _configurationSectionName = "ApplicationInsights";
 
@@ -18,10 +18,23 @@ public class CustomApplicationInsightsConfigBuilder
     /// </summary>
     /// <param name="applicationName">Will be used as the 'Cloud role name'.</param>
     /// <param name="typeFromEntryAssembly">The 'AssemblyInformationalVersion' of the assembly will be used as the
-    /// 'Application version'. Falls back to 'unknown'.</param>
+    /// 'Application version'. Falls back to 'unknown'. We'll also use this type to discover Service Bus triggered
+    /// Functions so that we can apply special handling to them.</param>
     public CustomApplicationInsightsConfigBuilder(string applicationName, Type typeFromEntryAssembly)
     {
         _applicationName = applicationName;
+        _typeFromEntryAssembly = typeFromEntryAssembly;
+    }
+
+    /// <summary>
+    /// <para>Helps you configure Application Insights.</para>
+    /// <para>By default we'll read the <see cref="CustomApplicationInsightsOptions"/> from the 'ApplicationInsights'
+    /// configuration section.</para>
+    /// </summary>
+    /// <param name="typeFromEntryAssembly">We'll use this type to discover Service Bus triggered Functions so that we
+    /// can apply special handling to them.</param>
+    public CustomApplicationInsightsConfigBuilder(Type typeFromEntryAssembly)
+    {
         _typeFromEntryAssembly = typeFromEntryAssembly;
     }
 

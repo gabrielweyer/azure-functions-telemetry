@@ -1,17 +1,17 @@
 namespace Gabo.AzureFunctionsTelemetryTests.ApplicationInsights;
 
-public class CustomApplicationInsightsOptionsTests
+public class CustomApplicationInsightsConfigTests
 {
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
-    public void GivenEmptyOrWhiteSpaceConfigurationSectionName_ThenThrows(string functionName)
+    public void GivenEmptyOrWhiteSpaceConfigurationSectionName_ThenThrows(string configurationSectionName)
     {
         // Act & Assert
         Assert.ThrowsAny<Exception>(() =>
             new CustomApplicationInsightsConfig(
                 "some-name",
                 typeof(StringHelper),
-                configurationSectionName: functionName));
+                configurationSectionName));
     }
 }

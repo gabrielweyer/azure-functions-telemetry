@@ -7,9 +7,9 @@ The Application Insights integration for Azure Functions `v3` and `v4` suffers f
 - Exceptions are logged twice for the HTTP binding
 - Exceptions are logged three times for the Service Bus binding
 
-The next issue has no impact on the cost of Application Insights but is related to the development experience. `TelemetryConfiguration` is not registered in the Inversion Of Control container when the Application Insights connection string is not set. Emitting a custom metric requires to inject the `TelemetryConfiguration`. Running locally without having configured the Application Insights connection string will then result in an exception.
+The next issue has no impact on the cost of Application Insights but is related to the development experience. `TelemetryConfiguration` is not registered in the Inversion Of Control container when the Application Insights connection string is not set. Emitting a custom metric requires injecting the `TelemetryConfiguration`. Running locally without having configured the Application Insights connection string will then result in an exception.
 
-The last issue is not related to Application Insights but also negatively affect developers' productivity. The custom Console logger provider used by the Azure Functions runtime does not include the stack trace when displaying an exception (for the HTTP binding at least).
+The last issue is not related to Application Insights but also negatively affects developers' productivity. The custom Console logger provider used by the Azure Functions runtime does not include the stack trace when displaying an exception (for the HTTP binding at least).
 
 If you are not familiar with some of the more advanced features of Application Insights, I suggest you go through the below references before reading the rest of this document:
 
@@ -94,7 +94,7 @@ This is done by calling `AddCustomConsoleLogging`. You will then consistently ge
 
 ### Registering telemetry initializers
 
-:memo: The built-in integration supports telemetry initializers. The custom integration supports registering telemetry initializers in the same way than the built-in integration does.
+:memo: The built-in integration supports telemetry initializers. The custom integration supports registering telemetry initializers in the same way as the built-in integration does.
 
 Telemetry initializers can either be registered using `TImplementation`:
 
@@ -140,7 +140,7 @@ The customisation is configured using application settings:
 }
 ```
 
-If you don't want to use the `ApplicationInsights` key, you can provide another value when configuraing the customisation:
+If you don't want to use the `ApplicationInsights` key, you can provide another value when configuring the customisation:
 
 ```csharp
 var appInsightsOptions = new CustomApplicationInsightsOptionsBuilder(

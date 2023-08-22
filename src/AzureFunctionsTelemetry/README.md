@@ -2,7 +2,7 @@
 
 Automatically discards redundant telemetry items such as Functions execution traces and duplicate exceptions. Allows you to register your own telemetry processor(s) that will be invoked on every telemetry item type.
 
-A more detailed documentation is available on [GitHub][documentation].
+More detailed documentation is available on [GitHub][documentation].
 
 ## Usage
 
@@ -23,7 +23,7 @@ Where
 - `{ApplicationName}` used to set Application Insights' _Cloud role name_ (optional). When not provided, the default behaviour is preserved (the _Cloud role name_ will be set to the Function App's name)
 - `{TypeFromEntryAssembly}` typically would be `typeof(Startup)`. When `{ApplicationName}` is provided, I read the [Assembly Informational Version][assembly-informational-version] of the entry assembly to set Application Insights' _Application version_ (I use _unknown_ as a fallback). When `{ApplicationName}` is not provided, _Application version_ will not be present on the telemetry items
 
-Additionaly you can discard health requests and Service Bus trigger traces using application settings:
+Additionally you can discard health requests and Service Bus trigger traces using application settings:
 
 ```json
 {

@@ -1,6 +1,9 @@
 # Postman
 docs/postman/*.json eol=lf
 
+# Icon
+docs/img/noun-design-tools-155462.svg eol=lf
+
 # Rider
 *.DotSettings eol=lf
 

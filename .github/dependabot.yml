@@ -17,4 +17,3 @@ updates:
         patterns:
           - xunit
           - xunit.analyzers
-          - xunit.runner.visualstudio

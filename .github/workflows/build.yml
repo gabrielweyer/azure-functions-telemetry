@@ -44,9 +44,12 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/setup-dotnet@v3
-        name: Install .NET Core 3.1
+        name: Install .NET Core 3.1 and .NET 8
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: |
+            3.1.x
+            8.0.x
+          dotnet-quality: 'ga'
       - name: Install Azure Functions Core Tools
         run: |
           wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb

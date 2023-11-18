@@ -30,6 +30,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
     functionWorkerRuntime: 'dotnet'
+    dotnetVersion: 'v4.0'
     storageName: '${resourceNamePrefix}7${toLower(defaultV3InProcessFunctionDisplayName)}'
   }
   {
@@ -38,6 +39,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
     functionWorkerRuntime: 'dotnet'
+    dotnetVersion: 'v4.0'
     storageName: '${resourceNamePrefix}7${toLower(defaultV4InProcessFunctionDisplayName)}'
   }
   {
@@ -46,6 +48,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV4IsolatedFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
     functionWorkerRuntime: 'dotnet-isolated'
+    dotnetVersion: 'v8.0'
     storageName: '${resourceNamePrefix}7${toLower(defaultV4IsolatedFunctionDisplayName)}'
   }
   {
@@ -54,6 +57,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(customV3InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 3
     functionWorkerRuntime: 'dotnet'
+    dotnetVersion: 'v4.0'
     storageName: '${resourceNamePrefix}7${toLower(customV3InProcessFunctionDisplayName)}'
   }
   {
@@ -62,6 +66,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
     functionWorkerRuntime: 'dotnet'
+    dotnetVersion: 'v4.0'
     storageName: '${resourceNamePrefix}7${toLower(customV4InProcessFunctionDisplayName)}'
   }
 ]
@@ -143,6 +148,7 @@ module functionAppModule './functionApp.bicep' = [for function in functions:  {
     hostingPlanName: function.hostingPlanName
     functionAppName: function.functionAppName
     functionRuntimeVersion: function.functionRuntimeVersion
+    dotnetVersion: function.dotnetVersion
     functionWorkerRuntime: function.functionWorkerRuntime
     applicationInsightsConnectionString: applicationInsights.properties.ConnectionString
     serviceBusConnectionString: listKeys('${serviceBusNamespace.id}/authorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString

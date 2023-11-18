@@ -25,6 +25,14 @@ param functionRuntimeVersion int
 @minLength(1)
 param functionWorkerRuntime string
 
+@description('.NET version.')
+@allowed([
+  'v4.0'
+  'v8.0'
+])
+@minLength(1)
+param dotnetVersion string
+
 @description('Application Insights connection string.')
 @secure()
 param applicationInsightsConnectionString string
@@ -95,5 +103,13 @@ resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
     'Testing:IsEnabled': 'false'
     'ApplicationInsights:DiscardServiceBusTrigger': 'true'
     'ApplicationInsights:HealthCheckFunctionName': 'HealthFunction'
+  }
+}
+
+resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
+  parent: functionApp
+  name: 'web'
+  properties: {
+    netFrameworkVersion: dotnetVersion
   }
 }

@@ -7,13 +7,13 @@ The Application Insights integration has been redesigned. Telemetry processors a
 Improvements compared to in-process:
 
 - Telemetry processors are supported for all telemetry item types except request
-- Console logger displays the stack trace
+- Console logger displays the exceptions' stack trace
 - The integration registers `TelemetryConfiguration` even when the Application Insights connection string is not present
 
 Regressions compared to in-process:
 
 - **Telemetry initializers are not supported on requests**
-- Each invocation records an `Invoke` dependency
+- Each Function invocation records an `Invoke` dependency
 
 No improvements compared to in-process (but I wish they were):
 
@@ -23,10 +23,10 @@ No improvements compared to in-process (but I wish they were):
 
 NuGet packages:
 
-- `Microsoft.Azure.Functions.Worker`: `1.19.0` (added automatically when creating the Function, updated later)
-- `Microsoft.Azure.Functions.Worker.Sdk`: `1.15.1` (added automatically when creating the Function, updated later)
+- `Microsoft.Azure.Functions.Worker`: `1.20.0` (added automatically when creating the Function, updated later)
+- `Microsoft.Azure.Functions.Worker.Sdk`: `1.16.2` (added automatically when creating the Function, updated later)
 - `Microsoft.ApplicationInsights.WorkerService`: `2.21.0` (added manually following [Application Insights][direct-app-insights-integration])
-- `Microsoft.Azure.Functions.Worker.ApplicationInsights`: `1.0.0` (added manually following [Application Insights][direct-app-insights-integration])
+- `Microsoft.Azure.Functions.Worker.ApplicationInsights`: `1.1.0` (added manually following [Application Insights][direct-app-insights-integration])
 
 I removed the Application Insights rule that [discarded any traces below Warning][remove-warning-app-insights-rule].
 

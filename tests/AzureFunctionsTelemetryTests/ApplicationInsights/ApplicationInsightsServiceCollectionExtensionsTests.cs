@@ -35,11 +35,13 @@ public class ApplicationInsightsServiceCollectionExtensionsTests
         registeredTelemetryInitializers.Should().Contain(typeof(ApplicationInitializer));
     }
 
-    private static IReadOnlyList<Type> GetTelemetryInitializers(IServiceCollection serviceCollection)
+#pragma warning disable CS8619 // I have to support both .NET Core 3.1 and .NET 6
+    private static List<Type> GetTelemetryInitializers(IServiceCollection serviceCollection)
     {
         return serviceCollection
             .Where(s => s.ServiceType == typeof(ITelemetryInitializer) && s.ImplementationType != null)
             .Select(s => s.ImplementationType)
-            .ToList()!;
+            .ToList();
     }
+#pragma warning restore CS8619
 }

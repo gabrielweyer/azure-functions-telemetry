@@ -35,6 +35,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
             return services;
         }
 
+#pragma warning disable CA1510 // I still have to support netstandard 2.1
         if (config == null)
         {
             throw new ArgumentNullException(nameof(config));
@@ -44,6 +45,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
         {
             throw new ArgumentNullException(nameof(services));
         }
+#pragma warning restore CA1510
 
         if (!string.IsNullOrWhiteSpace(config.ApplicationName))
         {
@@ -62,7 +64,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
         var serviceBusTriggeredFunctionName = FunctionsFinder
                 .GetServiceBusTriggeredFunctionNames(config.TypeFromEntryAssembly);
 
-        if (serviceBusTriggeredFunctionName.Any())
+        if (serviceBusTriggeredFunctionName.Count != 0)
         {
             services.AddSingleton<ITelemetryInitializer, ServiceBusRequestInitializer>();
         }

@@ -159,7 +159,7 @@ Navigate to <http://localhost:7073/health> (Default in-process `v4`) in your fav
 
 Navigate to <http://localhost:7074/health> (Custom in-process `v4`) in your favourite browser. The Health request is discarded by the `HealthRequestFilter` which is configured by the application setting `ApplicationInsights:HealthCheckFunctionName`.
 
-Navigate to <http://localhost:7075/health> (Isolated `v4`) in your favourite browser. The Health request is recorded in Application Insights despite having a telemetry processor attempting to discard it. This is because request telemetry items are emitted by the host.
+Navigate to <http://localhost:7075/health> (Isolated `v4`) in your favourite browser. The Health request is recorded in Application Insights despite having a telemetry processor attempting to discard it. This is because request telemetry items are emitted by the host and the `HealthRequestFilter` applies to the worker.
 
 ## HttpExceptionThrowingFunction
 

@@ -23,6 +23,7 @@ var host = new HostBuilder()
             .AddMyOptions<SecretOptions>("Secret")
             .AddApplicationInsightsTelemetryProcessor<TelemetryCounterProcessor>()
             .AddApplicationInsightsTelemetryProcessor<HealthRequestFilter>()
+            .AddApplicationInsightsTelemetryProcessor<CustomHttpDependencyFilter>()
             .AddSingleton<ITelemetryInitializer, TelemetryCounterInitializer>();
 
         services.Configure<LoggerFilterOptions>(options =>

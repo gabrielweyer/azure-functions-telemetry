@@ -6,7 +6,7 @@
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Nuke.Common" Version="7.0.6" />
+    <PackageVersion Include="Nuke.Common" Version="8.0.0" />
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="1.20.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="1.1.0" />

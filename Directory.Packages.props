@@ -30,7 +30,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" Condition="'$(TargetFramework)' == 'net6.0'" />
-    <PackageVersion Include="xunit.analyzers" Version="1.9.0" />
+    <PackageVersion Include="xunit.analyzers" Version="1.10.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.8.14" />
     <GlobalPackageReference Include="AsyncFixer" Version="1.6.0" />

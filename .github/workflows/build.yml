@@ -40,10 +40,10 @@ jobs:
       CREATE_PRERELEASE: 'false'
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4
         name: Install .NET Core 3.1 and .NET 8
         with:
           dotnet-version: |
@@ -65,27 +65,27 @@ jobs:
         env:
           IntegrationTestServiceBusConnectionString: ${{ secrets.SERVICE_BUS_CONNECTION_STRING }}
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
           path: './artifacts/test-results/**/*.html'
           if-no-files-found: error
       - name: Upload Functions logs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ failure() && steps.build.conclusion == 'failure' }}
         with:
           name: function-logs
           path: './artifacts/test-results/*.log'
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: code-coverage
           path: artifacts/coverage-report
           if-no-files-found: error
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: deploy
           path: |
@@ -127,7 +127,7 @@ jobs:
     concurrency: deploy
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: deploy
       - name: Sign-in to Azure

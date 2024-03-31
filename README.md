@@ -2,6 +2,8 @@
 
 :rotating_light: The customisation supports **in-process** Functions only. **Isolated Functions are not supported**.
 
+Beginning [10 November 2026, the in-process model for .NET apps in Azure Functions will no longer be supported][in-process-retirement-notice]. [Migrate to the isolated worked model][migrate-isolated-worker-model].
+
 The Application Insights integration for Azure Functions `v3` and `v4` suffers from a few quirks that can lead to a huge Application Insights bill:
 
 - Telemetry processors are not supported, preventing developers from discarding telemetry items
@@ -220,3 +222,5 @@ As I did not manage to cover my customisation with unit tests, I wrote [integrat
 [nuget-tool-command]: https://www.nuget.org/packages/AzureFunctions.Better.ApplicationInsights
 [migrating-from-v1-v2]: docs/Migrate-from-v1-to-v2.md
 [override-cloud-role-name]: https://github.com/Azure/azure-webjobs-sdk/blob/4d053ab5b4316d768166dbd10c9b531b2bfeb174/src/Microsoft.Azure.WebJobs.Logging.ApplicationInsights/Initializers/WebJobsRoleEnvironmentTelmetryInitializer.cs#L22
+[in-process-retirement-notice]: https://azure.microsoft.com/en-us/updates/retirement-support-for-the-inprocess-model-for-net-apps-in-azure-functions-ends-10-november-2026/
+[migrate-isolated-worker-model]: https://learn.microsoft.com/en-au/azure/azure-functions/migrate-dotnet-to-isolated-model?tabs=net8

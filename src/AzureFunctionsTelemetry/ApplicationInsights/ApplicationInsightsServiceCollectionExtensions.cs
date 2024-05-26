@@ -35,7 +35,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
             return services;
         }
 
-#pragma warning disable CA1510 // I still have to support netstandard 2.1
+#pragma warning disable CA1510 // I still have to support netstandard 2.0
         if (config == null)
         {
             throw new ArgumentNullException(nameof(config));
@@ -47,7 +47,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
         }
 #pragma warning restore CA1510
 
-        if (!string.IsNullOrWhiteSpace(config.ApplicationName))
+        if (config.ApplicationName != null && !string.IsNullOrWhiteSpace(config.ApplicationName))
         {
             var applicationVersion = GetAssemblyInformationalVersion(config.TypeFromEntryAssembly);
             var applicationDescriptor = new ApplicationDescriptor(config.ApplicationName, applicationVersion);
@@ -208,7 +208,7 @@ public static class ApplicationInsightsServiceCollectionExtensions
                         customProcessors.Insert(0, serviceBusTriggerFilter);
                     }
 
-                    if (!string.IsNullOrWhiteSpace(lightOptions.HealthCheckFunctionName))
+                    if (lightOptions.HealthCheckFunctionName != null && !string.IsNullOrWhiteSpace(lightOptions.HealthCheckFunctionName))
                     {
                         var healthRequestFilter = new HealthRequestFilter(
                             customProcessors.First(),

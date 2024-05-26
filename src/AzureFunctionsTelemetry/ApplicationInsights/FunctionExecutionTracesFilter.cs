@@ -32,10 +32,20 @@ internal class FunctionExecutionTracesFilter : ITelemetryProcessor
         _next.Process(item);
     }
 
-    private static bool IsServiceBusBindingMessageErrorProcessingTrace(TraceTelemetry trace) =>
-        trace.SeverityLevel == SeverityLevel.Error &&
-        TelemetryHelper.TryGetCategory(trace, out var category) &&
-        StringHelper.IsSame(FunctionRuntimeCategory.ServiceBusListener, category) &&
-        !string.IsNullOrEmpty(trace.Message) &&
-        trace.Message.StartsWith("Message processing error", StringComparison.OrdinalIgnoreCase);
+    private static bool IsServiceBusBindingMessageErrorProcessingTrace(TraceTelemetry trace)
+    {
+        if (trace.SeverityLevel != SeverityLevel.Error)
+        {
+            return false;
+        }
+
+        if (!TelemetryHelper.TryGetCategory(trace, out var category) || category == null)
+        {
+            return false;
+        }
+
+        return StringHelper.IsSame(FunctionRuntimeCategory.ServiceBusListener, category) &&
+               !string.IsNullOrEmpty(trace.Message) &&
+               trace.Message.StartsWith("Message processing error", StringComparison.OrdinalIgnoreCase);
+    }
 }

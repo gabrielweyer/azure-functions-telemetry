@@ -16,7 +16,7 @@ internal class DuplicateExceptionsFilter : ITelemetryProcessor
     {
         if (item is ExceptionTelemetry exceptionTelemetry)
         {
-            if (TelemetryHelper.TryGetCategory(exceptionTelemetry, out var category))
+            if (TelemetryHelper.TryGetCategory(exceptionTelemetry, out var category) && category != null)
             {
                 if (StringHelper.IsSame(FunctionRuntimeCategory.HostResults, category))
                 {

@@ -31,11 +31,8 @@ public class InstanceInitializerFunction
             _telemetryCounterInstanceInitializer.EventTelemetryCount,
             _telemetryCounterInstanceInitializer.ExceptionTelemetryCount,
             _telemetryCounterInstanceInitializer.MetricTelemetryCount,
-            _telemetryCounterInstanceInitializer.PageViewPerformanceTelemetryCount,
-            _telemetryCounterInstanceInitializer.PageViewTelemetryCount,
             _telemetryCounterInstanceInitializer.RequestTelemetryCount,
-            _telemetryCounterInstanceInitializer.TraceTelemetryCount,
-            _telemetryCounterInstanceInitializer.OtherTelemetryCount
+            _telemetryCounterInstanceInitializer.TraceTelemetryCount
         });
     }
 }

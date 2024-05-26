@@ -132,14 +132,14 @@ jobs:
         with:
           name: deploy
       - name: Sign-in to Azure
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID_1 }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
       - name: Deploy
-        uses: azure/powershell@v1
+        uses: azure/powershell@v2
         with:
           inlineScript: |
             deploy/Deploy.ps1 -Location ${{ env.AZURE_LOCATION }} -ResourceNamePrefix ${{ env.RESOURCE_NAME_PREFIX }}

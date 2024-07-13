@@ -168,7 +168,7 @@ sealed class Build : NukeBuild
         .Executes(() =>
         {
             ReportGeneratorTasks.ReportGenerator(s => s
-                .SetFramework("net6.0")
+                .SetFramework("net8.0")
                 .SetReports($"{TestResultsDirectory}/**/coverage.cobertura.xml")
                 .SetTargetDirectory(CodeCoverageDirectory)
                 .SetReportTypes(ReportTypes.Html));
@@ -494,7 +494,7 @@ sealed class Build : NukeBuild
     void StartFunction(string functionName, Action<OutputType, string> logger)
     {
         ProcessTasks
-            .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net6.0", null, null, null, null, logger);
+            .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net8.0", null, null, null, null, logger);
     }
 
     void RunIntegrationTest(string projectName)

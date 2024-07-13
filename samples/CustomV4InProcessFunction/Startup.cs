@@ -19,7 +19,7 @@ public class Startup : FunctionsStartup
     {
         var testingOptions = builder.GetContext().Configuration.GetSection("Testing").Get<TestingOptions>();
 
-        if (testingOptions.IsEnabled)
+        if (testingOptions?.IsEnabled == true)
         {
             builder.Services.AddSingleton<ITelemetryChannel, TestingChannel>();
         }

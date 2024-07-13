@@ -95,6 +95,7 @@ resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
     APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     FUNCTIONS_EXTENSION_VERSION: functionsExtensionsVersion
     FUNCTIONS_WORKER_RUNTIME: functionWorkerRuntime
+    FUNCTIONS_INPROC_NET8_ENABLED: '1'
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
     WEBSITE_CONTENTSHARE: functionAppName
     WEBSITE_RUN_FROM_PACKAGE: '1'

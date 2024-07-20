@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+
 
 bash --version 2>&1 | head -n 1
 

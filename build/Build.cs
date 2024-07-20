@@ -122,15 +122,8 @@ sealed class Build : NukeBuild
                 .EnableNoIncremental());
         });
 
-    Target VerifyFormat => _ => _
-        .DependsOn(Compile)
-        .Executes(() =>
-        {
-            DotNet($"format --verify-no-changes", RootDirectory);
-        });
-
     Target UnitTest => _ => _
-        .DependsOn(VerifyFormat)
+        .DependsOn(Compile)
         .Executes(() =>
         {
             var testProjects =

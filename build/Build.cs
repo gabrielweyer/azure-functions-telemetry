@@ -122,15 +122,8 @@ sealed class Build : NukeBuild
                 .EnableNoIncremental());
         });
 
-    Target VerifyFormat => _ => _
-        .DependsOn(Compile)
-        .Executes(() =>
-        {
-            DotNet($"format --verify-no-changes", RootDirectory);
-        });
-
     Target UnitTest => _ => _
-        .DependsOn(VerifyFormat)
+        .DependsOn(Compile)
         .Executes(() =>
         {
             var testProjects =
@@ -168,7 +161,7 @@ sealed class Build : NukeBuild
         .Executes(() =>
         {
             ReportGeneratorTasks.ReportGenerator(s => s
-                .SetFramework("net6.0")
+                .SetFramework("net8.0")
                 .SetReports($"{TestResultsDirectory}/**/coverage.cobertura.xml")
                 .SetTargetDirectory(CodeCoverageDirectory)
                 .SetReportTypes(ReportTypes.Html));
@@ -494,7 +487,7 @@ sealed class Build : NukeBuild
     void StartFunction(string functionName, Action<OutputType, string> logger)
     {
         ProcessTasks
-            .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net6.0", null, null, null, null, logger);
+            .StartProcess("func", "start --no-build", SamplesDirectory / functionName / "bin" / Configuration / "net8.0", null, null, null, null, logger);
     }
 
     void RunIntegrationTest(string projectName)

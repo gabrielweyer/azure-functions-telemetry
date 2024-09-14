@@ -39,7 +39,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(defaultV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
     functionWorkerRuntime: 'dotnet'
-    dotnetVersion: 'v4.0'
+    dotnetVersion: 'v8.0'
     storageName: '${resourceNamePrefix}7${toLower(defaultV4InProcessFunctionDisplayName)}'
   }
   {
@@ -66,7 +66,7 @@ var functions = [
     functionAppName: '${resourceNamePrefix}-${toLower(customV4InProcessFunctionDisplayName)}-func'
     functionRuntimeVersion: 4
     functionWorkerRuntime: 'dotnet'
-    dotnetVersion: 'v4.0'
+    dotnetVersion: 'v8.0'
     storageName: '${resourceNamePrefix}7${toLower(customV4InProcessFunctionDisplayName)}'
   }
 ]

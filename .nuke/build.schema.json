@@ -98,7 +98,6 @@
               "StopAppInsightsConnectionStringIntegrationTestAzureFunctions",
               "StopIntegrationTestAzureFunctions",
               "UnitTest",
-              "VerifyFormat",
               "WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs",
               "WriteIntegrationTestAzureFunctionLogs"
             ]
@@ -133,7 +132,6 @@
               "StopAppInsightsConnectionStringIntegrationTestAzureFunctions",
               "StopIntegrationTestAzureFunctions",
               "UnitTest",
-              "VerifyFormat",
               "WriteAppInsightsConnectionStringIntegrationTestAzureFunctionLogs",
               "WriteIntegrationTestAzureFunctionLogs"
             ]

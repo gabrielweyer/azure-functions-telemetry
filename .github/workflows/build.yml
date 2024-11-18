@@ -58,6 +58,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install azure-functions-core-tools-4
           func version
+          # See https://github.com/Azure/azure-functions-core-tools/issues/3766
+          sudo chmod +x /usr/lib/azure-functions-core-tools-4/in-proc6/func
       - name: Build
         id: build
         run: |

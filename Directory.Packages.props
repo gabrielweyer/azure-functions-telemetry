@@ -15,25 +15,34 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.0" />
     <PackageVersion Include="Microsoft.Azure.WebJobs.Logging.ApplicationInsights" Version="3.0.41" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="3.1.32" Condition="'$(TargetFramework)' == 'netstandard2.0'" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" Condition="'$(TargetFramework)' == 'net6.0'" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageVersion Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="5.16.4" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.32" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" Condition="'$(TargetFramework)' == 'net8.0'" />
-    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.1.2" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
-    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.4.0" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="FluentAssertions" Version="6.12.2" />
     <PackageVersion Include="GitHubActionsTestLogger" Version="2.4.1" />
     <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" Condition="'$(TargetFramework)' == 'net8.0'" />
     <PackageVersion Include="xunit.analyzers" Version="1.17.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.12.19" />
     <GlobalPackageReference Include="AsyncFixer" Version="1.6.0" />
     <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.182" />
+  </ItemGroup>
+  <!-- Workaround for https://github.com/dependabot/dependabot-core/issues/9299 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="3.1.32" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.3" />
+    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="3.1.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="3.1.32" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Microsoft.NET.Sdk.Functions" Version="4.4.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
   </ItemGroup>
 </Project>

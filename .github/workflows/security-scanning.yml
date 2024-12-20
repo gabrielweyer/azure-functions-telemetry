@@ -51,6 +51,8 @@ jobs:
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
+      env:
+        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: 1
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

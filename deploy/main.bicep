@@ -57,7 +57,7 @@ var serviceBusSettings = {
   ]
 }
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: applicationInsightsSettings.workspaceName
   location: location
   properties: {
@@ -81,7 +81,7 @@ resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' = {
   name: serviceBusSettings.name
   location: location
   sku: {
@@ -91,7 +91,7 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2021-11-01' = {
   properties: {}
 }
 
-resource queues 'Microsoft.ServiceBus/namespaces/queues@2021-11-01' = [for queue in serviceBusSettings.queueNames: {
+resource queues 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = [for queue in serviceBusSettings.queueNames: {
   parent: serviceBusNamespace
   name: queue
   properties: {

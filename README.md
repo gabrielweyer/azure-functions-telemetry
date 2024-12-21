@@ -4,7 +4,7 @@
 
 Beginning [10 November 2026, the in-process model for .NET apps in Azure Functions will no longer be supported][in-process-retirement-notice]. [Migrate to the isolated worked model][migrate-isolated-worker-model].
 
-The Application Insights integration for Azure Functions `v3` and `v4` suffers from a few quirks that can lead to a huge Application Insights bill:
+The Application Insights integration for Azure Functions `v4` suffers from a few quirks that can lead to a huge Application Insights bill:
 
 - Telemetry processors are not supported, preventing developers from discarding telemetry items
 - Each Function execution records a trace when starting and on completion

@@ -11,7 +11,7 @@ Provisions the below resources in Azure:
 
 - A Workspace based Application Insights instance
 - A Service Bus namespace
-- Five Function Apps and their supporting storage accounts
+- Three Function Apps and their supporting storage accounts
 
 Please run `build.ps1 --package` beforehand to publish the Functions to file system.
 
@@ -29,7 +29,7 @@ Used to create unique names. For example, with a 'hello' prefix and an Applicati
 .NOTES
 You need:
 
-- PowerShell 7 (https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2)
+- PowerShell 7 (https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4)
 - Azure PowerShell (https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell)
 - Bicep CLI (https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#install-manually)
 
@@ -102,34 +102,17 @@ $createEnvironmentDeploymentParameters = @{
 
 $deploymentResult = New-AzResourceGroupDeployment @createEnvironmentDeploymentParameters
 
-$defaultV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV3InProcessFunctionAppName').Value
 $defaultV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('defaultV4InProcessFunctionAppName').Value
 $defaultV4IsolatedFunctionAppName = $deploymentResult.Outputs.Item('defaultV4IsolatedFunctionAppName').Value
-$customV3InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV3InProcessFunctionAppName').Value
 $customV4InProcessFunctionAppName = $deploymentResult.Outputs.Item('customV4InProcessFunctionAppName').Value
 $serviceBusNamespace = $deploymentResult.Outputs.Item('serviceBusNamespace').Value
 $applicationInsightsName = $deploymentResult.Outputs.Item('applicationInsightsName').Value
 
-Write-Verbose "Default V3 In-Process Function App name is '$defaultV3InProcessFunctionAppName'"
 Write-Verbose "Default V4 In-Process Function App name is '$defaultV4InProcessFunctionAppName'"
 Write-Verbose "Default V4 Isolated Function App name is '$defaultV4IsolatedFunctionAppName'"
-Write-Verbose "Custom V3 In-Process Function App name is '$customV3InProcessFunctionAppName'"
 Write-Verbose "Custom V4 In-Process Function App name is '$customV4InProcessFunctionAppName'"
 Write-Verbose "Service Bus namespace is '$serviceBusNamespace'"
 Write-Verbose "Application Insights instance is '$applicationInsightsName'"
-
-Write-Host 'Deploying Default V3 In-Process Function App to Azure'
-
-$defaultV3InProcessFunctionArchivePath = Join-Path $outputPath 'DefaultV3InProcessFunction.zip'
-
-$publishDefaultV3InProcessParameters = @{
-    ResourceGroupName = $resourceGroupName
-    Name = $defaultV3InProcessFunctionAppName
-    ArchivePath = $defaultV3InProcessFunctionArchivePath
-    Force = $true
-}
-
-Publish-AzWebapp @publishDefaultV3InProcessParameters | Out-Null
 
 Write-Host 'Deploying Default V4 In-Process Function App to Azure'
 
@@ -156,19 +139,6 @@ $publishDefaultV4IsolatedParameters = @{
 }
 
 Publish-AzWebapp @publishDefaultV4IsolatedParameters | Out-Null
-
-Write-Host 'Deploying Custom V3 In-Process Function App to Azure'
-
-$customV3InProcessFunctionArchivePath = Join-Path $outputPath 'CustomV3InProcessFunction.zip'
-
-$publishCustomV3InProcessParameters = @{
-    ResourceGroupName = $resourceGroupName
-    Name = $customV3InProcessFunctionAppName
-    ArchivePath = $customV3InProcessFunctionArchivePath
-    Force = $true
-}
-
-Publish-AzWebapp @publishCustomV3InProcessParameters | Out-Null
 
 Write-Host 'Deploying Custom V4 In-Process Function App to Azure'
 

@@ -26,7 +26,7 @@ Used to create unique names. For example, with a 'hello' prefix and an Applicati
 .NOTES
 You need:
 
-- PowerShell 7 (https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.2)
+- PowerShell 7 (https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4)
 - Azure PowerShell (https://learn.microsoft.com/en-us/powershell/azure/install-azure-powershell)
 - Bicep CLI (https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/install#install-manually)
 

@@ -36,14 +36,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - uses: actions/setup-dotnet@v4
-      name: Install .NET Core 3.1 and .NET 8
-      with:
-        dotnet-version: |
-          3.1.x
-          8.0.x
-        dotnet-quality: 'ga'
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
@@ -51,8 +43,6 @@ jobs:
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@v3
-      env:
-        DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: 1
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3

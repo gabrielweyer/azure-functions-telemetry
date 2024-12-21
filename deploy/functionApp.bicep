@@ -10,13 +10,6 @@ param hostingPlanName string
 @description('Function App name.')
 param functionAppName string
 
-@description('Function runtime version (v3 or v4).')
-@allowed([
-  3
-  4
-])
-param functionRuntimeVersion int
-
 @description('Function worker runtime version.')
 @allowed([
   'dotnet'
@@ -24,14 +17,6 @@ param functionRuntimeVersion int
 ])
 @minLength(1)
 param functionWorkerRuntime string
-
-@description('.NET version.')
-@allowed([
-  'v4.0'
-  'v8.0'
-])
-@minLength(1)
-param dotnetVersion string
 
 @description('Application Insights connection string.')
 @secure()
@@ -44,8 +29,6 @@ param serviceBusConnectionString string
 @description('Used to populate "Secret:ReallySecretValue".')
 @secure()
 param reallySecretValue string
-
-var functionsExtensionsVersion = '~${functionRuntimeVersion}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-09-01' = {
   name: storageName
@@ -93,7 +76,7 @@ resource appSettings 'Microsoft.Web/sites/config@2022-03-01' = {
   properties: {
     AzureWebJobsStorage: storageAccountConnectionString
     APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
-    FUNCTIONS_EXTENSION_VERSION: functionsExtensionsVersion
+    FUNCTIONS_EXTENSION_VERSION: '~4'
     FUNCTIONS_WORKER_RUNTIME: functionWorkerRuntime
     FUNCTIONS_INPROC_NET8_ENABLED: '1'
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING: storageAccountConnectionString
@@ -111,6 +94,6 @@ resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: functionApp
   name: 'web'
   properties: {
-    netFrameworkVersion: dotnetVersion
+    netFrameworkVersion: 'v8.0'
   }
 }

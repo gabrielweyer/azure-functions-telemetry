@@ -36,7 +36,7 @@ In this repository I have tried to address all the quirks listed above.
 
 ## Using the Application Insights customisation
 
-The customisation supports both `v3` and `v4` runtime.
+The customisation supports the `v4` runtime.
 
 [![Build Status][github-actions-shield]][github-actions] [![NuGet][nuget-tool-badge]][nuget-tool-command]
 
@@ -181,17 +181,13 @@ There is an [opened GitHub issue][telemetry-processor-support-github-issue] abou
 
 ### Software versions
 
-The latest version of the Azure Functions Core Tools I have been using is `4.0.5198`.
+The latest version of the Azure Functions Core Tools I have been using is `4.0.6610`.
 
 NuGet packages:
 
-- `Microsoft.NET.Sdk.Functions`:
-  - `v3`: `3.1.2` (added automatically when creating the Function, updated later)
-  - `v4`: `4.4.0` (added automatically when creating the Function, updated later)
+- `Microsoft.NET.Sdk.Functions`: `4.4.0` (added automatically when creating the Function, updated later)
 - `Microsoft.Azure.Functions.Extensions`: `1.1.0` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
-- `Microsoft.Extensions.DependencyInjection` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection], updated later):
-  - `v3`: `3.1.32`
-  - `v4`: `8.0.0`
+- `Microsoft.Extensions.DependencyInjection`: `8.0.1` (added manually following [Use dependency injection in .NET Azure Functions][dependency-injection])
 - `Microsoft.Azure.WebJobs.Logging.ApplicationInsights`: `3.0.41` (added manually following [Log custom telemetry in C# Azure Functions][custom-telemetry])
 
 ### Supporting telemetry processors

@@ -5,7 +5,7 @@ The demo requires an Azure Service Bus namespace to run. Functions can run both 
 Before being able to deploy and run the Functions you will need to have the below software installed:
 
 - [Azurite][azurite] is used as the Azure blob storage emulator when running locally
-- [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line (you will need the `v4` version if you want to be able to run the `v4` Functions locally)
+- [Azure Functions Core Tools v4][azure-functions-core-tools] if you want to run from the command line
 - [Powershell 7][powershell-7] to deploy to Azure
 - [Azure PowerShell][azure-powershell] to deploy to Azure
 - [Bicep CLI][bicep-cli] to deploy to Azure
@@ -22,10 +22,10 @@ Run `Deploy.ps1` to deploy the project to Azure. This will deploy:
 .\deploy\Deploy.ps1 -Location {AzureRegion} -ResourceNamePrefix {UniquePrefix}
 ```
 
-The project contains five Functions Apps:
+The project contains three Functions Apps:
 
-- `DefaultV3InProcessFunction` and `DefaultV4InProcessFunction` demonstrate the quirks of in-process Azure Functions `v3` / `v4` Application Insights integration
-- `CustomV3InProcessFunction` and `CustomV4InProcessFunction` demonstrate the workarounds I use to improve in-process Azure Functions `v3` / `v4` Application Insights integration
+- `DefaultV4InProcessFunction` demonstrates the quirks of in-process Azure Functions `v4` Application Insights integration
+- `CustomV4InProcessFunction` demonstrate the workarounds I use to improve in-process Azure Functions `v4` Application Insights integration
 - `DefaultV4IsolatedFunction` demonstrates the quirks of an isolated Azure Function `v4`
 
 I've decided to commit the `local.settings.json` file. This is **not the default or recommended approach** but it makes it easier for new joiners to get started.
@@ -33,17 +33,7 @@ I've decided to commit the `local.settings.json` file. This is **not the default
 You can start the Function Apps by issuing the below commands from the root of repository:
 
 ```powershell
-cd .\samples\DefaultV3InProcessFunction\
-func start
-```
-
-```powershell
 cd .\samples\DefaultV4InProcessFunction\
-func start
-```
-
-```powershell
-cd .\samples\CustomV3InProcessFunction\
 func start
 ```
 
@@ -59,9 +49,7 @@ func start
 
 The Function Apps run on fixed ports locally so that you can run all five Functions at the same time:
 
-- Default in-process `v3`: `7071`
 - Default in-process `v4`: `7073`
-- Custom in-process `v3`: `7072`
 - Custom in-process `v4`: `7074`
 - Default isolated `v4`: `7075`
 
@@ -301,7 +289,7 @@ For the custom Function, each telemetry will be stamped with the Assembly Inform
 
 ## Discarding SystemTraceMiddleware logs
 
-The `SystemTraceMiddleware` emits two log events per HTTP Function execution when running an **in-process** v3 / v4 Function locally:
+The `SystemTraceMiddleware` emits two log events per HTTP Function execution when running an **in-process** v4 Function locally:
 
 ![SystemTraceMiddleware: two log events per HTTP Function execution when running locally](img/demo/inprocess-v4-default-system-trace-middleware-local-two-logs-http-function-execution.png)
 

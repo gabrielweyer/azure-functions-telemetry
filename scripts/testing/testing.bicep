@@ -10,20 +10,14 @@ var applicationInsightsSettings = {
   workspaceName: '${resourceNamePrefix}-log'
 }
 
-var defaultV3InProcessFunctionDisplayName = 'defaultV3InProcess'
 var defaultV4InProcessFunctionDisplayName = 'defaultV4InProcess'
-var customV3InProcessFunctionDisplayName = 'customV3InProcess'
 var customV4InProcessFunctionDisplayName = 'customV4InProcess'
 
 var serviceBusSettings = {
   name: '${resourceNamePrefix}sb'
   queueNames: [
-    '${toLower(defaultV3InProcessFunctionDisplayName)}-queue'
-    '${toLower(defaultV3InProcessFunctionDisplayName)}-exception-queue'
     '${toLower(defaultV4InProcessFunctionDisplayName)}-queue'
     '${toLower(defaultV4InProcessFunctionDisplayName)}-exception-queue'
-    '${toLower(customV3InProcessFunctionDisplayName)}-queue'
-    '${toLower(customV3InProcessFunctionDisplayName)}-exception-queue'
     '${toLower(customV4InProcessFunctionDisplayName)}-queue'
     '${toLower(customV4InProcessFunctionDisplayName)}-exception-queue'
   ]

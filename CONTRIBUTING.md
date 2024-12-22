@@ -23,7 +23,7 @@ Replace the user secrets:
 
 ```powershell
 dotnet user-secrets set Testing:IsEnabled true --id 074ca336-270b-4832-9a1a-60baf152b727
-dotnet user-secrets set ServiceBusConnection {testing-connection-string} --id 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set ServiceBusConnection '{testing-connection-string}' --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
 Start the custom v4 in-process Function:
@@ -46,7 +46,7 @@ Once you're done, restore the user secrets:
 
 ```powershell
 dotnet user-secrets remove Testing:IsEnabled 074ca336-270b-4832-9a1a-60baf152b727
-dotnet user-secrets set ServiceBusConnection {connection-string} --id 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set ServiceBusConnection '{connection-string}' --id 074ca336-270b-4832-9a1a-60baf152b727
 ```
 
 If you want to test the behaviour when the Application Insights connection string is not set, you'll need to remove the secret:
@@ -60,5 +60,5 @@ Run the [App Insights connection string integration tests](tests\AppInsightsConn
 Once you're done, restore the user secret:
 
 ```powershell
-dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING {connection-string} --id 074ca336-270b-4832-9a1a-60baf152b727
+dotnet user-secrets set APPLICATIONINSIGHTS_CONNECTION_STRING '{connection-string}' --id 074ca336-270b-4832-9a1a-60baf152b727
 ```

@@ -29,6 +29,6 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="8.0.1" />
     <GlobalPackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.13.2" />
     <GlobalPackageReference Include="AsyncFixer" Version="1.6.0" />
-    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.187" />
+    <GlobalPackageReference Include="Meziantou.Analyzer" Version="2.0.188" />
   </ItemGroup>
 </Project>

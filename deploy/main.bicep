@@ -57,7 +57,7 @@ var serviceBusSettings = {
   ]
 }
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
+resource workspace 'Microsoft.OperationalInsights/workspaces@2025-07-01' = {
   name: applicationInsightsSettings.workspaceName
   location: location
   properties: {

@@ -33,7 +33,8 @@ jobs:
     runs-on: ubuntu-24.04
     concurrency: build
     permissions:
-      contents: write
+      contents: write # Create GitHub releases
+      id-token: write # NuGet Trusted Publishing
     env:
       CREATE_RELEASE: ${{ github.ref_name == 'main' && !contains(github.event.head_commit.message, '[skip-release]') && !contains(github.event.head_commit.message, 'dependabot[bot]') }}
       IS_FEATURE_PULL_REQUEST: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'features/') }}
@@ -111,9 +112,15 @@ jobs:
         run: |
           touch empty-release-notes.txt
           gh release create ${{ env.PACKAGE_VERSION }} --title ${{ env.PACKAGE_VERSION }} ./artifacts/out/package/* --target ${{ github.sha }} --repo ${{ github.repository }} --notes-file empty-release-notes.txt --prerelease
+      - name: Get short-lived NuGet API key
+        id: nuget-login
+        if: ${{ env.CREATE_RELEASE == 'true' || env.CREATE_PRERELEASE == 'true' }}
+        uses: NuGet/login@v1
+        with:
+          user: ${{ secrets.NUGET_USER }}
       - name: Push NuGet package
         if: ${{ env.CREATE_RELEASE == 'true' || env.CREATE_PRERELEASE == 'true' }}
-        run: dotnet nuget push ./artifacts/out/package/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NUGET_API_KEY }}
+        run: dotnet nuget push ./artifacts/out/package/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
   deploy:
     name: Deploy
     if: github.ref == 'refs/heads/main'

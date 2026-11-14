@@ -22,7 +22,7 @@ updates:
       - dependency-name: "Microsoft.Azure.WebJobs.Extensions.ServiceBus"
         versions: [">= 5.18.0"]
       - dependency-name: "Microsoft.Azure.Functions.Worker"
-        versions: [">= 2.51.0"]
+        versions: [">= 2.50.0"]
       - dependency-name: "Microsoft.Azure.Functions.Worker.ApplicationInsights"
         versions: [">= 2.50.0"]
     groups:

@@ -18,6 +18,9 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "Microsoft.ApplicationInsights.WorkerService"
         update-types: ["version-update:semver-major"]
+      # 5.18.0 depends on Microsoft.Extensions.* 10.x, which in-process Functions don't support
+      - dependency-name: "Microsoft.Azure.WebJobs.Extensions.ServiceBus"
+        versions: [">= 5.18.0"]
     groups:
       xunit:
         patterns:

@@ -33,6 +33,7 @@ In this repository I have tried to address all the quirks listed above.
 - [Migration guides](#migration-guides)
 - [Demo](#demo)
 - [Q&A](#qa)
+- [Developing](#developing)
 
 ## Using the Application Insights customisation
 
@@ -176,6 +177,10 @@ A [demo](/docs/DEMO.md) demonstrates all the customisation's features.
 ### Why so much code to support telemetry processors?
 
 There is an [opened GitHub issue][telemetry-processor-support-github-issue] about the lack of telemetry processors support in Azure Functions. The thread supplies a workaround to enable telemetry processors, but the telemetry processors added in this fashion will not be called for request telemetry items.
+
+## Developing
+
+See [DEVELOPING.md](DEVELOPING.md) for how to build locally and how to release a new version.
 
 ## Appendix
 

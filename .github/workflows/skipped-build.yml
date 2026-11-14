@@ -12,6 +12,7 @@ on:
       - CONTRIBUTING.md
       - LICENSE
       - README.md
+      - DEVELOPING.md
 
 jobs:
   build:
